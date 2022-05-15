@@ -61,15 +61,26 @@ class Entities {
         }
     }
 
-    detectCollision(entity1, entity2){
-    //wenn der abstand zw. den beiden Mittelpunkten helper.detectDistance(x1,y2,x2,y2)
+    detectCollision(x1,y1,r1,x2,y2,r2){
+    //wenn der abstand zw. den beiden Mittelpunkten
     //kleiner/gleich die Summer der beiden Radien -> return true
 
-        var a = entity1.radius + entity2.radius; 
-        var distance = Helper.detectDistance(entity1.x, entity1.y, entity2.x, entity2.y); 
-        if (distance <= a){
+        var distance = Helper.detectDistance(x1, y1, x2, y2); 
+        if (distance <= (r1+r2)){
             return true; 
         }
         return false; 
     }
+
+    //detectCollision(entity1, entity2){
+    //    var a = entity1.radius + entity2.radius; 
+    //    var distance = Helper.detectDistance(entity1.x, entity1.y, entity2.x, entity2.y); 
+    //    if (distance <= a){
+    //        return true; 
+    //    }
+    //    return false; 
+    //}
+
+
 }
+
