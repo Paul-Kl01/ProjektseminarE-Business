@@ -61,10 +61,15 @@ class Entities {
         }
     }
 
-
     detectCollision(entity1, entity2){
     //wenn der abstand zw. den beiden Mittelpunkten helper.detectDistance(x1,y2,x2,y2)
-    //kleiner als die Summer der beiden Radien -> return true
+    //kleiner/gleich die Summer der beiden Radien -> return true
 
+        var a = entity1.radius + entity2.radius; 
+        var distance = Helper.detectDistance(entity1.x, entity1.y, entity2.x, entity2.y); 
+        if (distance <= a){
+            return true; 
+        }
+        return false; 
     }
 }
