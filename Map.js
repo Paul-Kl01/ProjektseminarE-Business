@@ -36,12 +36,13 @@ class Map {
             y = this.waypoints[i][1];
             ctx.lineTo(x, y);
         }
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 2;
         ctx.stroke();
         ctx.fill();
     }
 }
 
+// Map aufbauen
 const map = new Map("#F08080", 
                     "#eee", 
                     [
