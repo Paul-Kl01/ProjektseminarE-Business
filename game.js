@@ -1,64 +1,103 @@
-import Entities from '/.Entities'
+/* Einige Methoden sind eher als Pseudocode zu verstehen
+*  Zur exakten Implementierung ist es für die Game-Classe nötig die anderen Klassen im Detail zu kennen
+*  Es gibt bei mir noch einige Unklarheiten bzgl. manacher Methoden, bzw. derer Realisierung.
+*  Kriegen wir schon gelöst xD 
+*/
+
+
+// import Entities from "/.Entities";
 // import alle klassen
 
-
-// brauche mehr input aus den anderen klassen, wie diese konstruiert sind und wie methoden gebaut sind
 class Game {
+  constructor() {
+    this.canvas = document.getElementById("canvas");
+    this.ctx = this.canvas.getcontext("2d");
+    this.waveCounter = 0;
+    // DrawList enthält alle Elemente die gezeichnet werden sollen
+    this.drawList = [];
 
-    constructor() {
-        this.canvas = document.getElementById('canvas');
-        this.ctx = this.canvas.getcontext('2d');
-        this.waveCounter = 0;
-        // DrawList enthält alle Elemente die gezeichnet werden sollen
-        this.drawList = [];
+    //Zukunft
+    this.timer;
+    this.mode = 0;
+    this.score = 0;
+    this.remainingLifes = 0;
+    this.ressources = 0;
 
-        //Zukunft
-        this.timer;
-        this.mode = 0;
-        this.score = 0;
-        this.remainingLifes = 0;
-        this.ressources = 0;
+    //Müssen Create() funktionen der anderen Klasse hier mittles this.--- = new ... aufgerufen werden?
+  }
 
-        //Müssen Create() funktionen der anderen Klasse hier mittles this.--- = new ... aufgerufen werden?
+  initialise() {
+    // Aufruf der draw() Methoden der anderen Klassen
+    setInterval(Game.draw(), 1000 / 30);
 
+    //Leben im Prototyp auf 1;
+    this.remainigLifes = 1;
+
+    this.draw();
+  }
+
+  drawCircle(x, y, radius, color) {
+    Game.ctx.beginPath();
+
+    //Kreis zeichnen
+    Game.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    //Kreis ausmalen
+    Game.ctx.fillStyle = color;
+    Game.ctx.fill();
+  }
+
+  draw() {
+    window.requestAnimationFrame(Game.draw);
+
+    // Clear Canvas
+    Game.ctx.clearRect(0, 0, game.canvs.width, game.canvas.height);
+
+    Game.restartGame();
+    // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
+    // for (i = 0, i <= Anzahl Klassen; i++) ...
+    Map.draw();
+    Tower.draw();
+    Enemy.draw();
+    Entities.draw();
+    Entities.detectCollision();
+  }
+
+  update() {
+    //Unklar, ruft eventull update() der anderen Klassen auf.
+    /* In beispiel wurden die Aufrufe der Methoden über eine List geregelt, welche über einen
+            Trigger vervollstäändigt wurden */
+  }
+
+  // startet spiel -- brauch es die Methode wirklich?
+  startGame() {
+      if (Entities.Liste.length == 0) Game.initialise();
+
+  }
+
+  // alle Werte 0 setzen, entities löschen
+  // Würde restartMethode in reset umbenennen.
+  restartGame() {
+    // Reset Score, WaveCounter, Ressources, timer
+    this.score = 0;
+    this.waveCounter = 0;
+    this.ressources = 0;
+    //this.timer = reset -- muss noch implementiert werden
+
+    // Entities liste = 0;
+  }
+
+  drawOverlay() {
+    /* Methode obselet wenn Aufrufe über HTML 'buttonOnClick' plus CSS realisiert ist */
+  }
+
+  pauseGame() {
+    /* Timer stoppen, Waves "anhalten"
+        at the Moment keine Ahnung wie das implementiert werden soll */
+  }
+
+  gameOver() {
+    if (this.remainigLifes == 0) {
+      //reset Game
     }
-
-    initialise() {
-        // Aufruf der draw() Methoden der anderen Klassen
-        setInterval(Game.update(), 1000/30);
-
-        this.draw();
-        
-        
-    }
-    
-    drawCircle(x, y, radius, color)
-    {
-        game.ctx.beginPath();
-        
-        //Kreis zeichnen
-        game.ctx.arc(x, y, r, 0 , 2*Math.PI);
-        //Kreis ausmalen
-        game.ctx.fillStyle = color;
-        game.ctx.fill();
-    }
-    
-    draw() 
-    {
-        window.requestAnimationFrame(Game.draw);
-        
-        // Clear Canvas
-        Game.ctx.clearRect(0, 0, game.canvs.width, game.canvas.height);
-        
-        Map.draw();
-        Tower.draw();
-        Enemy.draw();
-        Entities.draw();
-        Entities.detectCollision();
-
-    }
-
-    update() {
-        //Unklar
-    }
+  }
 }
