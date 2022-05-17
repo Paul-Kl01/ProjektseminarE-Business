@@ -1,0 +1,73 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/*section Style - parent of all */
+
+#game {
+    padding-top: 5%;
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* gui - parent of canvas & buttons */
+.gui {
+    border: 1px solid red;
+    width: 75%;
+    height: 75%;
+}
+
+/* buttons & timer */
+
+.buttons {
+    display: flex;
+    justify-content: right;
+    background: black;
+
+}
+
+button{
+    padding: 0 10px 0 10px;
+    margin: 0 10px 0 10px;
+    background: rgba(128, 128, 128, 0.541);
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+/* timer */
+
+#timerCountDown {
+    width: 75px;
+    height: 50px;
+    margin: 0;
+    background: rgba(128, 128, 128, 0.541);
+
+}
+
+p {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+#waveCounter {
+    width: 75px;
+    height: 50px;
+    background: rgba(128, 128, 128, 0.541);
+    margin-left: 10px;
+}
+
+#canvas {
+    width: 100%;
+    height: 60%;
+    border: 1px solid black;
+}
