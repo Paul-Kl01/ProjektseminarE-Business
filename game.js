@@ -1,6 +1,8 @@
 import Entities from '/.Entities'
 // import alle klassen
 
+
+// brauche mehr input aus den anderen klassen, wie diese konstruiert sind und wie methoden gebaut sind
 class Game {
 
     constructor() {
@@ -16,6 +18,8 @@ class Game {
         this.score = 0;
         this.remainingLifes = 0;
         this.ressources = 0;
+
+        //Müssen Create() funktionen der anderen Klasse hier mittles this.--- = new ... aufgerufen werden?
 
     }
 
@@ -54,9 +58,7 @@ class Game {
 
     }
 
-    // Trigger für das Hinzufügen der Elemente in die DrawList
-    trigger(event) 
-    {
-        
+    update() {
+        //Unklar
     }
 }
