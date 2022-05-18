@@ -1,7 +1,7 @@
 // import Game from './Game';
 // import Helper from './Helper';
 
-class Map {
+export default class Map {
   constructor(roadColor, mapBackground, waypoints, initalEnemyPos) {
     this.waypoints = waypoints;
     this.mapBackground = mapBackground;
@@ -35,9 +35,8 @@ class Map {
       y = this.waypoints[i][1];
       ctx.lineTo(x, y);
     }
-    ctx.lineWidth = 60;
+    ctx.lineWidth = 50;
     ctx.stroke();
-    ctx.fill();
   }
 }
 

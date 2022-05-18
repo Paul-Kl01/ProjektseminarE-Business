@@ -11,16 +11,16 @@
     <section id="game">
       <div class="gui">
         <div class="buttons">
-          <button onclick="Game.init();">Start Game</button>
-          <button onclick="Game.restart();">Restart Game</button>
+          <button onclick="g.draw();">Start Game</button>
+          <button onclick="console.log(g.score);">Restart Game</button>
           <button onclick="/*buildTower*/">Build Tower</button>
           <div id="waveCounter"><p>Welle</p></div>
           <div id="timerCountDown"><p>Timer</p></div>
         </div>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" width="1000px" height="500px"></canvas>
       </div>
     </section>
 
-    <script src="Game.js"></script>
+    <script type="module" src="./Game.js"></script>
   </body>
 </html>

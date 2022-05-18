@@ -6,12 +6,11 @@
 
 // import Entities from "/.Entities";
 // import alle klassen
-import Map from "./Map";
-
+ import Map from "./Map.js";
 class Game {
   constructor() {
     this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getcontext("2d");
+    this.ctx = this.canvas.getContext("2d");
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
@@ -22,6 +21,15 @@ class Game {
     this.score = 0;
     this.remainingLifes = 0;
     this.ressources = 0;
+
+
+    //Window erstellt globale Variable
+    window.map = new Map("#F08080", "#eee", [
+      [800, 60],
+      [800, 200],
+      [200, 200],
+      [200, 500],
+    ]);
 
     //Müssen Create() funktionen der anderen Klasse hier mittles this.--- = new ... aufgerufen werden?
   }
@@ -47,19 +55,15 @@ class Game {
   }
 
   draw() {
-    window.requestAnimationFrame(Game.draw);
+    // window.requestAnimationFrame(draw())
 
     // Clear Canvas
-    Game.ctx.clearRect(0, 0, game.canvs.width, game.canvas.height);
+    // Game.ctx.clearRect(0, 0, Game.canvas.width, game.canvas.height);
 
-    Game.restartGame();
+    // Game.restartGame();
     // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
     // for (i = 0, i <= Anzahl Klassen; i++) ...
-    Map.draw();
-    Tower.draw();
-    Enemy.draw();
-    Entities.draw();
-    Entities.detectCollision();
+    map.draw();
   }
 
   update() {
@@ -100,3 +104,6 @@ class Game {
     }
   }
 }
+
+ window.g = new Game();
+//Map aufbauen
