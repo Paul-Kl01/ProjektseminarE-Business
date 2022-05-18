@@ -1,12 +1,12 @@
 /* Einige Methoden sind eher als Pseudocode zu verstehen
-*  Zur exakten Implementierung ist es für die Game-Classe nötig die anderen Klassen im Detail zu kennen
-*  Es gibt bei mir noch einige Unklarheiten bzgl. manacher Methoden, bzw. derer Realisierung.
-*  Kriegen wir schon gelöst xD 
-*/
-
+ *  Zur exakten Implementierung ist es für die Game-Classe nötig die anderen Klassen im Detail zu kennen
+ *  Es gibt bei mir noch einige Unklarheiten bzgl. manacher Methoden, bzw. derer Realisierung.
+ *  Kriegen wir schon gelöst xD
+ */
 
 // import Entities from "/.Entities";
 // import alle klassen
+import Map from "./Map";
 
 class Game {
   constructor() {
@@ -26,7 +26,7 @@ class Game {
     //Müssen Create() funktionen der anderen Klasse hier mittles this.--- = new ... aufgerufen werden?
   }
 
-  initialise() {
+  init() {
     // Aufruf der draw() Methoden der anderen Klassen
     setInterval(Game.draw(), 1000 / 30);
 
@@ -70,8 +70,7 @@ class Game {
 
   // startet spiel -- brauch es die Methode wirklich?
   startGame() {
-      if (Entities.Liste.length == 0) Game.initialise();
-
+    if (Entities.Liste.length == 0) Game.initialise();
   }
 
   // alle Werte 0 setzen, entities löschen

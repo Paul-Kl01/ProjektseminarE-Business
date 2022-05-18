@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tower Defense</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <section id="game">
-        <div class="gui">
-            <div class="buttons">
-                <button onclick="game.init();">Start Game</button>
-                <button onclick="game.restart();">Restart Game</button>
-                <button onclick="/*buildTower*/">Build Tower</button>
-                <div id="waveCounter"><p>Welle</p></div>
-                <div id="timerCountDown"><p>Timer</p></div>
-            </div>
-            <canvas id="canvas"></canvas>
+      <div class="gui">
+        <div class="buttons">
+          <button onclick="Game.init();">Start Game</button>
+          <button onclick="Game.restart();">Restart Game</button>
+          <button onclick="/*buildTower*/">Build Tower</button>
+          <div id="waveCounter"><p>Welle</p></div>
+          <div id="timerCountDown"><p>Timer</p></div>
         </div>
+        <canvas id="canvas"></canvas>
+      </div>
     </section>
-        
 
-    <script src="game.js"></script>
-</body>
+    <script src="Game.js"></script>
+  </body>
 </html>

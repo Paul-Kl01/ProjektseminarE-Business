@@ -41,7 +41,7 @@ class Map {
   }
 }
 
-// Map aufbauen
+/* Map aufbauen
 const map = new Map("#F08080", "#eee", [
   [800, 60],
   [800, 200],
@@ -49,4 +49,4 @@ const map = new Map("#F08080", "#eee", [
   [200, 500],
 ]);
 map.draw();
-console.log(map);
+console.log(map);*/
