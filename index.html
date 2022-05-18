@@ -1,15 +1,27 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title></title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <canvas id="canvas" width="1000" height="500"></canvas>
-    <script src="Map.js" async defer></script>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section id="game">
+        <div class="gui">
+            <div class="buttons">
+                <button onclick="game.init();">Start Game</button>
+                <button onclick="game.restart();">Restart Game</button>
+                <button onclick="/*buildTower*/">Build Tower</button>
+                <div id="waveCounter"><p>Welle</p></div>
+                <div id="timerCountDown"><p>Timer</p></div>
+            </div>
+            <canvas id="canvas"></canvas>
+        </div>
+    </section>
+        
+
+    <script src="game.js"></script>
+</body>
 </html>
