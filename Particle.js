@@ -1,6 +1,6 @@
-import "game.js";
 import "helper.js";
 import "entities.js";
+import "enemy.js";
 
 class Particle {
     constructor (towerX, towerY, closestEnemy) { //Über tower.js aufzurufen
@@ -13,6 +13,9 @@ class Particle {
     }
 
     update() { //Klassenvariablen updaten
+        if(entities.detectCollsision()) {
+            enemy.hit() //Enemy bekommt Schaden übergeben
+        }
         this.draw()
         this.x = this.x + this.velocity.x //Bewegung updaten
         this.y = this.y + this.velocity.y 
@@ -22,19 +25,11 @@ class Particle {
     }
 
     draw() { //Particle jeweils auf canvas zeichnen
-        game.drawCircle(this.x, this.y, this.radius, this.color)
+        helper.drawCircle(this.x, this.y, this.radius, this.color)
     }
-
-    detectClosestEnemy() { //Im Rahmen der Funktion tower.shoot aufzurufen
-        /*Klasse Enities liefert an Tower zurück, ob sich Enemy in seiner Range befindet & welcher der nähste ist
-         *Tower bekommt dann Referenz auf den nähsten Enemy zurückgelgiefert und gibt den an Particle weiter im Konstruktor
-         *Daher diese Funktion evtl. streichen???
-        */
-    } 
 
     /*PROBLEM: Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden
      *Bis Enemy getroffen wurde vom Particle
-     *Wie soll EnemyTreffer gehandelt werden??? Bzw. wo???
      */
     calcPathToEnemy() { //Müsste im Rahmen der TowerKlasse nach Konsturktor-Aufruf des Particles einmal inizial aufgerufen werden
         const angle = Math.atan2(closestEnemy.y - this.y , closestEnemy.x - this.x) //Bestimmt den Winkel zwischen Enemy & Particle
