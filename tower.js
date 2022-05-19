@@ -63,7 +63,7 @@ class Tower {
 
     upgradeSpeed(value = 1) {
         // Upgrade von Schussgeschwindigkeit
-        if ((this.cooldown > 1)&&()) {
+        if ((this.cooldown > 1)&&((this.cooldown - value)>0)) {
             this.cooldown -= value;
         }
     }
