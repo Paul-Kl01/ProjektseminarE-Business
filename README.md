@@ -16,8 +16,10 @@ Veränderungen hochladen: \
 `git add .` \
 Veränderungen pushen: \
 `git push origin "branch name"` 
-
-    
+ # Was ist in dieser Branch?
+ 1. Einige Klassen wurden bereits zu game.js hinzugefügt - mittels Node.js   
+ 2. StartGame Button malt einen "Turm"
+ 3. Map ist bereits erstellt wenn man die Seite lädt
 
 
     
