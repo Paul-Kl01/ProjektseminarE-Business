@@ -6,7 +6,7 @@ export default class Map {
     this.waypoints = waypoints;
     this.mapBackground = mapBackground;
     this.roadColor = roadColor;
-    //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
+    this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
   draw() {
