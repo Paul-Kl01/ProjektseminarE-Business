@@ -5,6 +5,7 @@ var gameObject_ = new gameObject();
 var helpers = new helper();
 
 class tower extends gameObject {
+
     constructor(x, y, towerType = 0) {
         this.radius = 5; // Größe des Turmkreises
         //towerId; // woher?
@@ -91,5 +92,7 @@ class tower extends gameObject {
         }
     }
 
+
 }
+
 module.exports = tower; // muss mit Klassenname übereinstimmen
