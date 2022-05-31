@@ -98,14 +98,19 @@ class entities {
 
 module.exports = entities;
 },{}],3:[function(require,module,exports){
-
-// Import via Node.js
-const map = require('./map');
-const turret = require('./turret');
-const entitites = require('./entities');
-const events = require('./Events');
+// Import der Klassen via Node.js
+const map = require("./map");
+const turret = require("./turret");
+const entitites = require("./entities");
+const events = require("./Events");
 var entities_ = new entitites();
 var event = new events();
+
+/*
+ * Bündeln der Klassen
+ * @author Constantin
+ *
+ */
 
 class game {
   constructor() {
@@ -124,31 +129,32 @@ class game {
     this.remainingLifes;
     this.ressources = 0;
 
+    // Map erstellen
+    this.map = new map(
+      "#F08080",
+      "#eee",
+      [
+        [800, 60],
+        [800, 200],
+        [200, 200],
+        [200, 500],
+      ],
+      [0, 60]
+    );
 
-    this.map = new map("#F08080", "#eee", [
-      [800, 60],
-      [800, 200],
-      [200, 200],
-      [200, 500],
-    ]);
-
+    // Turm erstellen
     this.turret = new turret(50, 50);
-
-    //Müssen Create() funktionen der anderen Klasse hier mittles this.--- = new ... aufgerufen werden?
   }
 
   init = () => {
     setInterval(this.draw(), 1000 / 30);
-    
+
     //Leben im Prototyp auf 1;
     this.remainigLifes = 1;
     this.draw();
+  };
 
-  }
-  
-  
   draw = () => {
-    
     window.requestAnimationFrame(this.draw);
     // Clear Canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -158,7 +164,7 @@ class game {
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
     this.turret.draw();
-  }
+  };
 
   update() {
     //Unklar, ruft eventull update() der anderen Klassen auf.
@@ -169,13 +175,12 @@ class game {
   // Check ob Turm gebaut ist und ob das Spiel schon läuft
   startGame = () => {
     if (this.towerCount == 0 && this.waveCounter == 0) {
-        this.init();
-      } else {
-        alert("Spiel läuft schon.");
-        // Build Tower
-      }
+      this.init();
+    } else {
+      alert("Spiel läuft schon.");
+      // Build Tower
     }
-  
+  };
 
   // alle Werte 0 setzen, entities löschen
   // Würde restartMethode in reset umbenennen.
@@ -187,9 +192,8 @@ class game {
     //this.timer = reset -- muss noch implementiert werden
     this.init();
 
-
     // Entities liste = 0;
-  }
+  };
 
   pauseGame() {
     /* Timer stoppen, Waves "anhalten"
@@ -201,53 +205,64 @@ class game {
       this.restartGame();
       alert("Game Over");
     }
-  }
+  };
 }
 
-
 // Neue Instanz des Spiels
- const g = new game();
+const g = new game();
 
- // Verankerung der Buttons mit den Funktionen
- document.getElementById("btnStart").addEventListener("click", g.startGame, false);
- document.getElementById("btnReset").addEventListener("click", g.restartGame, false);
+// Verankerung der Buttons mit den Funktionen
+document
+  .getElementById("btnStart")
+  .addEventListener("click", g.startGame, false);
+document
+  .getElementById("btnReset")
+  .addEventListener("click", g.restartGame, false);
 
- // Map beim Laden der Seite einzeichnen
- window.onload = g.map.draw;
+// Map beim Laden der Seite einzeichnen
+window.onload = g.map.draw;
 
 },{"./Events":1,"./entities":2,"./map":4,"./turret":5}],4:[function(require,module,exports){
-// import Game from './Game';
-// import Helper from './Helper';
+/*
+ * Spielflaeche erzeugen
+ * @author Paul
+ *
+ */
 
 class map {
-  constructor(roadColor, mapBackground, waypoints, initalEnemyPos) {
+  constructor(
+    roadColor,
+    mapBackground,
+    waypoints,
+    startingPoint
+  ) {
     this.waypoints = waypoints;
     this.mapBackground = mapBackground;
     this.roadColor = roadColor;
+    this.startingPoint = startingPoint;
     //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
-  draw = () =>{
-    // Canvas erstellen (aus Game importieren)
+  // Spielflaeche auf Canvas zeichnen
+  draw = () => {
+    // Canvas definieren
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.strokeStyle = this.roadColor;
 
     // Canvas Background
     ctx.fillStyle = this.mapBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Waypoints (800,60),(800,200),(200,500)
-
-    ctx.beginPath();
-    ctx.strokeStyle = this.roadColor;
     // Koordinaten Weg
     let x;
     let y;
 
-    // Startpunkt weg
-    ctx.moveTo(0, 60);
+    // Startpunkt Path definieren
+    ctx.moveTo(this.startingPoint[0], this.startingPoint[1]);
 
-    // Weg zeichnen
+    // Path zeichnen
     for (let i = 0; i < this.waypoints.length; i++) {
       x = this.waypoints[i][0];
       y = this.waypoints[i][1];
@@ -255,20 +270,11 @@ class map {
     }
     ctx.lineWidth = 50;
     ctx.stroke();
-  }
+  };
 }
 
+// Klasse Exportieren
 module.exports = map;
-
-/* Map aufbauen
-const map = new Map("#F08080", "#eee", [
-  [800, 60],
-  [800, 200],
-  [200, 200],
-  [200, 500],
-]);
-map.draw();
-console.log(map);*/
 
 },{}],5:[function(require,module,exports){
 // import Particle from './Particle';
