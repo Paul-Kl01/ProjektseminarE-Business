@@ -1,8 +1,9 @@
-import "helper.js"
-import "entities.js"
-import "enemy.js"
+import "./Helper.js"
+import "./Entities.js"
+import "./Enemy.js"
+import "./GameObject.js"
 
-export default class Particle {
+export default class Particle extends GameObject{
     //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
     // canvas = document.getElementById("canvas");
     // ctx = this.canvas.getContext("2d");
@@ -19,6 +20,7 @@ export default class Particle {
     update = () => { //Klassenvariablen updaten
         if(entities.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
             enemy.hit() //Enemy bekommt Schaden übergeben
+            //Anschließend muss Partikel entfernt werden
         }
         this.draw()
         this.x = this.x + this.velocity.x //Bewegung updaten
