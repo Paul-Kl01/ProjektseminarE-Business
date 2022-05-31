@@ -14,8 +14,12 @@ var event = new events();
 
 class game {
   constructor() {
+    // Canvas erstellen
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
+
+    // Wegpunkte im Konstruktor übergeben?
+
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
@@ -39,7 +43,9 @@ class game {
         [200, 200],
         [200, 500],
       ],
-      [0, 60]
+      [0, 60],
+      this.canvas,
+      this.ctx
     );
 
     // Turm erstellen

@@ -9,21 +9,25 @@ class map {
     roadColor,
     mapBackground,
     waypoints,
-    initalEnemyPos,
-    startingPoint
+    //initalEnemyPos,
+    startingPoint,
+    canvas,
+    context
   ) {
     this.waypoints = waypoints;
     this.mapBackground = mapBackground;
     this.roadColor = roadColor;
     this.startingPoint = startingPoint;
+    this.canvas = canvas;
+    this.context = context;
     //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
   // Spielflaeche auf Canvas zeichnen
   draw = () => {
     // Canvas definieren
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
+    var canvas = this.canvas;
+    var ctx = this.context;
     ctx.beginPath();
     ctx.strokeStyle = this.roadColor;
 
