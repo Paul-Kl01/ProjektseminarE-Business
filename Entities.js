@@ -1,5 +1,6 @@
-import Game from './Game';
 import Helper from './Helper';
+import Tower from './Tower';
+import Enemies from './Enemies';
 
 class Entities {
 
@@ -10,77 +11,76 @@ class Entities {
         this.towerCounter =  0; 
     }
 
-    draw(){
+    draw = () => {
         //von jeden Enemy/Tower wird die Draw() Funktion aufgerufen 
         for ( let i=0; i < this.enemyList.length; i++) this.enemyList[i].draw(); 
         for ( let j=0; j < this.towerList.length; j++) this.towerList[j].draw(); 
     }
 
-    update(){
+    update = () => {
+        this.detect_enemie(); 
+
          //von jeden Enemy/Tower wird die Update() Funktion aufgerufen 
         for ( let i=0; i < this.enemyList.length; i++) this.enemyList[i].update(); 
         for ( let j=0; j < this.towerList.length; j++) this.towerList[j].update(); 
     } 
 
-    create(x, y, radius, color, type) {
-        //type zur Fallunterscheidung welche Art von Entität; 0 Enemy, 1 Tower
+
+ create = (x,y,r, color, objecttype ) => {
+        //objecttype zur Fallunterscheidung welche Art von Entität; 0 Enemy, 1 Tower 2 Particle
         var id; 
-        switch (type) {
+    
+        //Entity erzeugen und zur entsprechenden Liste hinzufügen 
+        switch (objecttype) {
             case "0" :
-                id: ++this.enemyCounter; 
+                var enemy = new Enemies(x,y,r,colour)
+                id = ++this.enemyCounter; 
+                this.enemyList[id] = enemy; 
                 break; 
 
             case '1':
-                id: ++this.towerCounter; 
-        }
-
-        //Entity Typ erstellen
-        var entity = 
-        {
-            id: id, 
-            type: type,
-            x: x, 
-            y:y, 
-            r:r,  
-            color: color, 
-            draw: function(){
-                game.drawCircle(this.x, this.y, this.radius, this.color)
-            }, 
-            update: function(){}
-        }; 
-
-
-        //Entity zur entsprechenden Liste hinzufügen 
-        switch (type) {
-            case "0" :
-                this.enemyList[entity.id] = entity; 
-                break; 
-
-            case '1':
-                this.towerList[entity.id] = entity;
+                var tower = new Tower (x,y,r,colour)
+                id = ++this.towerCounter; 
+                this.towerList[id] = tower; 
         }
     }
 
-    detectCollision(x1,y1,r1,x2,y2,r2){
-    //wenn der abstand zw. den beiden Mittelpunkten
-    //kleiner/gleich die Summer der beiden Radien -> return true
 
-        var distance = Helper.detectDistance(x1, y1, x2, y2); 
-        if (distance <= (r1+r2)){
-            return true; 
+    //toDo: wie heißt KlassenVar bei Enemy für zurück gelegten Weg (hier: weg)
+    // Weiterleitung des vom Tower abzuschließenden Enemy: über tower.shoot(enemy)
+    detect_enemie(){
+        //leitet den Enemy, der in Towerrange ist und am meisten Weg zurück gelegt hat, an den entsp. schussbereiten Tower weiter
+
+        for ( let j=0; j < this.towerList.length; j++) {
+
+            //Tower schussbereit?
+            if (this.towerList[i].cooldownleft !== 0) continue; 
+            let last_enemy; 
+
+            for ( let i=0; i < this.enemyList.length; i++) {
+                //Enemie in Tower Range?
+                var bool =  Helper.detectCollision(this.towerList[j].x, this.towerList[j].y, this.towerList[j].range, this.enemyList[i].x, this.enemyList[i].y, this.enemyList[i].radius ); 
+
+                if (bool = true) {
+                    //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
+                    if (last_enemy === undefined){
+                        last_enemy = this.enemyList[i];
+                    }
+                }
+                    //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;    
+                else {
+                    if (this.enemyList[i].weg > last_enemy.weg   ){
+                        last_enemy = this.enemyList[i]
+                    }
+                }              
+            }
+              //wenn last_enemy initialisiert-> Weiterleiten an Tower
+            if (last_enemy !== undefined){
+                this.towerList[j].shoot(last_enemy);
+            }
         }
-        return false; 
+
     }
-
-    //detectCollision(entity1, entity2){
-    //    var a = entity1.radius + entity2.radius; 
-    //    var distance = Helper.detectDistance(entity1.x, entity1.y, entity2.x, entity2.y); 
-    //    if (distance <= a){
-    //        return true; 
-    //    }
-    //    return false; 
-    //}
-
-
 }
+
 
