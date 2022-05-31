@@ -39,3 +39,5 @@ export default class Wave {
         }
     }
 }
+
+module.exports = Wave;
