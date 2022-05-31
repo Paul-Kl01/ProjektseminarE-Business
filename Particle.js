@@ -61,3 +61,5 @@ export default class Particle extends GameObject{
         this.update //Position des Particles entsprechend updaten
     }
 }
+
+module.exports = Particle;
