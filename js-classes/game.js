@@ -6,6 +6,12 @@ const events = require("./Events");
 var entities_ = new entitites();
 var event = new events();
 
+/*
+ * Bündeln der Klassen
+ * @author Constantin
+ *
+ */
+
 class game {
   constructor() {
     this.canvas = document.getElementById("canvas");

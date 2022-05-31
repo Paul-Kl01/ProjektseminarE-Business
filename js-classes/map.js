@@ -19,6 +19,7 @@ class map {
     //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
+  // Spielflaeche auf Canvas zeichnen
   draw = () => {
     // Canvas definieren
     var canvas = document.getElementById("canvas");
