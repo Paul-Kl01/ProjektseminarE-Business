@@ -1,18 +1,31 @@
+<<<<<<< Updated upstream
 import Particle from './Particle';
 import Entities from './Entities';
 
 class Tower {
     constructor(x, y, type = 0) {
+=======
+class Tower {
+    constructor(x, y, towerType = 0) {
+>>>>>>> Stashed changes
         this.radius = 5; // Größe des Turmkreises
         //towerId; // woher?
         this.color = '#1E90FF'; // Blau = gut ^^
         this.x = x; 
         this.y = y;
+<<<<<<< Updated upstream
         this.type = type; 
         this.cooldownLeft = 0;
 
         // Fallentscheidung welchen Type der Turm hat
         if (type == 0) { 
+=======
+        this.towerType = towerType; 
+        this.cooldownLeft = 0;
+
+        // Fallentscheidung welchen towerType der Turm hat
+        if (towerType== 0) { 
+>>>>>>> Stashed changes
             // Standardturm
             this.damage = 1;
             this.price = 10;
@@ -23,11 +36,20 @@ class Tower {
         } 
     }
 
+<<<<<<< Updated upstream
     shoot(amount = 1) {
         // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten
         if (this.isFireReady() == true) {
             for (var i = 1; i <= amount; i++) {
                 var particle = new Particle.create(this.x, this.y); // schauen ob Create zu Particle passt
+=======
+    shoot(enemy, amount = 1) {
+        // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
+        if ((this.isFireReady() == true)&&(this.searchEnemy() != false)) {
+            for (var i = 1; i <= amount; i++) {
+
+                var particle = new Particle(this.x, this.y, enemy);
+>>>>>>> Stashed changes
             }
             this.cooldownLeft = this.cooldown; // Cooldown wieder hochgesetzt
         } 
@@ -75,7 +97,11 @@ class Tower {
 
     draw() {
         // Zeichnet den Kreis des Turms
+<<<<<<< Updated upstream
         Game.drawCircle(this.x, this.y, this.radius, this.color)
+=======
+        Helper.drawCircle(this.x, this.y, this.radius, this.color)
+>>>>>>> Stashed changes
     }
 
     isFireReady() {
@@ -87,6 +113,7 @@ class Tower {
         }
     }
 
+<<<<<<< Updated upstream
     /*
     enemyInRange() {
         // Fragt bei Entities an, ob enemy in Reichweite ist, bekommt Enemy als objekt zurück
@@ -95,4 +122,6 @@ class Tower {
     }
     */
 
+=======
+>>>>>>> Stashed changes
 }
