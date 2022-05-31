@@ -9,7 +9,6 @@ class map {
     roadColor,
     mapBackground,
     waypoints,
-    initalEnemyPos,
     startingPoint
   ) {
     this.waypoints = waypoints;
