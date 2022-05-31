@@ -1,4 +1,4 @@
-class Events {
+class events {
   canvas = document.querySelector("canvas");
 
   getCursorPosition = (canvas, event) => {
@@ -8,3 +8,5 @@ class Events {
     console.log(x, y);
   };
 }
+
+module.exports = events;
