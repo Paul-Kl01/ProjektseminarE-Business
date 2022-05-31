@@ -1,35 +1,44 @@
-// import Game from './Game';
-// import Helper from './Helper';
+/*
+ * Spielflaeche erzeugen
+ * @author Paul
+ *
+ */
 
-export default class Map {
-  constructor(roadColor, mapBackground, waypoints, initalEnemyPos) {
+class map {
+  constructor(
+    roadColor,
+    mapBackground,
+    waypoints,
+    initalEnemyPos,
+    startingPoint
+  ) {
     this.waypoints = waypoints;
     this.mapBackground = mapBackground;
     this.roadColor = roadColor;
+    this.startingPoint = startingPoint;
     //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
-  draw() {
-    // Canvas erstellen (aus Game importieren)
+  // Spielflaeche auf Canvas zeichnen
+  draw = () => {
+    // Canvas definieren
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.strokeStyle = this.roadColor;
 
     // Canvas Background
     ctx.fillStyle = this.mapBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Waypoints (800,60),(800,200),(200,500)
-
-    ctx.beginPath();
-    ctx.strokeStyle = this.roadColor;
     // Koordinaten Weg
     let x;
     let y;
 
-    // Startpunkt weg
-    ctx.moveTo(0, 60);
+    // Startpunkt Path definieren
+    ctx.moveTo(this.startingPoint[0], this.startingPoint[1]);
 
-    // Weg zeichnen
+    // Path zeichnen
     for (let i = 0; i < this.waypoints.length; i++) {
       x = this.waypoints[i][0];
       y = this.waypoints[i][1];
@@ -37,15 +46,8 @@ export default class Map {
     }
     ctx.lineWidth = 50;
     ctx.stroke();
-  }
+  };
 }
 
-/* Map aufbauen
-const map = new Map("#F08080", "#eee", [
-  [800, 60],
-  [800, 200],
-  [200, 200],
-  [200, 500],
-]);
-map.draw();
-console.log(map);*/
+// Klasse Exportieren
+module.exports = map;
