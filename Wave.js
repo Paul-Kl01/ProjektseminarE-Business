@@ -1,7 +1,12 @@
-import Entities from './Enitites.js'
-import Map from './Map.js'
+// import Entities from './Enitites.js'
+// import Map from './Map.js'
 
-export default class Wave {
+const entities = require('./Entities')
+const map = require('./Map')
+var map_ = new map();
+var entities_ = new entities();
+
+export default class wave {
     constructor() {
         this.currentWave = 1
         this.amountOfEnemies = 5
@@ -22,7 +27,7 @@ export default class Wave {
         //die aktuelle Welle gefüllt ist, da sonst alle anderen Prozesse auf das Spawnen von Enemies warten müssen
 
         //Startposition der Enemies abhänging von der Map definieren
-        this.enemyStartPos = Map.initalEnemyPos
+        this.enemyStartPos = map_.initalEnemyPos
         //Startposition muss nun weit außerhalb der Map liegen bzgl x-Koordinate, damit Enemies nicht direkt Map (sichtbar) betreten
         this.enemyStartPos = {x: this.enemyStartPos.x - 2000, y: this.enemyStartPos.y} //2000 als erster Testwert
 
@@ -33,11 +38,11 @@ export default class Wave {
                 this.enemySpwanCooldown--
             }
             else{
-                Entities.create('Enemy', this.enemyStartPos) //StartPosition der Enemies muss mitübergeben werden
+                entities_.create('Enemy') //this.enemyStartPos StartPosition der Enemies muss mitübergeben werden
                 this.enemySpwanCooldown = 2
             }
         }
     }
 }
 
-module.exports = Wave;
+module.exports = wave;
