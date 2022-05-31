@@ -6,7 +6,7 @@ export default class Wave {
         this.currentWave = 1
         this.amountOfEnemies = 5
         this.enemySpwanCooldown = 2 //Als Anfangswert einfach mal 2 genommen
-        this.enemyStartPos = {x, y} //Muss Map-spezifisch sein
+        this.enemyStartPos = {x, y} //Muss Map-spezifisch sein, also aus der Klasse Map zu entnehmen
     }
 
     update = () => {
@@ -24,7 +24,7 @@ export default class Wave {
         //Startposition der Enemies abhänging von der Map definieren
         this.enemyStartPos = Map.initalEnemyPos
         //Startposition muss nun weit außerhalb der Map liegen bzgl x-Koordinate, damit Enemies nicht direkt Map (sichtbar) betreten
-        this.enemyStartPos = {x: this.enemyStartPos.x - 2000, y: this.enemyStartPos.y}
+        this.enemyStartPos = {x: this.enemyStartPos.x - 2000, y: this.enemyStartPos.y} //2000 als erster Testwert
 
         //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
         for(i = 0; i < amountOfEnemies; i++) {
