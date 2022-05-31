@@ -1,9 +1,15 @@
-import "./Helper.js"
-import "./Entities.js"
-import "./Enemy.js"
-import "./GameObject.js"
+// import "./Helper.js"
+// import "./Entities.js"
+// import "./Enemy.js"
+// import "./GameObject.js"
+const gameObject = require('./GameObject')
+const enemy = require('./Enemy')
+const helper = require('./Helper')
+var gameObject_ = new gameObject();
+var enemy_ = new enemy();
+var helpers_ = new helper();
 
-export default class Particle extends GameObject{
+export default class particle extends gameObject_{
     //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
     // canvas = document.getElementById("canvas");
     // ctx = this.canvas.getContext("2d");
@@ -18,8 +24,8 @@ export default class Particle extends GameObject{
     }
 
     update = () => { //Klassenvariablen updaten
-        if(entities.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
-            enemy.hit() //Enemy bekommt Schaden übergeben
+        if(helpers_.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
+            enemy_.hit() //Enemy bekommt Schaden übergeben
             //Anschließend muss Partikel entfernt werden
         }
         this.draw()
@@ -31,7 +37,7 @@ export default class Particle extends GameObject{
     }
 
     draw = () => { //Particle jeweils auf canvas zeichnen
-        helper.drawCircle(this.x, this.y, this.radius, this.color)
+        helpers_.drawCircle(this.x, this.y, this.radius, this.color)
     }
 
     //Partikel als "Laser" sorgt dafür, dass mein restlichen Code direkt vollkommen unnötig wird,
@@ -62,4 +68,4 @@ export default class Particle extends GameObject{
     }
 }
 
-module.exports = Particle;
+module.exports = particle;
