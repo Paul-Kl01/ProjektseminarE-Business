@@ -1,18 +1,21 @@
-import Particle from './Particle';
-import Entities from './Entities';
+const gameObject = require('./GameObject')
+const enemy = require('./Enemy')
+const helper = require('./Helper')
+var gameObject_ = new gameObject();
+var helpers = new helper();
 
-class Tower {
-    constructor(x, y, type = 0) {
+class tower extends gameObject {
+    constructor(x, y, towerType = 0) {
         this.radius = 5; // Größe des Turmkreises
         //towerId; // woher?
         this.color = '#1E90FF'; // Blau = gut ^^
         this.x = x; 
         this.y = y;
-        this.type = type; 
+        this.towerType = towerType; 
         this.cooldownLeft = 0;
 
-        // Fallentscheidung welchen Type der Turm hat
-        if (type == 0) { 
+        // Fallentscheidung welchen towerType der Turm hat
+        if (towerType== 0) { 
             // Standardturm
             this.damage = 1;
             this.price = 10;
@@ -23,11 +26,12 @@ class Tower {
         } 
     }
 
-    shoot(amount = 1) {
-        // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten
-        if (this.isFireReady() == true) {
+    shoot(enemy, amount = 1) {
+        // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
+        if ((this.isFireReady() == true)&&(this.searchEnemy() != false)) {
             for (var i = 1; i <= amount; i++) {
-                var particle = new Particle.create(this.x, this.y); // schauen ob Create zu Particle passt
+
+                var particle = new Particle(this.x, this.y, enemy);
             }
             this.cooldownLeft = this.cooldown; // Cooldown wieder hochgesetzt
         } 
@@ -75,7 +79,7 @@ class Tower {
 
     draw() {
         // Zeichnet den Kreis des Turms
-        Game.drawCircle(this.x, this.y, this.radius, this.color)
+        helpers.drawCircle(this.x, this.y, this.radius, this.color)
     }
 
     isFireReady() {
@@ -87,12 +91,5 @@ class Tower {
         }
     }
 
-    /*
-    enemyInRange() {
-        // Fragt bei Entities an, ob enemy in Reichweite ist, bekommt Enemy als objekt zurück
-        // Übergibt die aktuelle Towerposition, und die Reicheweite mit
-        // Return Enemy Objekt oder false
-    }
-    */
-
 }
+module.exports = tower; // muss mit Klassenname übereinstimmen
