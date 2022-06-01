@@ -23,7 +23,7 @@ class map {
     //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
-  // Spielflaeche auf Canvas zeichnen
+  // Weg auf Canvas zeichnen
   draw = () => {
     // Canvas definieren
     var canvas = this.canvas;

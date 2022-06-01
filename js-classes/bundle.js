@@ -1,16 +1,25 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 class events {
-  canvas = document.querySelector("canvas");
+  constructor(canvas, context) {
+    this.canvas = canvas;
+    this.context = context;
+  }
 
-  getCursorPosition = (canvas, event) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    console.log(x, y);
+  getMousePosition = () => {
+    canvas.addEventListener("mousemove", function (e) {
+      console.log("Test");
+      var cRect = canvas.getBoundingClientRect(); // Gets CSS pos, and width/height
+      var canvasX = Math.round(e.clientX - cRect.left); // Subtract the 'left' of the canvas
+      var canvasY = Math.round(e.clientY - cRect.top); // from the X/Y positions to make
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // (0,0) the top left of the canvas
+      ctx.fillText("X: " + canvasX + ", Y: " + canvasY, 10, 20);
+      console.log(canvasX, canvasY);
+    });
   };
 }
 
 module.exports = events;
+
 },{}],2:[function(require,module,exports){
 class entities {
   constructor() {
@@ -109,21 +118,27 @@ var event = new events();
 
 class game {
   constructor() {
+    // Canvas erstellen
     this.canvas = document.getElementById("canvas");
-    console.log(this.canvas);
     this.ctx = this.canvas.getContext("2d");
+
+    // Wegpunkte im Konstruktor übergeben?
+
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
     this.towerCount = entities_.towerCounter;
     this.enemyCount = entities_.enemyCounter;
 
-    //Zukunft
+    // Zukunft
     this.timer;
     this.mode = 0;
     this.score = 0;
     this.remainingLifes;
     this.ressources = 0;
+
+    // Event erstellen
+    this.event = new events(this.canvas, this.ctx);
 
     // Map erstellen
     this.map = new map(
@@ -162,6 +177,7 @@ class game {
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
     this.turret.draw();
+    this.event.getMousePosition();
   };
 
   update() {
@@ -246,7 +262,7 @@ class map {
     //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
-  // Spielflaeche auf Canvas zeichnen
+  // Weg auf Canvas zeichnen
   draw = () => {
     // Canvas definieren
     var canvas = this.canvas;
