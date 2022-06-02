@@ -9,7 +9,7 @@ var gameObject_ = new gameObject();
 var enemy_ = new enemy();
 var helpers_ = new helper();
 
-export default class particle extends gameObject_{
+class particle extends gameObject_{
     //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
     // canvas = document.getElementById("canvas");
     // ctx = this.canvas.getContext("2d");
@@ -23,7 +23,7 @@ export default class particle extends gameObject_{
         this.focusedEnemy = closestEnemy //Referenziert später Enemy die fokussiert werden soll
     }
 
-    update = () => { //Klassenvariablen updaten
+    update() { //Klassenvariablen updaten
         if(helpers_.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
             enemy_.hit() //Enemy bekommt Schaden übergeben
             //Anschließend muss Partikel entfernt werden
@@ -36,7 +36,7 @@ export default class particle extends gameObject_{
         this.calcPathToEnemy() //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
     }
 
-    draw = () => { //Particle jeweils auf canvas zeichnen
+    draw() { //Particle jeweils auf canvas zeichnen
         helpers_.drawCircle(this.x, this.y, this.radius, this.color)
     }
 
@@ -58,7 +58,7 @@ export default class particle extends gameObject_{
     /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden
      *Bis Enemy getroffen wurde vom Particle
      */
-    calcPathToEnemy = () => { //Müsste im Rahmen der TowerKlasse nach Konsturktor-Aufruf des Particles einmal inizial aufgerufen werden
+    calcPathToEnemy() { //Müsste im Rahmen der TowerKlasse nach Konsturktor-Aufruf des Particles einmal inizial aufgerufen werden
         const angle = Math.atan2(closestEnemy.y - this.y , closestEnemy.x - this.x) //Bestimmt den Winkel zwischen Enemy & Particle
         this.velocity = { //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
             x: Math.cos(angle),
