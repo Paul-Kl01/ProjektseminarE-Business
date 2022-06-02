@@ -6,7 +6,7 @@ const map = require('./Map')
 var map_ = new map();
 var entities_ = new entities();
 
-export default class wave {
+class wave {
     constructor() {
         this.currentWave = 1
         this.amountOfEnemies = 5
@@ -14,7 +14,7 @@ export default class wave {
         this.enemyStartPos = map_.initalEnemyPos//Muss Map-spezifisch sein, also aus der Klasse Map zu entnehmen
     }
 
-    update = () => { //Update um Klassenvariablen anzupassen
+    update(){ //Update um Klassenvariablen anzupassen
         if(this.amountOfEnemies > 0) {
             this.initialiseEnemies
         }
@@ -23,7 +23,7 @@ export default class wave {
         //Später noch Stärke der Enemies anpassen...
     }
 
-    initialiseEnemies = () => {
+    initialiseEnemies() {
     //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
         if(this.enemySpwanCooldown > 0) {
             this.enemySpwanCooldown--
