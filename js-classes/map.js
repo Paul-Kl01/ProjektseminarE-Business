@@ -9,6 +9,9 @@ class map {
     roadColor,
     mapBackground,
     waypoints,
+    startingPoint,
+    canvas,
+    context
   ) {
     this.waypoints = waypoints;
     this.mapBackground = mapBackground;
