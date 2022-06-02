@@ -20,14 +20,11 @@ Veränderungen hochladen: \
 Veränderungen pushen: \
 `git push origin "branch name"`
 
-# Was ist in dieser Branch?
-
-1.  Einige Klassen wurden bereits zu game.js hinzugefügt - mittels Node.js
-2.  StartGame Button malt einen "Turm"
-3.  Map ist bereits erstellt wenn man die Seite lädt
-
-# Abhängigkeiten installieren
+# Abhängigkeiten für Bwoserify installieren
 
 1. NodeJS auf https://nodejs.org/en/ herunterladen — dadurch installiert man den
    Befehl npm fürs Terminal
 2. `npm install -g browserify`
+3. `cd js-classes`
+4. `npm install`
+5. `browserify game.js -o bundle.js`

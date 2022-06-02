@@ -14,20 +14,27 @@ var event = new events();
 
 class game {
   constructor() {
+    // Canvas erstellen
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
+
+    // Wegpunkte im Konstruktor übergeben?
+
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
     this.towerCount = entities_.towerCounter;
     this.enemyCount = entities_.enemyCounter;
 
-    //Zukunft
+    // Zukunft
     this.timer;
     this.mode = 0;
     this.score = 0;
     this.remainingLifes;
     this.ressources = 0;
+
+    // Event erstellen
+    this.event = new events(this.canvas, this.ctx);
 
     // Map erstellen
     this.map = new map(
@@ -39,7 +46,9 @@ class game {
         [200, 200],
         [200, 500],
       ],
-      [0, 60]
+      [0, 60],
+      this.canvas,
+      this.ctx
     );
 
     // Turm erstellen
@@ -64,6 +73,7 @@ class game {
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
     this.turret.draw();
+    this.event.getMousePosition();
   };
 
   update() {
