@@ -8,7 +8,7 @@
 const gameObject = require('./GameObject')
 const enemy = require('./Enemy')
 const helper = require('./Helper')
-const tower = require('./Tower')
+const tower = require('./tower')
 var gameObject_ = new gameObject();
 var enemy_;
 var helpers_ = new helper();
