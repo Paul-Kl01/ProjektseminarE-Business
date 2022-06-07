@@ -58,13 +58,18 @@ class game {
       this.ctx
     );
 
+    //
+    //
     // Enemys erstellen
-    this.enemy = new enemy(
-      this.startingPoint,
-      this.waypoints,
-      this.canvas,
-      this.ctx
-    );
+    //
+    //
+
+    this.enemyList = [];
+    this.enemy = new enemy(60, 60, this.canvas, this.ctx);
+    console.log(enemy);
+
+    this.enemyList.push(this.enemy);
+    console.log(this.enemyList);
 
     // Turm erstellen
     this.turret = new turret(50, 50);
@@ -88,7 +93,8 @@ class game {
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
     this.turret.draw();
-    this.event.getMousePosition();
+    this.enemy.draw();
+    this.enemy.handleEnemy(this.enemyList);
   };
 
   update() {

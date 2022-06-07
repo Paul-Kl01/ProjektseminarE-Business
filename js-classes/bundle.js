@@ -23,15 +23,15 @@ var enemyColor = "red";
 var enemyRadius = 10;
 
 class enemy {
-  constructor(x, y) {
+  constructor(x, y, canvas, ctx) {
     this.x = x;
     this.y = y;
     this.radius = 10;
     this.color = "red";
     this.status = 1;
-    this.speed = 5;
-    this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContext("2d");
+    this.speed = 2;
+    this.canvas = canvas;
+    this.ctx = ctx;
   }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
@@ -43,7 +43,7 @@ class enemy {
       this.y += this.speed;
     }
 
-    if (wp1 == true && wp === true && wp3 == false) {
+    if (wp1 == true && wp2 === true && wp3 == false) {
       this.x -= this.speed;
     }
 
@@ -51,66 +51,74 @@ class enemy {
       this.y += this.speed;
     }
   }
+
   draw() {
-    ctx.beginPath();
-    ctx.fillStyle = this.color;
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+    // Enemy zeichnen
+    this.ctx.beginPath();
+    this.ctx.fillStyle = this.color;
+    this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    this.ctx.fill();
+    this.ctx.closePath();
+  }
+
+  // Logik
+  handleEnemy(enemyList) {
+    console.log("handle", enemyList);
+    // if (enemyList.length == 0) {
+    //   this.drawEnemy;
+    // }
+
+    for (let i = 0; i < enemyList.length; i++) {
+      console.log(i);
+      enemyList[i].update();
+      enemyList[i].draw();
+
+      //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
+
+      if (enemyList[i].x == wp1x && enemyList[i].y == wp1y) {
+        wp1 = true;
+      }
+      if (enemyList[i].x == wp2x && enemyList[i].y == wp2y) {
+        wp2 = true;
+      }
+      if (enemyList[i].x == wp3x && enemyList[i].y == wp3y) {
+        wp3 = true;
+      }
+
+      // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
+      //Koordinaten Hard coded für Prototyp
+      if (
+        enemyList[i].x + enemyList[i].radius == 200 &&
+        enemyList[i].x + enemyList[i].radius == 500
+      ) {
+        GameOver;
+      }
+
+      // Konstant neue Gegner erzeugen
+      // if (frame % 100 === 0) {
+      //   enemyList.push(new enemy(0, 60));
+      // }
+
+      //Kollisionsprüfung von Gegner mit Partikel Platzhalter
+      if (this.detectCollision == true) {
+        enemyList[i].status = 0; //
+        //enemyList health - x
+        //hier würde Schaden übergeben
+      }
+
+      //Gegner aus dem Arraay löschen 'töten'
+      if (enemyList[i].status == 0) {
+        enemyList.splice(i, 1);
+        i--;
+      }
+    }
   }
 }
+
+// Ersten Enemy erstellen
 function drawEnemy() {
   enemyList.push(new enemy(0, 60));
   enemyList[1].this.draw();
-}
-function handleEnemy() {
-  if (enemyList.length == 0) {
-    this.drawEnemy;
-  }
-
-  for (let i = 0; i < enemyList.length; i++) {
-    enemyList[i].update();
-    enemyList[i].draw();
-
-    //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
-
-    if (enemyList[i].x == wp1x && enemyList[i].y == wp1y) {
-      wp1 = true;
-    }
-    if (enemyList[i].x == wp2x && enemyList[i].y == wp2y) {
-      wp2 = true;
-    }
-    if (enemyList[i].x == wp3x && enemyList[i].y == wp3y) {
-      wp3 = true;
-    }
-
-    // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
-    //Koordinaten Hard coded für Prototyp
-    if (
-      enemyList[i].x + enemyList[i].radius == 200 &&
-      enemyList[i].x + enemyList[i].radius == 500
-    ) {
-      GameOver;
-    }
-
-    // Konstant neue Gegner erzeugen
-    if (frame % 100 === 0) {
-      enemyList.push(new enemy(0, 60));
-    }
-
-    //Kollisionsprüfung von Gegner mit Partikel Platzhalter
-    if (this.detectCollision == true) {
-      enemyList[i].status = 0; //
-      //enemyList health - x
-      //hier würde Schaden übergeben
-    }
-
-    //Gegner aus dem Arraay löschen 'töten'
-    if (enemyList[i].status == 0) {
-      enemyList.splice(i, 1);
-      i--;
-    }
-  }
 }
 
 //Redirect zur Gameover Site
@@ -336,7 +344,6 @@ const enemy = require("./Enemy");
 // Instanzen erstellen
 var entities_ = new entitites();
 var events_ = new events();
-var enemy_ = new enemy();
 
 /*
  * Bündeln der Klassen
@@ -387,6 +394,19 @@ class game {
       this.ctx
     );
 
+    //
+    //
+    // Enemys erstellen
+    //
+    //
+
+    this.enemyList = [];
+    this.enemy = new enemy(60, 60, this.canvas, this.ctx);
+    console.log(enemy);
+
+    this.enemyList.push(this.enemy);
+    console.log(this.enemyList);
+
     // Turm erstellen
     this.turret = new turret(50, 50);
   }
@@ -409,7 +429,8 @@ class game {
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
     this.turret.draw();
-    this.event.getMousePosition();
+    this.enemy.draw();
+    this.enemy.handleEnemy(this.enemyList);
   };
 
   update() {
