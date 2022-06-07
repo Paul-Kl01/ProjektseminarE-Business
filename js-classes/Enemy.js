@@ -50,6 +50,7 @@ class enemy {
       this.y += this.speed;
     }
   }
+
   draw() {
     ctx.beginPath();
     ctx.fillStyle = this.color;
@@ -58,6 +59,7 @@ class enemy {
     ctx.closePath();
   }
 }
+
 function drawEnemy() {
   enemyList.push(new enemy(0, 60));
   enemyList[1].this.draw();

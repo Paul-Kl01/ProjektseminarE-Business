@@ -8,7 +8,6 @@ const enemy = require("./Enemy");
 // Instanzen erstellen
 var entities_ = new entitites();
 var events_ = new events();
-var enemy_ = new enemy();
 
 /*
  * Bündeln der Klassen
@@ -38,19 +37,31 @@ class game {
     this.ressources = 0;
 
     // Event erstellen
-    this.event = new events(this.canvas, this.ctx);
+    // this.event = new events(this.canvas, this.ctx);
+
+    // Map Variablen
+    this.waypoints = [
+      [800, 60],
+      [800, 200],
+      [200, 200],
+      [200, 500],
+    ];
+    this.startingPoint = [0, 60];
 
     // Map erstellen
     this.map = new map(
       "#F08080",
       "#eee",
-      [
-        [800, 60],
-        [800, 200],
-        [200, 200],
-        [200, 500],
-      ],
-      [0, 60],
+      this.waypoints,
+      this.startingPoint,
+      this.canvas,
+      this.ctx
+    );
+
+    // Enemys erstellen
+    this.enemy = new enemy(
+      this.startingPoint,
+      this.waypoints,
       this.canvas,
       this.ctx
     );
