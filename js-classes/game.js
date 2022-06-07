@@ -3,8 +3,12 @@ const map = require("./map");
 const turret = require("./turret");
 const entitites = require("./entities");
 const events = require("./Events");
+const enemy = require("./Enemy");
+
+// Instanzen erstellen
 var entities_ = new entitites();
-var event = new events();
+var events_ = new events();
+var enemy_ = new enemy();
 
 /*
  * Bündeln der Klassen
