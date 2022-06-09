@@ -5,16 +5,15 @@
  */
 
 //Imports und Instanzerzeugung
-const gameObject = require('./GameObject')
+// const gameObject = require('./GameObject')
 const enemy = require('./Enemy')
 const helper = require('./Helper')
 const tower = require('./tower')
-var gameObject_ = new gameObject();
 var enemy_;
 var helpers_ = new helper();
 var tower_;
 
-class particle extends gameObject_{
+class particle{
     //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
     // canvas = document.getElementById("canvas");
     // ctx = this.canvas.getContext("2d");
@@ -32,7 +31,7 @@ class particle extends gameObject_{
     }
 
     update() { //Klassenvariablen updaten
-        if(helpers_.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
+        if(entities.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
             enemy_.hit() //Enemy bekommt Schaden übergeben
             //Anschließend muss Partikel entfernt werden
         }
@@ -45,7 +44,7 @@ class particle extends gameObject_{
     }
 
     draw() { //Particle jeweils auf canvas zeichnen
-        helpers_.drawCircle(this.x, this.y, this.radius, this.color)
+        //helpers_.drawCircle(this.x, this.y, this.radius, this.color)
     }
 
     //Partikel als "Laser" sorgt dafür, dass mein restlichen Code direkt vollkommen unnötig wird,
