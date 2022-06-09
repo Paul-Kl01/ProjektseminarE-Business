@@ -1,7 +1,7 @@
 // const Tower = require('./Tower');
-// const Enemy = require('./Enemy');
-// const Helper = require('./Helper');
-// var helpers = new Helper();
+const Enemy = require('./Enemy');
+const Helper = require('./Helper');
+var helpers = new Helper();
 
 class Entities {
   constructor() {
@@ -24,28 +24,29 @@ class Entities {
 
   update = () => {
     //this.detect_enemy();
-    this.detect_first_enemy();
-
+    // this.detect_first_enemy();
+    
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
-    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].update();
-    for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
+    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].handleEnemy();
+    // for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
   };
 
-  create = (x, y, r, color, objecttype) => {
+  create = (canvas, ctx, waypoints, startingPoint, objecttype) => {
     //objecttype zur Fallunterscheidung welche Art von Entität; 0 Enemy, 1 Tower 2 Particle
     var id;
 
     //Entity erzeugen und zur entsprechenden Liste hinzufügen
     switch (objecttype) {
-      case "0":
-        var enemy = new Enemy(x, y, r, colour);
+      case 0:
+        var enemy = new Enemy(canvas, ctx, waypoints, startingPoint);
         id = this.enemyCounter++;
         this.enemyList[id] = enemy;
+        console.log(this.enemyList);
         break;
 
       case "1":
-        var tower = new Tower(x, y, r, colour);
-        id = this.towerCounter++;
+        // var tower = new Tower(x, y, r, colour);
+        // id = this.towerCounter++;
         this.towerList[id] = tower;
     }
   };
