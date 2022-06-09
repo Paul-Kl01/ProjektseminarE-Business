@@ -4,6 +4,7 @@ const turret = require("./turret");
 const entitites = require("./entities");
 const events = require("./Events");
 const enemy = require("./Enemy");
+const wave = require("./Wave");
 
 // Instanzen erstellen
 var entities_ = new entitites();
@@ -62,17 +63,22 @@ class game {
     //
     //
 
-    this.enemyList = [];
-    this.enemy = new enemy(
-      this.canvas,
-      this.ctx,
-      this.waypoints,
-      this.startingPoint
-    );
-    console.log(enemy);
+    this.wave = new wave(entities_,this.startingPoint, this.canvas, this.ctx, this.waypoints);
+    this.wave.initialiseEnemies();
+    // entities_.create(this.canvas, this.ctx, this.waypoints, this.startingPoint, 0);
+    
 
-    this.enemyList.push(this.enemy);
-    console.log(this.enemyList);
+    // this.enemyList = [];
+    // this.enemy = new enemy(
+    //   this.canvas,
+    //   this.ctx,
+    //   this.waypoints,
+    //   this.startingPoint
+    // );
+    // console.log(enemy);
+
+    // this.enemyList.push(this.enemy);
+    // console.log(this.enemyList);
 
     // Turm erstellen
     this.turret = new turret(100, 100);
@@ -95,9 +101,12 @@ class game {
     // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
+    entities_.draw();
+    entities_.update();
+    this.wave.update();
     this.turret.draw();
-    this.enemy.draw();
-    this.enemy.handleEnemy(this.enemyList);
+    // this.enemy.draw();
+    // this.enemy.handleEnemy(this.enemyList);
   };
 
   update() {

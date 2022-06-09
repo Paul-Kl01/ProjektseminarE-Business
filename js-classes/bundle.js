@@ -8,9 +8,6 @@ var dy = 2;
 var waypoints = [];
 var enemyList = [];
 let frame = 0;
-var wp1 = false;
-var wp2 = false;
-var wp3 = false;
 var enemyColor = "red";
 var enemyRadius = 10;
 
@@ -19,11 +16,14 @@ class enemy {
     this.radius = 10;
     this.color = "red";
     this.status = 1;
-    this.speed = 2;
+    this.speed = 1;
     this.canvas = canvas;
     this.ctx = ctx;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
+    this.wp1 = false;
+    this.wp2 = false;
+    this.wp3 = false;
 
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
@@ -33,25 +33,25 @@ class enemy {
     this.wp2x = this.waypoints[1][0];
     this.wp2y = this.waypoints[1][1];
     this.wp3x = this.waypoints[2][0];
-    this.wp3y = this.waypoints[2][2];
+    this.wp3y = this.waypoints[2][1];
     this.wp4x = this.waypoints[3][0];
-    this.wp4y = this.waypoints[3][3];
+    this.wp4y = this.waypoints[3][1];
   }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
   update() {
-    if (wp1 == false) {
+    if (this.wp1 == false) {
       this.x += this.speed;
     }
-    if (wp1 == true && wp2 == false) {
+    if (this.wp1 == true && this.wp2 == false) {
       this.y += this.speed;
     }
 
-    if (wp1 == true && wp2 === true && wp3 == false) {
+    if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
       this.x -= this.speed;
     }
 
-    if (wp1 == true && wp2 == true && wp3 == true) {
+    if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
       this.y += this.speed;
     }
   }
@@ -66,34 +66,32 @@ class enemy {
   }
 
   // Logik
-  handleEnemy(enemyList) {
-    console.log("handle", enemyList);
+  handleEnemy() {
+    // console.log("handle", enemyList);
     // if (enemyList.length == 0) {
     //   this.drawEnemy;
     // }
 
-    for (let i = 0; i < enemyList.length; i++) {
-      console.log(i);
-      enemyList[i].update();
-      enemyList[i].draw();
+      this.update();
+      // this.draw();
 
       //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
 
-      if (enemyList[i].x == this.wp1x && enemyList[i].y == this.wp1y) {
-        wp1 = true;
+      if (this.x == this.wp1x && this.y == this.wp1y) {
+        this.wp1 = true;
       }
-      if (enemyList[i].x == this.wp2x && enemyList[i].y == this.wp2y) {
-        wp2 = true;
+      if (this.x == this.wp2x && this.y == this.wp2y) {
+        this.wp2 = true;
       }
-      if (enemyList[i].x == this.wp3x && enemyList[i].y == this.wp3y) {
-        wp3 = true;
+      if (this.x == this.wp3x && this.y == this.wp3y) {
+        this.wp3 = true;
       }
 
       // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
       //Koordinaten Hard coded für Prototyp
       if (
-        enemyList[i].x + enemyList[i].radius == 200 &&
-        enemyList[i].x + enemyList[i].radius == 500
+        this.x + this.radius == 200 &&
+        this.x + this.radius == 500
       ) {
         GameOver;
       }
@@ -104,18 +102,18 @@ class enemy {
       // }
 
       //Kollisionsprüfung von Gegner mit Partikel Platzhalter
-      if (this.detectCollision == true) {
-        enemyList[i].status = 0; //
-        //enemyList health - x
-        //hier würde Schaden übergeben
-      }
+      // if (this.detectCollision == true) {
+      //   this.status = 0; //
+      //   //enemyList health - x
+      //   //hier würde Schaden übergeben
+      // }
 
-      //Gegner aus dem Arraay löschen 'töten'
-      if (enemyList[i].status == 0) {
-        enemyList.splice(i, 1);
-        i--;
-      }
-    }
+      // //Gegner aus dem Arraay löschen 'töten'
+      // if (this.status == 0) {
+      //   enemyList.splice(i, 1);
+      //   i--;
+      // }
+    
   }
 }
 
@@ -134,11 +132,163 @@ function GameOver() {
 
 module.exports = enemy;
 
-},{"./Wave":5}],2:[function(require,module,exports){
+},{"./Wave":4}],2:[function(require,module,exports){
+class events {
+  constructor(canvas, context) {
+    this.canvas = canvas;
+    this.context = context;
+  }
+
+  getMousePosition = () => {
+    canvas.addEventListener("mousemove", function (e) {
+      console.log("Test");
+      var cRect = canvas.getBoundingClientRect(); // Gets CSS pos, and width/height
+      var canvasX = Math.round(e.clientX - cRect.left); // Subtract the 'left' of the canvas
+      var canvasY = Math.round(e.clientY - cRect.top); // from the X/Y positions to make
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // (0,0) the top left of the canvas
+      ctx.fillText("X: " + canvasX + ", Y: " + canvasY, 10, 20);
+      console.log(canvasX, canvasY);
+    });
+  };
+}
+
+module.exports = events;
+
+},{}],3:[function(require,module,exports){
+
+class Helper{
+
+
+  //constructor(canvas,ctx ){
+    //this.canvas = canvas; 
+    //this.ctx = ctx;
+  //}
+  //constructor(){
+    //this.canvas = document.getElementById("canvas");
+    //this.ctx = this.canvas.getContext("2d");
+  //}
+
+
+//detectDistance(x1,y1,x2,y2){    
+static detectDistance(x1,y1,x2,y2){
+
+    //Abstand zwischen zwei Punkten d = Wurzel( (x1-x2)^2 + (y1-y2)^2 )
+    var a = x1-x2; 
+    var b = y1-y2; 
+    return Math.sqrt(a*a + b*b);
+}
+
+//detectCollision(x1,y1,r1,x2,y2,r2){
+static detectCollision(x1,y1,r1,x2,y2,r2){
+  //wenn der abstand zw. den beiden Mittelpunkten
+  //kleiner/gleich die Summer der beiden Radien -> return true
+
+      var distance = Helper.detectDistance(x1, y1, x2, y2); 
+      if (distance <= (r1+r2)){
+          return true; 
+      }
+      return false; 
+  }
+
+
+static drawCircle(x, y, radius, color) {
+    //Kreis zeichnen für Anzeige Reichweite/GameObjects
+    //mit Koordinaten x,y ; Radius;  Farbe
+
+    //jedes Mal Holen Canavas, ctx oder im Konstruktor übergeben
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(x, y, radius, 0,  2 * Math.PI, false);
+    ctx.fill();
+    ctx.closePath(); 
+  }
+
+  //drawCircle = (x, y, radius, color) => {
+    //this.ctx.beginPath();
+    //this.ctx.fillStyle = color;
+    //this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    //this.ctx.fill();
+    //this.ctx.closePath(); 
+  //}
+
+}
+module.exports = Helper; 
+},{}],4:[function(require,module,exports){
+/*
+ * Verwaltung der Waves im Spiel
+ * @author Nicole
+ *
+ */
+
+//Imports und Instanzerzeugung
+
+class wave { //Referenz auf Entitiesinstanz von Game übergeben
+    constructor(entities, startingPoint, canvas, ctx, waypoints) {
+        this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
+        this.currentWave = 1 //Akt. Wave in-game
+        this.amountOfEnemies = 5 //Initalwert für Enemyanzahl
+        this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
+        this.enemyStartPos = startingPoint //Muss Map-spezifisch sein, also aus der Klasse Map zu entnehmen
+        this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
+        this.canvas = canvas
+        this.ctx = ctx
+        this.waypoints = waypoints
+    }
+
+    update(){ //Update um Klassenvariablen anzupassen
+        if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
+            this.initialiseEnemies()
+        }
+        //Neue Wave muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
+        if(this.isStarting) {
+            this.nextWave()
+        }
+    }
+
+    initialiseEnemies() {
+    //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
+        if(this.enemySpwanCooldown > 0) {
+            this.enemySpwanCooldown--
+        }
+        else{
+            this.entities.create(this.canvas, this.ctx, this.waypoints, this.enemyStartPos, 0); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+            //Neuen Cooldown random setzten
+            this.enemySpwanCooldown = this.getRndInteger(10,30)
+            this.amountOfEnemies--
+        }
+    }
+    
+    nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
+        this.currentWave++
+        //EnemyAnzahl exponentiell erhöhen...
+        this.amountOfEnemies = this.getRndInteger(5, 5 * Math.exp(this.currentWave))
+        this.enemySpwanCooldown = this.getRndInteger(10,30)
+
+        this.update()
+        //Später noch Stärke der Enemies anpassen...
+    }
+
+    //Markierung, dass nächste Wave starten soll
+    //muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
+    triggerNextWave() {
+        this.isStarting = true
+    }
+
+    //Random Zahl für bestimmtes Intervall generieren (min & max sind im Intervall inklusive)
+    getRndInteger(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) ) + min;
+    }
+}
+
+module.exports = wave;
+},{}],5:[function(require,module,exports){
 // const Tower = require('./Tower');
-// const Enemy = require('./Enemy');
-// const Helper = require('./Helper');
-// var helpers = new Helper();
+const Enemy = require('./Enemy');
+const Helper = require('./Helper');
+var helpers = new Helper();
 
 class Entities {
   constructor() {
@@ -161,28 +311,29 @@ class Entities {
 
   update = () => {
     //this.detect_enemy();
-    this.detect_first_enemy();
-
+    // this.detect_first_enemy();
+    
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
-    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].update();
-    for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
+    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].handleEnemy();
+    // for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
   };
 
-  create = (x, y, r, color, objecttype) => {
+  create = (canvas, ctx, waypoints, startingPoint, objecttype) => {
     //objecttype zur Fallunterscheidung welche Art von Entität; 0 Enemy, 1 Tower 2 Particle
     var id;
 
     //Entity erzeugen und zur entsprechenden Liste hinzufügen
     switch (objecttype) {
-      case "0":
-        var enemy = new Enemy(x, y, r, colour);
+      case 0:
+        var enemy = new Enemy(canvas, ctx, waypoints, startingPoint);
         id = this.enemyCounter++;
         this.enemyList[id] = enemy;
+        console.log(this.enemyList);
         break;
 
       case "1":
-        var tower = new Tower(x, y, r, colour);
-        id = this.towerCounter++;
+        // var tower = new Tower(x, y, r, colour);
+        // id = this.towerCounter++;
         this.towerList[id] = tower;
     }
   };
@@ -267,135 +418,14 @@ class Entities {
 
 module.exports = Entities;
 
-},{}],3:[function(require,module,exports){
-class events {
-  constructor(canvas, context) {
-    this.canvas = canvas;
-    this.context = context;
-  }
-
-  getMousePosition = () => {
-    canvas.addEventListener("mousemove", function (e) {
-      console.log("Test");
-      var cRect = canvas.getBoundingClientRect(); // Gets CSS pos, and width/height
-      var canvasX = Math.round(e.clientX - cRect.left); // Subtract the 'left' of the canvas
-      var canvasY = Math.round(e.clientY - cRect.top); // from the X/Y positions to make
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // (0,0) the top left of the canvas
-      ctx.fillText("X: " + canvasX + ", Y: " + canvasY, 10, 20);
-      console.log(canvasX, canvasY);
-    });
-  };
-}
-
-module.exports = events;
-
-},{}],4:[function(require,module,exports){
-/*
- * Spielflaeche erzeugen
- * @author Paul
- *
- */
-
-class map {
-  constructor(
-    roadColor,
-    mapBackground,
-    waypoints,
-    startingPoint,
-    canvas,
-    context
-  ) {
-    this.waypoints = waypoints;
-    this.mapBackground = mapBackground;
-    this.roadColor = roadColor;
-    this.startingPoint = startingPoint;
-    this.canvas = canvas;
-    this.context = context;
-    //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
-  }
-
-  // Weg auf Canvas zeichnen
-  draw = () => {
-    // Canvas definieren
-    var canvas = this.canvas;
-    var ctx = this.context;
-    ctx.beginPath();
-    ctx.strokeStyle = this.roadColor;
-
-    // Canvas Background
-    ctx.fillStyle = this.mapBackground;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Koordinaten Weg
-    let x;
-    let y;
-
-    // Startpunkt Path definieren
-    ctx.moveTo(this.startingPoint[0], this.startingPoint[1]);
-
-    // Path zeichnen
-    for (let i = 0; i < this.waypoints.length; i++) {
-      x = this.waypoints[i][0];
-      y = this.waypoints[i][1];
-      ctx.lineTo(x, y);
-    }
-    ctx.lineWidth = 50;
-    ctx.stroke();
-  };
-}
-
-// Klasse Exportieren
-module.exports = map;
-
-},{}],5:[function(require,module,exports){
-// import Entities from './Enitites.js'
-// import Map from './Map.js'
-
-const entities = require('./Entities')
-const map = require('./Map')
-var map_ = new map();
-var entities_ = new entities();
-
-class wave {
-    constructor() {
-        this.currentWave = 1
-        this.amountOfEnemies = 5
-        this.enemySpwanCooldown = 1
-        this.enemyStartPos = map_.initalEnemyPos//Muss Map-spezifisch sein, also aus der Klasse Map zu entnehmen
-    }
-
-    update(){ //Update um Klassenvariablen anzupassen
-        if(this.amountOfEnemies > 0) {
-            this.initialiseEnemies
-        }
-        //this.currentWave++
-        //EnemyAnzahl erhöhen...
-        //Später noch Stärke der Enemies anpassen...
-    }
-
-    initialiseEnemies() {
-    //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
-        if(this.enemySpwanCooldown > 0) {
-            this.enemySpwanCooldown--
-        }
-        else{
-            entities_.create('Enemy') //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
-            this.enemySpwanCooldown = 1
-            this.amountOfEnemies--
-        }
-    }    
-}
-
-module.exports = wave;
-},{"./Entities":2,"./Map":4}],6:[function(require,module,exports){
-arguments[4][2][0].apply(exports,arguments)
-},{"dup":2}],7:[function(require,module,exports){
+},{"./Enemy":1,"./Helper":3}],6:[function(require,module,exports){
 // Import der Klassen via Node.js
 const map = require("./map");
 const turret = require("./turret");
 const entitites = require("./entities");
 const events = require("./Events");
 const enemy = require("./Enemy");
+const wave = require("./Wave");
 
 // Instanzen erstellen
 var entities_ = new entitites();
@@ -454,17 +484,22 @@ class game {
     //
     //
 
-    this.enemyList = [];
-    this.enemy = new enemy(
-      this.canvas,
-      this.ctx,
-      this.waypoints,
-      this.startingPoint
-    );
-    console.log(enemy);
+    this.wave = new wave(entities_,this.startingPoint, this.canvas, this.ctx, this.waypoints);
+    this.wave.initialiseEnemies();
+    // entities_.create(this.canvas, this.ctx, this.waypoints, this.startingPoint, 0);
+    
 
-    this.enemyList.push(this.enemy);
-    console.log(this.enemyList);
+    // this.enemyList = [];
+    // this.enemy = new enemy(
+    //   this.canvas,
+    //   this.ctx,
+    //   this.waypoints,
+    //   this.startingPoint
+    // );
+    // console.log(enemy);
+
+    // this.enemyList.push(this.enemy);
+    // console.log(this.enemyList);
 
     // Turm erstellen
     this.turret = new turret(100, 100);
@@ -487,9 +522,12 @@ class game {
     // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
+    entities_.draw();
+    entities_.update();
+    this.wave.update();
     this.turret.draw();
-    this.enemy.draw();
-    this.enemy.handleEnemy(this.enemyList);
+    // this.enemy.draw();
+    // this.enemy.handleEnemy(this.enemyList);
   };
 
   update() {
@@ -548,9 +586,65 @@ document
 // Map beim Laden der Seite einzeichnen
 window.onload = g.map.draw;
 
-},{"./Enemy":1,"./Events":3,"./entities":6,"./map":8,"./turret":9}],8:[function(require,module,exports){
-arguments[4][4][0].apply(exports,arguments)
-},{"dup":4}],9:[function(require,module,exports){
+},{"./Enemy":1,"./Events":2,"./Wave":4,"./entities":5,"./map":7,"./turret":8}],7:[function(require,module,exports){
+/*
+ * Spielflaeche erzeugen
+ * @author Paul
+ *
+ */
+
+class map {
+  constructor(
+    roadColor,
+    mapBackground,
+    waypoints,
+    startingPoint,
+    canvas,
+    context
+  ) {
+    this.waypoints = waypoints;
+    this.mapBackground = mapBackground;
+    this.roadColor = roadColor;
+    this.startingPoint = startingPoint;
+    this.canvas = canvas;
+    this.context = context;
+    //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
+  }
+
+  // Weg auf Canvas zeichnen
+  draw = () => {
+    // Canvas definieren
+    var canvas = this.canvas;
+    var ctx = this.context;
+    ctx.beginPath();
+    ctx.strokeStyle = this.roadColor;
+
+    // Canvas Background
+    ctx.fillStyle = this.mapBackground;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Koordinaten Weg
+    let x;
+    let y;
+
+    // Startpunkt Path definieren
+    ctx.moveTo(this.startingPoint[0], this.startingPoint[1]);
+
+    // Path zeichnen
+    for (let i = 0; i < this.waypoints.length; i++) {
+      x = this.waypoints[i][0];
+      y = this.waypoints[i][1];
+      ctx.lineTo(x, y);
+    }
+    ctx.lineWidth = 50;
+    ctx.stroke();
+  };
+}
+
+// Klasse Exportieren
+module.exports = map;
+
+},{}],8:[function(require,module,exports){
 // import Particle from './Particle';
 // import Entities from './Entities';
 // import Game from "./game";
@@ -616,4 +710,4 @@ class tower {
     }
 }
 module.exports = tower;
-},{}]},{},[7]);
+},{}]},{},[6]);
