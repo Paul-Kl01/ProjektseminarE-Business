@@ -5,7 +5,6 @@
  */
 
 //Imports und Instanzerzeugung
-
 class wave { //Referenz auf Entitiesinstanz von Game übergeben
     constructor(entities, startingPoint, canvas, ctx, waypoints) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
@@ -45,9 +44,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++
         //EnemyAnzahl exponentiell erhöhen...
-        this.amountOfEnemies = this.getRndInteger(5, 5 * Math.exp(this.currentWave))
         this.enemySpwanCooldown = this.getRndInteger(10,30)
-
         this.update()
         //Später noch Stärke der Enemies anpassen...
     }
