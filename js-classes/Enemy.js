@@ -7,9 +7,6 @@ var dy = 2;
 var waypoints = [];
 var enemyList = [];
 let frame = 0;
-var wp1 = false;
-var wp2 = false;
-var wp3 = false;
 var enemyColor = "red";
 var enemyRadius = 10;
 
@@ -18,11 +15,14 @@ class enemy {
     this.radius = 10;
     this.color = "red";
     this.status = 1;
-    this.speed = 2;
+    this.speed = 1;
     this.canvas = canvas;
     this.ctx = ctx;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
+    this.wp1 = false;
+    this.wp2 = false;
+    this.wp3 = false;
 
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
@@ -32,25 +32,25 @@ class enemy {
     this.wp2x = this.waypoints[1][0];
     this.wp2y = this.waypoints[1][1];
     this.wp3x = this.waypoints[2][0];
-    this.wp3y = this.waypoints[2][2];
+    this.wp3y = this.waypoints[2][1];
     this.wp4x = this.waypoints[3][0];
-    this.wp4y = this.waypoints[3][3];
+    this.wp4y = this.waypoints[3][1];
   }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
   update() {
-    if (wp1 == false) {
+    if (this.wp1 == false) {
       this.x += this.speed;
     }
-    if (wp1 == true && wp2 == false) {
+    if (this.wp1 == true && this.wp2 == false) {
       this.y += this.speed;
     }
 
-    if (wp1 == true && wp2 === true && wp3 == false) {
+    if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
       this.x -= this.speed;
     }
 
-    if (wp1 == true && wp2 == true && wp3 == true) {
+    if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
       this.y += this.speed;
     }
   }
@@ -65,34 +65,32 @@ class enemy {
   }
 
   // Logik
-  handleEnemy(enemyList) {
-    console.log("handle", enemyList);
+  handleEnemy() {
+    // console.log("handle", enemyList);
     // if (enemyList.length == 0) {
     //   this.drawEnemy;
     // }
 
-    for (let i = 0; i < enemyList.length; i++) {
-      console.log(i);
-      enemyList[i].update();
-      enemyList[i].draw();
+      this.update();
+      // this.draw();
 
       //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
 
-      if (enemyList[i].x == this.wp1x && enemyList[i].y == this.wp1y) {
-        wp1 = true;
+      if (this.x == this.wp1x && this.y == this.wp1y) {
+        this.wp1 = true;
       }
-      if (enemyList[i].x == this.wp2x && enemyList[i].y == this.wp2y) {
-        wp2 = true;
+      if (this.x == this.wp2x && this.y == this.wp2y) {
+        this.wp2 = true;
       }
-      if (enemyList[i].x == this.wp3x && enemyList[i].y == this.wp3y) {
-        wp3 = true;
+      if (this.x == this.wp3x && this.y == this.wp3y) {
+        this.wp3 = true;
       }
 
       // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
       //Koordinaten Hard coded für Prototyp
       if (
-        enemyList[i].x + enemyList[i].radius == 200 &&
-        enemyList[i].x + enemyList[i].radius == 500
+        this.x + this.radius == 200 &&
+        this.x + this.radius == 500
       ) {
         GameOver;
       }
@@ -103,18 +101,18 @@ class enemy {
       // }
 
       //Kollisionsprüfung von Gegner mit Partikel Platzhalter
-      if (this.detectCollision == true) {
-        enemyList[i].status = 0; //
-        //enemyList health - x
-        //hier würde Schaden übergeben
-      }
+      // if (this.detectCollision == true) {
+      //   this.status = 0; //
+      //   //enemyList health - x
+      //   //hier würde Schaden übergeben
+      // }
 
-      //Gegner aus dem Arraay löschen 'töten'
-      if (enemyList[i].status == 0) {
-        enemyList.splice(i, 1);
-        i--;
-      }
-    }
+      // //Gegner aus dem Arraay löschen 'töten'
+      // if (this.status == 0) {
+      //   enemyList.splice(i, 1);
+      //   i--;
+      // }
+    
   }
 }
 
