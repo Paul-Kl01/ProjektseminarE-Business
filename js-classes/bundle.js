@@ -1,4 +1,273 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const wave = require("./Wave");
+
+var initialEnemyx = 0;
+var initialEnemyy = 60;
+var dx = 2;
+var dy = 2;
+var waypoints = [];
+var enemyList = [];
+let frame = 0;
+var wp1 = false;
+var wp2 = false;
+var wp3 = false;
+var enemyColor = "red";
+var enemyRadius = 10;
+
+class enemy {
+  constructor(canvas, ctx, waypoints, startingPoint) {
+    this.radius = 10;
+    this.color = "red";
+    this.status = 1;
+    this.speed = 2;
+    this.canvas = canvas;
+    this.ctx = ctx;
+    this.waypoints = waypoints;
+    this.startingPoint = startingPoint;
+
+    this.x = this.startingPoint[0];
+    this.y = this.startingPoint[1];
+
+    this.wp1x = this.waypoints[0][0];
+    this.wp1y = this.waypoints[0][1];
+    this.wp2x = this.waypoints[1][0];
+    this.wp2y = this.waypoints[1][1];
+    this.wp3x = this.waypoints[2][0];
+    this.wp3y = this.waypoints[2][2];
+    this.wp4x = this.waypoints[3][0];
+    this.wp4y = this.waypoints[3][3];
+  }
+
+  //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
+  update() {
+    if (wp1 == false) {
+      this.x += this.speed;
+    }
+    if (wp1 == true && wp2 == false) {
+      this.y += this.speed;
+    }
+
+    if (wp1 == true && wp2 === true && wp3 == false) {
+      this.x -= this.speed;
+    }
+
+    if (wp1 == true && wp2 == true && wp3 == true) {
+      this.y += this.speed;
+    }
+  }
+
+  draw() {
+    // Enemy zeichnen
+    this.ctx.beginPath();
+    this.ctx.fillStyle = this.color;
+    this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    this.ctx.fill();
+    this.ctx.closePath();
+  }
+
+  // Logik
+  handleEnemy(enemyList) {
+    console.log("handle", enemyList);
+    // if (enemyList.length == 0) {
+    //   this.drawEnemy;
+    // }
+
+    for (let i = 0; i < enemyList.length; i++) {
+      console.log(i);
+      enemyList[i].update();
+      enemyList[i].draw();
+
+      //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
+
+      if (enemyList[i].x == this.wp1x && enemyList[i].y == this.wp1y) {
+        wp1 = true;
+      }
+      if (enemyList[i].x == this.wp2x && enemyList[i].y == this.wp2y) {
+        wp2 = true;
+      }
+      if (enemyList[i].x == this.wp3x && enemyList[i].y == this.wp3y) {
+        wp3 = true;
+      }
+
+      // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
+      //Koordinaten Hard coded für Prototyp
+      if (
+        enemyList[i].x + enemyList[i].radius == 200 &&
+        enemyList[i].x + enemyList[i].radius == 500
+      ) {
+        GameOver;
+      }
+
+      // Konstant neue Gegner erzeugen
+      // if (frame % 100 === 0) {
+      //   enemyList.push(new enemy(0, 60));
+      // }
+
+      //Kollisionsprüfung von Gegner mit Partikel Platzhalter
+      if (this.detectCollision == true) {
+        enemyList[i].status = 0; //
+        //enemyList health - x
+        //hier würde Schaden übergeben
+      }
+
+      //Gegner aus dem Arraay löschen 'töten'
+      if (enemyList[i].status == 0) {
+        enemyList.splice(i, 1);
+        i--;
+      }
+    }
+  }
+}
+
+// Ersten Enemy erstellen
+function drawEnemy() {
+  enemyList.push(new enemy(0, 60));
+  enemyList[1].this.draw();
+}
+
+//Redirect zur Gameover Site
+//Alternative: bool variable die den animation Aufruf stoppt.
+function GameOver() {
+  window.location.replace(gameover.html);
+  clearInterval(interval);
+}
+
+module.exports = enemy;
+
+},{"./Wave":5}],2:[function(require,module,exports){
+// const Tower = require('./Tower');
+// const Enemy = require('./Enemy');
+// const Helper = require('./Helper');
+// var helpers = new Helper();
+
+class Entities {
+  constructor() {
+    this.enemyList = [];
+    this.towerList = [];
+    this.enemyCounter = 0;
+    this.towerCounter = 0;
+  }
+
+  clear_enemyList = () => {
+    this.enemyList = [];
+    this.enemyCounter = 0;
+  };
+
+  draw = () => {
+    //von jeden Enemy/Tower wird die Draw() Funktion aufgerufen
+    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].draw();
+    for (let j = 0; j < this.towerList.length; j++) this.towerList[j].draw();
+  };
+
+  update = () => {
+    //this.detect_enemy();
+    this.detect_first_enemy();
+
+    //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
+    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].update();
+    for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
+  };
+
+  create = (x, y, r, color, objecttype) => {
+    //objecttype zur Fallunterscheidung welche Art von Entität; 0 Enemy, 1 Tower 2 Particle
+    var id;
+
+    //Entity erzeugen und zur entsprechenden Liste hinzufügen
+    switch (objecttype) {
+      case "0":
+        var enemy = new Enemy(x, y, r, colour);
+        id = this.enemyCounter++;
+        this.enemyList[id] = enemy;
+        break;
+
+      case "1":
+        var tower = new Tower(x, y, r, colour);
+        id = this.towerCounter++;
+        this.towerList[id] = tower;
+    }
+  };
+
+  //toDo: wie heißt KlassenVar bei Enemy für zurück gelegten Weg (hier: weg)
+  // Weiterleitung des vom Tower abzuschließenden Enemy: über tower.shoot(enemy)
+  detect_enemy() {
+    //leitet den Enemy, der in Towerrange ist und am meisten Weg zurück gelegt hat, an den entsp. schussbereiten Tower weiter
+
+    for (let j = 0; j < this.towerList.length; j++) {
+      //Tower schussbereit?
+      if (this.towerList[i].cooldownleft !== 0) continue;
+      let last_enemy;
+
+      for (let i = 0; i < this.enemyList.length; i++) {
+        //Enmie schon tot?
+        if ((this.enemyList[j].dead = true)) continue;
+        //Enemie schon anvisiert und dadurch tot?
+        if (this.enemyList[j].futureDamage >= this.enemyList[j].remainingLife)
+          continue;
+        //Enemie in Tower Range?
+        var bool = helpers.detectCollision(
+          this.towerList[j].x,
+          this.towerList[j].y,
+          this.towerList[j].range,
+          this.enemyList[i].x,
+          this.enemyList[i].y,
+          this.enemyList[i].radius
+        );
+
+        if ((bool = true)) {
+          //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
+          if (last_enemy === undefined) {
+            last_enemy = this.enemyList[i];
+          }
+        }
+        //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
+        else {
+          if (this.enemyList[i].weg > last_enemy.weg) {
+            last_enemy = this.enemyList[i];
+          }
+        }
+      }
+      //wenn last_enemy initialisiert-> Weiterleiten an Tower
+      if (last_enemy !== undefined) {
+        this.towerList[j].shoot(last_enemy);
+      }
+    }
+  }
+
+  detect_first_enemy() {
+    //einfache detect_enemy zum Testen, schießt ersten gefundenen Enemy in Range ab
+    for (let j = 0; j < this.towerList.length; j++) {
+      //Tower schussbereit?
+      if (this.towerList[i].cooldownleft !== 0) continue;
+
+      for (let i = 0; i < this.enemyList.length; i++) {
+        //Enmie schon tot?
+        if ((this.enemyList[j].dead = true)) continue;
+        //Enemie schon anvisiert und dadurch tot?
+        if (this.enemyList[j].futureDamage >= this.enemyList[j].remainingLife)
+          continue;
+        //Enemie in Tower Range?
+        var bool = helpers.detectCollision(
+          this.towerList[j].x,
+          this.towerList[j].y,
+          this.towerList[j].range,
+          this.enemyList[i].x,
+          this.enemyList[i].y,
+          this.enemyList[i].radius
+        );
+
+        if ((bool = true)) {
+          this.towerList[j].shoot(this.enemyList[j]);
+          //Weiter Prüfen mit nächstem Tower
+          break;
+        }
+      }
+    }
+  }
+}
+
+module.exports = Entities;
+
+},{}],3:[function(require,module,exports){
 class events {
   constructor(canvas, context) {
     this.canvas = canvas;
@@ -20,223 +289,7 @@ class events {
 
 module.exports = events;
 
-},{}],2:[function(require,module,exports){
-class entities {
-  constructor() {
-    this.enemyList = [];
-    this.towerList = [];
-    this.enemyCounter = 0;
-    this.towerCounter = 0;
-  }
-
-  draw() {
-    //von jeden Enemy/Tower wird die Draw() Funktion aufgerufen
-    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].draw();
-    for (let j = 0; j < this.towerList.length; j++) this.towerList[j].draw();
-  }
-
-  update() {
-    //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
-    for (let i = 0; i < this.enemyList.length; i++) this.enemyList[i].update();
-    for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
-  }
-
-  create(x, y, radius, color, type) {
-    //type zur Fallunterscheidung welche Art von Entität; 0 Enemy, 1 Tower
-    var id;
-    switch (type) {
-      case "0":
-        id: ++this.enemyCounter;
-        break;
-
-      case "1":
-        id: ++this.towerCounter;
-    }
-
-    //Entity Typ erstellen
-    var entity = {
-      id: id,
-      type: type,
-      x: x,
-      y: y,
-      r: r,
-      color: color,
-      draw: function () {
-        game.drawCircle(this.x, this.y, this.radius, this.color);
-      },
-      update: function () {},
-    };
-
-    //Entity zur entsprechenden Liste hinzufügen
-    switch (type) {
-      case "0":
-        this.enemyList[entity.id] = entity;
-        break;
-
-      case "1":
-        this.towerList[entity.id] = entity;
-    }
-  }
-
-  detectCollision(x1, y1, r1, x2, y2, r2) {
-    //wenn der abstand zw. den beiden Mittelpunkten
-    //kleiner/gleich die Summer der beiden Radien -> return true
-
-    var distance = Helper.detectDistance(x1, y1, x2, y2);
-    if (distance <= r1 + r2) {
-      return true;
-    }
-    return false;
-  }
-
-  //detectCollision(entity1, entity2){
-  //    var a = entity1.radius + entity2.radius;
-  //    var distance = Helper.detectDistance(entity1.x, entity1.y, entity2.x, entity2.y);
-  //    if (distance <= a){
-  //        return true;
-  //    }
-  //    return false;
-  //}
-}
-
-module.exports = entities;
-
-},{}],3:[function(require,module,exports){
-// Import der Klassen via Node.js
-const map = require("./map");
-const turret = require("./turret");
-const entitites = require("./entities");
-const events = require("./Events");
-var entities_ = new entitites();
-var event = new events();
-
-/*
- * Bündeln der Klassen
- * @author Constantin
- *
- */
-
-class game {
-  constructor() {
-    // Canvas erstellen
-    this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContext("2d");
-
-    // Wegpunkte im Konstruktor übergeben?
-
-    this.waveCounter = 0;
-    // DrawList enthält alle Elemente die gezeichnet werden sollen
-    this.drawList = [];
-    this.towerCount = entities_.towerCounter;
-    this.enemyCount = entities_.enemyCounter;
-
-    // Zukunft
-    this.timer;
-    this.mode = 0;
-    this.score = 0;
-    this.remainingLifes;
-    this.ressources = 0;
-
-    // Event erstellen
-    this.event = new events(this.canvas, this.ctx);
-
-    // Map erstellen
-    this.map = new map(
-      "#F08080",
-      "#eee",
-      [
-        [800, 60],
-        [800, 200],
-        [200, 200],
-        [200, 500],
-      ],
-      [0, 60],
-      this.canvas,
-      this.ctx
-    );
-
-    // Turm erstellen
-    this.turret = new turret(50, 50);
-  }
-
-  init = () => {
-    setInterval(this.draw(), 1000 / 30);
-
-    //Leben im Prototyp auf 1;
-    this.remainigLifes = 1;
-    this.draw();
-  };
-
-  draw = () => {
-    window.requestAnimationFrame(this.draw);
-    // Clear Canvas
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // Game.restartGame();
-    // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
-    // for (i = 0, i <= Anzahl Klassen; i++) ...
-    this.map.draw();
-    this.turret.draw();
-    this.event.getMousePosition();
-  };
-
-  update() {
-    //Unklar, ruft eventull update() der anderen Klassen auf.
-    /* In beispiel wurden die Aufrufe der Methoden über eine List geregelt, welche über einen
-            Trigger vervollstäändigt wurden */
-  }
-
-  // Check ob Turm gebaut ist und ob das Spiel schon läuft
-  startGame = () => {
-    if (this.towerCount == 0 && this.waveCounter == 0) {
-      this.init();
-    } else {
-      alert("Spiel läuft schon.");
-      // Build Tower
-    }
-  };
-
-  // alle Werte 0 setzen, entities löschen
-  // Würde restartMethode in reset umbenennen.
-  restartGame = () => {
-    // Reset Score, WaveCounter, Ressources, timer
-    this.score = 0;
-    this.waveCounter = 0;
-    this.ressources = 0;
-    //this.timer = reset -- muss noch implementiert werden
-    this.init();
-
-    // Entities liste = 0;
-  };
-
-  pauseGame() {
-    /* Timer stoppen, Waves "anhalten"
-        at the Moment keine Ahnung wie das implementiert werden soll */
-  }
-
-  gameOver = () => {
-    if (this.remainigLifes == 0) {
-      this.restartGame();
-      alert("Game Over");
-    }
-  };
-}
-
-// Neue Instanz des Spiels
-const g = new game();
-
-// Verankerung der Buttons mit den Funktionen
-document
-  .getElementById("btnStart")
-  .addEventListener("click", g.startGame, false);
-document
-  .getElementById("btnReset")
-  .addEventListener("click", g.restartGame, false);
-
-// Map beim Laden der Seite einzeichnen
-window.onload = g.map.draw;
-
-},{"./Events":1,"./entities":2,"./map":4,"./turret":5}],4:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*
  * Spielflaeche erzeugen
  * @author Paul
@@ -295,6 +348,209 @@ class map {
 module.exports = map;
 
 },{}],5:[function(require,module,exports){
+// import Entities from './Enitites.js'
+// import Map from './Map.js'
+
+const entities = require('./Entities')
+const map = require('./Map')
+var map_ = new map();
+var entities_ = new entities();
+
+class wave {
+    constructor() {
+        this.currentWave = 1
+        this.amountOfEnemies = 5
+        this.enemySpwanCooldown = 1
+        this.enemyStartPos = map_.initalEnemyPos//Muss Map-spezifisch sein, also aus der Klasse Map zu entnehmen
+    }
+
+    update(){ //Update um Klassenvariablen anzupassen
+        if(this.amountOfEnemies > 0) {
+            this.initialiseEnemies
+        }
+        //this.currentWave++
+        //EnemyAnzahl erhöhen...
+        //Später noch Stärke der Enemies anpassen...
+    }
+
+    initialiseEnemies() {
+    //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
+        if(this.enemySpwanCooldown > 0) {
+            this.enemySpwanCooldown--
+        }
+        else{
+            entities_.create('Enemy') //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+            this.enemySpwanCooldown = 1
+            this.amountOfEnemies--
+        }
+    }    
+}
+
+module.exports = wave;
+},{"./Entities":2,"./Map":4}],6:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"dup":2}],7:[function(require,module,exports){
+// Import der Klassen via Node.js
+const map = require("./map");
+const turret = require("./turret");
+const entitites = require("./entities");
+const events = require("./Events");
+const enemy = require("./Enemy");
+
+// Instanzen erstellen
+var entities_ = new entitites();
+var events_ = new events();
+
+/*
+ * Bündeln der Klassen
+ * @author Constantin
+ *
+ */
+
+class game {
+  constructor() {
+    // Canvas erstellen
+    this.canvas = document.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+
+    this.waveCounter = 0;
+    // DrawList enthält alle Elemente die gezeichnet werden sollen
+    this.drawList = [];
+    this.towerCount = entities_.towerCounter;
+    this.enemyCount = entities_.enemyCounter;
+
+    // Zukunft
+    this.timer;
+    this.mode = 0;
+    this.score = 0;
+    this.remainingLifes;
+    this.ressources = 0;
+
+    // Event erstellen
+    // this.event = new events(this.canvas, this.ctx);
+
+    // Map Variablen
+    this.waypoints = [
+      [800, 60],
+      [800, 200],
+      [200, 200],
+      [200, 500],
+    ];
+    this.startingPoint = [0, 60];
+
+    // Map erstellen
+    this.map = new map(
+      "#F08080",
+      "#eee",
+      this.waypoints,
+      this.startingPoint,
+      this.canvas,
+      this.ctx
+    );
+
+    //
+    //
+    // Enemys erstellen
+    //
+    //
+
+    this.enemyList = [];
+    this.enemy = new enemy(
+      this.canvas,
+      this.ctx,
+      this.waypoints,
+      this.startingPoint
+    );
+    console.log(enemy);
+
+    this.enemyList.push(this.enemy);
+    console.log(this.enemyList);
+
+    // Turm erstellen
+    this.turret = new turret(100, 100);
+  }
+
+  init = () => {
+    setInterval(this.draw(), 1000 / 30);
+
+    //Leben im Prototyp auf 1;
+    this.remainigLifes = 1;
+    this.draw();
+  };
+
+  draw = () => {
+    window.requestAnimationFrame(this.draw);
+    // Clear Canvas
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Game.restartGame();
+    // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
+    // for (i = 0, i <= Anzahl Klassen; i++) ...
+    this.map.draw();
+    this.turret.draw();
+    this.enemy.draw();
+    this.enemy.handleEnemy(this.enemyList);
+  };
+
+  update() {
+    //Unklar, ruft eventull update() der anderen Klassen auf.
+    /* In beispiel wurden die Aufrufe der Methoden über eine List geregelt, welche über einen
+            Trigger vervollstäändigt wurden */
+  }
+
+  // Check ob Turm gebaut ist und ob das Spiel schon läuft
+  startGame = () => {
+    if (this.towerCount == 0 && this.waveCounter == 0) {
+      this.init();
+    } else {
+      alert("Spiel läuft schon.");
+      // Build Tower
+    }
+  };
+
+  // alle Werte 0 setzen, entities löschen
+  // Würde restartMethode in reset umbenennen.
+  restartGame = () => {
+    // Reset Score, WaveCounter, Ressources, timer
+    this.score = 0;
+    this.waveCounter = 0;
+    this.ressources = 0;
+    //this.timer = reset -- muss noch implementiert werden
+    this.init();
+
+    // Entities liste = 0;
+  };
+
+  pauseGame() {
+    /* Timer stoppen, Waves "anhalten"
+        at the Moment keine Ahnung wie das implementiert werden soll */
+  }
+
+  gameOver = () => {
+    if (this.remainigLifes == 0) {
+      this.restartGame();
+      alert("Game Over");
+    }
+  };
+}
+
+// Neue Instanz des Spiels
+const g = new game();
+
+// Verankerung der Buttons mit den Funktionen
+document
+  .getElementById("btnStart")
+  .addEventListener("click", g.startGame, false);
+document
+  .getElementById("btnReset")
+  .addEventListener("click", g.restartGame, false);
+
+// Map beim Laden der Seite einzeichnen
+window.onload = g.map.draw;
+
+},{"./Enemy":1,"./Events":3,"./entities":6,"./map":8,"./turret":9}],8:[function(require,module,exports){
+arguments[4][4][0].apply(exports,arguments)
+},{"dup":4}],9:[function(require,module,exports){
 // import Particle from './Particle';
 // import Entities from './Entities';
 // import Game from "./game";
@@ -360,4 +616,4 @@ class tower {
     }
 }
 module.exports = tower;
-},{}]},{},[3]);
+},{}]},{},[7]);

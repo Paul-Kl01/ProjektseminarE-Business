@@ -3,8 +3,11 @@ const map = require("./map");
 const turret = require("./turret");
 const entitites = require("./entities");
 const events = require("./Events");
+const enemy = require("./Enemy");
+
+// Instanzen erstellen
 var entities_ = new entitites();
-var event = new events();
+var events_ = new events();
 
 /*
  * Bündeln der Klassen
@@ -17,8 +20,6 @@ class game {
     // Canvas erstellen
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
-
-    // Wegpunkte im Konstruktor übergeben?
 
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
@@ -34,25 +35,47 @@ class game {
     this.ressources = 0;
 
     // Event erstellen
-    this.event = new events(this.canvas, this.ctx);
+    // this.event = new events(this.canvas, this.ctx);
+
+    // Map Variablen
+    this.waypoints = [
+      [800, 60],
+      [800, 200],
+      [200, 200],
+      [200, 500],
+    ];
+    this.startingPoint = [0, 60];
 
     // Map erstellen
     this.map = new map(
       "#F08080",
       "#eee",
-      [
-        [800, 60],
-        [800, 200],
-        [200, 200],
-        [200, 500],
-      ],
-      [0, 60],
+      this.waypoints,
+      this.startingPoint,
       this.canvas,
       this.ctx
     );
 
+    //
+    //
+    // Enemys erstellen
+    //
+    //
+
+    this.enemyList = [];
+    this.enemy = new enemy(
+      this.canvas,
+      this.ctx,
+      this.waypoints,
+      this.startingPoint
+    );
+    console.log(enemy);
+
+    this.enemyList.push(this.enemy);
+    console.log(this.enemyList);
+
     // Turm erstellen
-    this.turret = new turret(50, 50);
+    this.turret = new turret(100, 100);
   }
 
   init = () => {
@@ -73,7 +96,8 @@ class game {
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
     this.turret.draw();
-    this.event.getMousePosition();
+    this.enemy.draw();
+    this.enemy.handleEnemy(this.enemyList);
   };
 
   update() {
