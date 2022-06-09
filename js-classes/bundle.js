@@ -8,14 +8,6 @@ var dy = 2;
 var waypoints = [];
 var enemyList = [];
 let frame = 0;
-var wp1x = 800;
-var wp1y = 60;
-var wp2x = 800;
-var wp2y = 200;
-var wp3x = 200;
-var wp3y = 200;
-var wp4x = 200;
-var wp4y = 500;
 var wp1 = false;
 var wp2 = false;
 var wp3 = false;
@@ -23,15 +15,27 @@ var enemyColor = "red";
 var enemyRadius = 10;
 
 class enemy {
-  constructor(x, y, canvas, ctx) {
-    this.x = x;
-    this.y = y;
+  constructor(canvas, ctx, waypoints, startingPoint) {
     this.radius = 10;
     this.color = "red";
     this.status = 1;
     this.speed = 2;
     this.canvas = canvas;
     this.ctx = ctx;
+    this.waypoints = waypoints;
+    this.startingPoint = startingPoint;
+
+    this.x = this.startingPoint[0];
+    this.y = this.startingPoint[1];
+
+    this.wp1x = this.waypoints[0][0];
+    this.wp1y = this.waypoints[0][1];
+    this.wp2x = this.waypoints[1][0];
+    this.wp2y = this.waypoints[1][1];
+    this.wp3x = this.waypoints[2][0];
+    this.wp3y = this.waypoints[2][2];
+    this.wp4x = this.waypoints[3][0];
+    this.wp4y = this.waypoints[3][3];
   }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
@@ -75,13 +79,13 @@ class enemy {
 
       //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
 
-      if (enemyList[i].x == wp1x && enemyList[i].y == wp1y) {
+      if (enemyList[i].x == this.wp1x && enemyList[i].y == this.wp1y) {
         wp1 = true;
       }
-      if (enemyList[i].x == wp2x && enemyList[i].y == wp2y) {
+      if (enemyList[i].x == this.wp2x && enemyList[i].y == this.wp2y) {
         wp2 = true;
       }
-      if (enemyList[i].x == wp3x && enemyList[i].y == wp3y) {
+      if (enemyList[i].x == this.wp3x && enemyList[i].y == this.wp3y) {
         wp3 = true;
       }
 
@@ -131,6 +135,8 @@ function GameOver() {
 module.exports = enemy;
 
 },{"./Wave":5}],2:[function(require,module,exports){
+const enemy = require("./Enemy");
+
 class entities {
   constructor() {
     this.enemyList = [];
@@ -211,7 +217,7 @@ class entities {
 
 module.exports = entities;
 
-},{}],3:[function(require,module,exports){
+},{"./Enemy":1}],3:[function(require,module,exports){
 class events {
   constructor(canvas, context) {
     this.canvas = canvas;
@@ -333,7 +339,7 @@ class wave {
 module.exports = wave;
 },{"./Entities":2,"./Map":4}],6:[function(require,module,exports){
 arguments[4][2][0].apply(exports,arguments)
-},{"dup":2}],7:[function(require,module,exports){
+},{"./Enemy":1,"dup":2}],7:[function(require,module,exports){
 // Import der Klassen via Node.js
 const map = require("./map");
 const turret = require("./turret");
@@ -356,8 +362,6 @@ class game {
     // Canvas erstellen
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
-
-    // Wegpunkte im Konstruktor übergeben?
 
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
@@ -401,14 +405,19 @@ class game {
     //
 
     this.enemyList = [];
-    this.enemy = new enemy(60, 60, this.canvas, this.ctx);
+    this.enemy = new enemy(
+      this.canvas,
+      this.ctx,
+      this.waypoints,
+      this.startingPoint
+    );
     console.log(enemy);
 
     this.enemyList.push(this.enemy);
     console.log(this.enemyList);
 
     // Turm erstellen
-    this.turret = new turret(50, 50);
+    this.turret = new turret(100, 100);
   }
 
   init = () => {

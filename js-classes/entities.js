@@ -1,3 +1,5 @@
+const enemy = require("./Enemy");
+
 class entities {
   constructor() {
     this.enemyList = [];

@@ -21,8 +21,6 @@ class game {
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
 
-    // Wegpunkte im Konstruktor übergeben?
-
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
@@ -65,14 +63,19 @@ class game {
     //
 
     this.enemyList = [];
-    this.enemy = new enemy(60, 60, this.canvas, this.ctx);
+    this.enemy = new enemy(
+      this.canvas,
+      this.ctx,
+      this.waypoints,
+      this.startingPoint
+    );
     console.log(enemy);
 
     this.enemyList.push(this.enemy);
     console.log(this.enemyList);
 
     // Turm erstellen
-    this.turret = new turret(50, 50);
+    this.turret = new turret(100, 100);
   }
 
   init = () => {
