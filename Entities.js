@@ -1,6 +1,7 @@
-import Helper from './Helper';
-import Tower from './Tower';
-import Enemies from './Enemies';
+const Tower = require('./Tower')
+const Enemy = require('./Enemy')
+const Helper = require('./Helper')
+var helpers = new Helper();
 
 class Entities {
 
@@ -33,7 +34,7 @@ class Entities {
         //Entity erzeugen und zur entsprechenden Liste hinzufügen 
         switch (objecttype) {
             case "0" :
-                var enemy = new Enemies(x,y,r,colour)
+                var enemy = new Enemy(x,y,r,colour)
                 id = ++this.enemyCounter; 
                 this.enemyList[id] = enemy; 
                 break; 
@@ -58,8 +59,13 @@ class Entities {
             let last_enemy; 
 
             for ( let i=0; i < this.enemyList.length; i++) {
+
+                //Enmie schon tot?
+                if (this.enemyList[j].dead = true) continue; 
+                //Enemie schon anvisiert und dadurch tot?
+                if (this.enemyList[j].futureDamage >= this.enemyList[j].remainingLife)  continue; 
                 //Enemie in Tower Range?
-                var bool =  Helper.detectCollision(this.towerList[j].x, this.towerList[j].y, this.towerList[j].range, this.enemyList[i].x, this.enemyList[i].y, this.enemyList[i].radius ); 
+                var bool =  helpers.detectCollision(this.towerList[j].x, this.towerList[j].y, this.towerList[j].range, this.enemyList[i].x, this.enemyList[i].y, this.enemyList[i].radius ); 
 
                 if (bool = true) {
                     //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
@@ -83,4 +89,4 @@ class Entities {
     }
 }
 
-
+module.exports = Entities; 

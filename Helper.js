@@ -31,10 +31,11 @@ static drawCircle(x, y, radius, color) {
 
     ctx.beginPath();
     //Kreis zeichnen
-    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
     //Kreis ausmalen
     ctx.fillStyle = color;
     ctx.fill();
   }
 
 }
+module.exports = Helper; 

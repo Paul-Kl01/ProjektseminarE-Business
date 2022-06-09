@@ -1,4 +1,5 @@
-import Helper from './Helper';
+const Helper = require('./Helper')
+var helpers = new Helper();
 
 class GameObject {
     
@@ -18,3 +19,5 @@ draw(){
 update(){}
 
 }
+
+module.exports = GameObject; 
