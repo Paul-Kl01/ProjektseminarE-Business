@@ -62,14 +62,14 @@ class Entities {
     }
   };
 
-create_enemy(){
+create_enemy = () => {
   var enemy = new Enemy(this.canvas, this.ctx, this.waypoints, this.startingPoint);
   var id = this.enemyCounter++;
   this.enemyList[id] = enemy;
   console.log(this.enemyList);
 }
 
-create_tower(x,y){
+create_tower = (x,y) => {
   //var tower = new Tower(x, y);
   //var id = this.towerCounter++;
   //this.towerList[id] = tower;
@@ -153,7 +153,7 @@ create_tower(x,y){
     }
   }
 
-  validate_position(x,y,radius){
+  validate_position = (x,y,radius) =>{
 
     //für alle tower -> detectCollision mit x,y,r des zu bauenden und x,y,r des ausgelesen Tower
     for (let j = 0; j < this.towerList.length; j++) {
@@ -203,7 +203,7 @@ create_tower(x,y){
         finish = y2; 
         change_x = false; 
       }
-      else if (y1 > y2){
+      else if (y1 > y2){ //Norden, oben
 	      start = y2; 
         finish = y1; 
         change_x = false; 
@@ -211,7 +211,6 @@ create_tower(x,y){
  	
       //Prüfen aller Punkte der Map zwischen aktuellem und nächstem Waypoint
 	    for (let j = start; j < finish; j++) {
-
         let bool;
 		    if (change_x == true)  bool = helpers.detectCollision(j,y1,50,x,y,radius); 
         else bool = helpers.detectCollision(x1,j, 50, x, y, radius);
