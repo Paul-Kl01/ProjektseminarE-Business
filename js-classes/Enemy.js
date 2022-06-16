@@ -24,6 +24,7 @@ class enemy {
     this.wp2 = false;
     this.wp3 = false;
     this.dead = false;
+    this.covereddistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
 
@@ -41,17 +42,21 @@ class enemy {
   update() {
     if (this.wp1 == false) {
       this.x += this.speed;
+      this.covereddistance += this.speed;
     }
     if (this.wp1 == true && this.wp2 == false) {
       this.y += this.speed;
+      this.covereddistance += this.speed;
     }
 
     if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
       this.x -= this.speed;
+      this.covereddistance += this.speed;
     }
 
     if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
       this.y += this.speed;
+      this.covereddistance += this.speed;
     }
   }
 
