@@ -1,19 +1,18 @@
-const gameObject = require('./GameObject')
 const enemy = require('./Enemy')
-const helper = require('./Helper')
-var gameObject_ = new gameObject();
-var helpers = new helper();
+const particle = require('./Particle');
 
-class tower extends gameObject {
+class tower {
 
     constructor(x, y, towerType = 0) {
-        this.radius = 5; // Größe des Turmkreises
+        this.radius = 15; // Größe des Turmkreises
         //towerId; // woher?
         this.color = '#1E90FF'; // Blau = gut ^^
         this.x = x; 
         this.y = y;
         this.towerType = towerType; 
         this.cooldownLeft = 0;
+        this.particleList = [];
+        this.particleCount = 0;
 
         // Fallentscheidung welchen towerType der Turm hat
         if (towerType== 0) { 
@@ -27,30 +26,26 @@ class tower extends gameObject {
         } 
     }
 
-    shoot(enemy, amount = 1) {
+    shoot = (enemy, amount = 1) => {
         // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
-        if ((this.isFireReady() == true)&&(this.searchEnemy() != false)) {
-            for (var i = 1; i <= amount; i++) {
-
-                var particle = new Particle(this.x, this.y, enemy);
+        for (var i = 1; i <= amount; i++) {
+                console.log("test");
+                console.log(enemy);
+                this.particleList[this.particleCount] = new particle(this.x, this.y, this.damage, enemy);
+                this.particleCount++;
+                console.log(this.particleList);
             }
             this.cooldownLeft = this.cooldown; // Cooldown wieder hochgesetzt
         } 
-    }
+    
 
     update() {
         // Schaut ob der Tower wieder schießbereit ist, wenn ja, schauen ob Gegner in Reichweite, wenn ja Partikel erzeugen (= schiessen)
-        if (this.isFireReady() == true) {
-            enemy = this.enemyInRange(); // Bekommt wenn vorhanden enemy übergeben
-
-            // Wenn Gegner in Reicheweite, dann schießen
-            if (enemy != false) {
-                // Schiessen
-                this.shoot();
-            }
-        } else {
-            // noch nicht Feuerbereit, cooldown left runterzählen
+        if (this.cooldownLeft > 0) {
             this.cooldownLeft--;
+        }
+        for (let i = 0; i < this.particleList.length; i++) {
+            this.particleList[i].update();
         }
     }
 
@@ -78,10 +73,10 @@ class tower extends gameObject {
         this.particlesPerShot += value;
     }
 
-    draw() {
-        // Zeichnet den Kreis des Turms
-        helpers.drawCircle(this.x, this.y, this.radius, this.color)
-    }
+    // draw() {
+    //     // Zeichnet den Kreis des Turms
+    //     helpers.drawCircle(this.x, this.y, this.radius, this.color)
+    // }
 
     isFireReady() {
         // Prüfen ob der Turm schon Feuerbereit ist (cooldownLeft == 0)

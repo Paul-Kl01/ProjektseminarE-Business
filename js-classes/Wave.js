@@ -8,16 +8,14 @@
 
 //Imports und Instanzerzeugung
 class wave { //Referenz auf Entitiesinstanz von Game übergeben
-    constructor(entities, startingPoint, canvas, ctx, waypoints) {
+    constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Akt. Wave in-game
         this.amountOfEnemies = 5 //Initalwert für Enemyanzahl
         this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
-        this.enemyStartPos = startingPoint //Muss Map-spezifisch sein, also aus der Klasse Map zu entnehmen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
         this.ctx = ctx
-        this.waypoints = waypoints
     }
 
     update(){ //Update um Klassenvariablen anzupassen
@@ -36,9 +34,9 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
             this.enemySpwanCooldown--
         }
         else{
-            this.entities.create(this.canvas, this.ctx, this.waypoints, this.enemyStartPos, 0); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+            this.entities.create_enemy(this.canvas, this.ctx); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
             //Neuen Cooldown random setzten
-            this.enemySpwanCooldown = this.getRndInteger(500,5000)
+            this.enemySpwanCooldown = this.getRndInteger(50,500)
             this.amountOfEnemies--
         }
     }
@@ -46,7 +44,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++
         //EnemyAnzahl exponentiell erhöhen...
-        this.enemySpwanCooldown = this.getRndInteger(500,5000)
+        this.enemySpwanCooldown = this.getRndInteger(50,500)
         this.update()
         //Später noch Stärke der Enemies anpassen...
     }

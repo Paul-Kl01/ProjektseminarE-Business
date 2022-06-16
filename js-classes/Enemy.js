@@ -12,7 +12,7 @@ var enemyRadius = 1;
 
 class enemy {
   constructor(canvas, ctx, waypoints, startingPoint) {
-    this.radius = 1;
+    this.radius = 5;
     this.color = "red";
     this.status = 1;
     this.speed = 1;
@@ -23,7 +23,7 @@ class enemy {
     this.wp1 = false;
     this.wp2 = false;
     this.wp3 = false;
-
+    this.dead = false;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
 
@@ -106,13 +106,16 @@ class enemy {
       //   //enemyList health - x
       //   //hier würde Schaden übergeben
       // }
-
+      
       // //Gegner aus dem Arraay löschen 'töten'
       // if (this.status == 0) {
       //   enemyList.splice(i, 1);
       //   i--;
       // }
     
+  }
+  hit(damage) {
+    this.dead = true;
   }
 }
 

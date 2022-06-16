@@ -9,28 +9,28 @@
 const enemy = require('./Enemy')
 const helper = require('./Helper')
 const tower = require('./tower')
+const entities = require('./entities')
 var helpers_ = new helper();
-
 class particle{
     //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
     // canvas = document.getElementById("canvas");
     // ctx = this.canvas.getContext("2d");
 
-    constructor (tower, closestEnemy) { //Über tower.js aufzurufen
+    constructor(x, y, damage, closestEnemy) { //Über tower.js aufzurufen
         //eventuell Referenz auf Tower übergeben und daraus die Koordinaten ziehen, wegen dem Exportieren & Importieren von Klasse?
-        this.tower = tower
         this.enemy = closestEnemy //wahrscheinlich unnötig?
-        this.x = this.tower.x //Als Startposition Koordinaten des jeweiligen Turms
-        this.y = this.tower.y
+        this.x = x //Als Startposition Koordinaten des jeweiligen Turms
+        this.y = y
         this.velocity = {x: 0, y: 0}
         this.color = "#483d8b"
         this.radius = 1
-        this.damage = this.tower.damage //Turmschaden
+        this.damage = damage //Turmschaden
+
     }
 
     update() { //Klassenvariablen updaten
-        if(entities.detectCollsision(this.x, this.y, this.radius, this.enemy.x, this.enemy.y, this.enemy.radius)) {
-            this.enemy.hit() //Enemy bekommt Schaden übergeben
+        if(helpers_.detectCollsision(this.x, this.y, this.radius, this.enemy.x, this.enemy.y, this.enemy.radius)) {
+            this.enemy.hit(this.damage) //Enemy bekommt Schaden übergeben
             //Anschließend muss Partikel entfernt werden
         }
         this.draw()
@@ -42,7 +42,8 @@ class particle{
     }
 
     draw() { //Particle jeweils auf canvas zeichnen
-        //helpers_.drawCircle(this.x, this.y, this.radius, this.color)
+        console.log(this.x);
+        helpers_.drawCircle(this.x, this.y, this.radius, this.color)
     }
 
     //Partikel als "Laser" sorgt dafür, dass mein restlichen Code direkt vollkommen unnötig wird,
