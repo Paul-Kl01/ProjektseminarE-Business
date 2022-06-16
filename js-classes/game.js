@@ -5,36 +5,37 @@ const entitites = require("./entities");
 const events = require("./Events");
 const enemy = require("./Enemy");
 const wave = require("./Wave");
+const particle = require("./Particle");
 
 // Instanzen erstellen
 var events_ = new events();
 
 /*
-* Bündeln der Klassen
-* @author Constantin
-*
-*/
+ * Bündeln der Klassen
+ * @author Constantin
+ *
+ */
 
 class game {
   constructor() {
     // Canvas erstellen
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
-    
+
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
-    
+
     // Zukunft
     this.timer;
     this.mode = 0;
     this.score = 0;
     this.remainingLifes;
     this.ressources = 0;
-    
+
     // Event erstellen
     // this.event = new events(this.canvas, this.ctx);
-    
+
     // Map Variablen
     console.log("hio");
     this.waypoints = [
@@ -45,7 +46,7 @@ class game {
     ];
     this.startingPoint = [0, 60];
     console.log("hio2");
-    
+
     // Map erstellen
     this.map = new map(
       "#F08080",
@@ -54,21 +55,20 @@ class game {
       this.startingPoint,
       this.canvas,
       this.ctx
-      );
-      
-      this.entities_ = new entitites(this.startingPoint, this.waypoints);
-      this.towerCount = this.entities_.towerCounter;
-      this.enemyCount = this.entities_.enemyCounter;
-      //
-      //
-      // Enemys erstellen
+    );
+
+    this.entities_ = new entitites(this.startingPoint, this.waypoints);
+    this.towerCount = this.entities_.towerCounter;
+    this.enemyCount = this.entities_.enemyCounter;
+    //
+    //
+    // Enemys erstellen
     //
     //
 
     this.wave = new wave(this.entities_, this.canvas, this.ctx);
     this.wave.initialiseEnemies();
     // entities_.create(this.canvas, this.ctx, this.waypoints, this.startingPoint, 0);
-    
 
     // this.enemyList = [];
     // this.enemy = new enemy(
