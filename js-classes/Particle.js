@@ -5,35 +5,32 @@
  */
 
 //Imports und Instanzerzeugung
-const gameObject = require('./GameObject')
+// const gameObject = require('./GameObject')
 const enemy = require('./Enemy')
 const helper = require('./Helper')
 const tower = require('./tower')
-var gameObject_ = new gameObject();
-var enemy_;
 var helpers_ = new helper();
-var tower_;
 
-class particle extends gameObject_{
+class particle{
     //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
     // canvas = document.getElementById("canvas");
     // ctx = this.canvas.getContext("2d");
 
-    constructor (towerX, towerY, closestEnemy) { //Über tower.js aufzurufen
+    constructor (tower, closestEnemy) { //Über tower.js aufzurufen
         //eventuell Referenz auf Tower übergeben und daraus die Koordinaten ziehen, wegen dem Exportieren & Importieren von Klasse?
-        enemy_ = closestEnemy //wahrscheinlich unnötig?
-
-        this.x = towerX //Als Startposition Koordinaten des jeweiligen Turms
-        this.y = towerY
+        this.tower = tower
+        this.enemy = closestEnemy //wahrscheinlich unnötig?
+        this.x = this.tower.x //Als Startposition Koordinaten des jeweiligen Turms
+        this.y = this.tower.y
         this.velocity = {x: 0, y: 0}
         this.color = "#483d8b"
         this.radius = 1
-        this.focusedEnemy = enemy_ //Referenziert später Enemy der fokussiert werden soll
+        this.damage = this.tower.damage //Turmschaden
     }
 
     update() { //Klassenvariablen updaten
-        if(helpers_.detectCollsision(this.x, this.y, this.radius, this.focusedEnemy.x, this.focusedEnemy.y, this.focusedEnemy.radius)) {
-            enemy_.hit() //Enemy bekommt Schaden übergeben
+        if(entities.detectCollsision(this.x, this.y, this.radius, this.enemy.x, this.enemy.y, this.enemy.radius)) {
+            this.enemy.hit() //Enemy bekommt Schaden übergeben
             //Anschließend muss Partikel entfernt werden
         }
         this.draw()
@@ -45,7 +42,7 @@ class particle extends gameObject_{
     }
 
     draw() { //Particle jeweils auf canvas zeichnen
-        helpers_.drawCircle(this.x, this.y, this.radius, this.color)
+        //helpers_.drawCircle(this.x, this.y, this.radius, this.color)
     }
 
     //Partikel als "Laser" sorgt dafür, dass mein restlichen Code direkt vollkommen unnötig wird,
@@ -57,7 +54,7 @@ class particle extends gameObject_{
     //     this.ctx.strokeStyle = 'white';
 	// 	this.ctx.lineWidth = 1;
     //     this.ctx.moveTo(this.x, this.y);
-	// 	this.ctx.lineTo(this.focusedEnemy.x, this.focusedEnemy.y);
+	// 	this.ctx.lineTo(this.enemy.x, this.enemy.y);
 	// 	this.ctx.stroke();
 	// 	this.ctx.restore();
     //     this.update;
@@ -67,7 +64,7 @@ class particle extends gameObject_{
      *Bis Enemy getroffen wurde vom Particle
      */
     calcPathToEnemy() { //Müsste im Rahmen der TowerKlasse nach Konsturktor-Aufruf des Particles einmal initial aufgerufen werden
-        const angle = Math.atan2(closestEnemy.y - this.y , closestEnemy.x - this.x) //Bestimmt den Winkel zwischen Enemy & Particle
+        const angle = Math.atan2(this.enemy.y - this.y , this.enemy.x - this.x) //Bestimmt den Winkel zwischen Enemy & Particle
         this.velocity = { //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
             x: Math.cos(angle),
             y: Math.sin(angle)

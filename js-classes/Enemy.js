@@ -8,11 +8,11 @@ var waypoints = [];
 var enemyList = [];
 let frame = 0;
 var enemyColor = "red";
-var enemyRadius = 10;
+var enemyRadius = 1;
 
 class enemy {
   constructor(canvas, ctx, waypoints, startingPoint) {
-    this.radius = 10;
+    this.radius = 1;
     this.color = "red";
     this.status = 1;
     this.speed = 1;

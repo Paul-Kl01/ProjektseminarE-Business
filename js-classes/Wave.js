@@ -4,6 +4,8 @@
  *
  */
 
+//Notiz: Es müsste evtl. noch umgesetzt werden, dass Enemies "häufichenweise" spawnen, also nicht alle hintereinander weg?
+
 //Imports und Instanzerzeugung
 class wave { //Referenz auf Entitiesinstanz von Game übergeben
     constructor(entities, startingPoint, canvas, ctx, waypoints) {
@@ -36,7 +38,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
         else{
             this.entities.create(this.canvas, this.ctx, this.waypoints, this.enemyStartPos, 0); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
             //Neuen Cooldown random setzten
-            this.enemySpwanCooldown = this.getRndInteger(10,30)
+            this.enemySpwanCooldown = this.getRndInteger(500,5000)
             this.amountOfEnemies--
         }
     }
@@ -44,7 +46,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++
         //EnemyAnzahl exponentiell erhöhen...
-        this.enemySpwanCooldown = this.getRndInteger(10,30)
+        this.enemySpwanCooldown = this.getRndInteger(500,5000)
         this.update()
         //Später noch Stärke der Enemies anpassen...
     }
