@@ -54,7 +54,6 @@ class particle {
 
   draw() {
     //Particle jeweils auf canvas zeichnen
-    console.log(this.x);
     helpers_.drawCircle(this.x, this.y, this.radius, this.color);
   }
 

@@ -1,11 +1,8 @@
 // Import der Klassen via Node.js
 const map = require("./map");
-const tower = require("./tower");
 const entitites = require("./entities");
 const events = require("./Events");
-const enemy = require("./Enemy");
 const wave = require("./Wave");
-const particle = require("./Particle");
 
 // Instanzen erstellen
 var events_ = new events();
@@ -60,27 +57,10 @@ class game {
     this.entities_ = new entitites(this.startingPoint, this.waypoints);
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
-    //
-    //
-    // Enemys erstellen
-    //
-    //
 
     this.wave = new wave(this.entities_, this.canvas, this.ctx);
-    this.wave.initialiseEnemies();
-    // entities_.create(this.canvas, this.ctx, this.waypoints, this.startingPoint, 0);
-
-    // this.enemyList = [];
-    // this.enemy = new enemy(
-    //   this.canvas,
-    //   this.ctx,
-    //   this.waypoints,
-    //   this.startingPoint
-    // );
-    // console.log(enemy);
-
-    // this.enemyList.push(this.enemy);
-    // console.log(this.enemyList);
+    this.entities_.newWave(this.wave.amountOfEnemies); 
+    //this.wave.initialiseEnemies();
 
     // Turm erstellen
     this.entities_.create_tower(70, 100);

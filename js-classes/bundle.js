@@ -25,6 +25,7 @@ class enemy {
     this.wp2 = false;
     this.wp3 = false;
     this.dead = false;
+    this.covereddistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
 
@@ -42,17 +43,21 @@ class enemy {
   update() {
     if (this.wp1 == false) {
       this.x += this.speed;
+      this.covereddistance += this.speed;
     }
     if (this.wp1 == true && this.wp2 == false) {
       this.y += this.speed;
+      this.covereddistance += this.speed;
     }
 
     if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
       this.x -= this.speed;
+      this.covereddistance += this.speed;
     }
 
     if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
       this.y += this.speed;
+      this.covereddistance += this.speed;
     }
   }
 
@@ -270,7 +275,6 @@ class particle {
 
   draw() {
     //Particle jeweils auf canvas zeichnen
-    console.log(this.x);
     helpers_.drawCircle(this.x, this.y, this.radius, this.color);
   }
 
@@ -349,7 +353,6 @@ class tower {
     // Schaut ob der Tower wieder schießbereit ist, wenn ja, schauen ob Gegner in Reichweite, wenn ja Partikel erzeugen (= schiessen)
     if (this.cooldownLeft > 0) {
       this.cooldownLeft--;
-      console.log(this.cooldownLeft);
     }
     for (let i = 0; i < this.particleList.length; i++) {
       if (this.particleList[i].flag == true) continue;
@@ -476,18 +479,19 @@ class Entities {
     this.towerList = [];
     this.enemyCounter = 0;
     this.towerCounter = 0;
+    this.win = false; 
   }
 
-  // constructor() {
-  //   this.enemyList = [];
-  //   this.towerList = [];
-  //   this.enemyCounter = 0;
-  //   this.towerCounter = 0;
-  // }
-
-  clear_enemyList = () => {
+  newWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
+    this.win = false; 
+    this.amountOfEnemies = amountOfEnemies; 
+
+    for(let j = 0; j < this.towerList.length; j++) {
+      this.towerList[j].particleList = []; 
+      this.towerList[j].particleCount = 0; 
+    }
   };
 
   draw = () => {
@@ -545,13 +549,22 @@ class Entities {
   };
 
   update = () => {
-    // this.detect_first_enemy();
 
+    var count = 0; 
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
-      if (this.enemyList[i].dead == true) continue;
+      if (this.enemyList[i].dead == true) {
+        count++; 
+        continue;
+      }
       this.enemyList[i].handleEnemy();
     }
+    if (count == this.amountOfEnemies) {
+      console.log("win"); 
+      this.win = true; 
+    }
+
+
     for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
     this.detect_enemy();
   };
@@ -692,12 +705,9 @@ module.exports = Entities;
 },{"./Enemy":1,"./Helper":3,"./Tower":5}],8:[function(require,module,exports){
 // Import der Klassen via Node.js
 const map = require("./map");
-const tower = require("./tower");
 const entitites = require("./entities");
 const events = require("./Events");
-const enemy = require("./Enemy");
 const wave = require("./Wave");
-const particle = require("./Particle");
 
 // Instanzen erstellen
 var events_ = new events();
@@ -752,27 +762,10 @@ class game {
     this.entities_ = new entitites(this.startingPoint, this.waypoints);
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
-    //
-    //
-    // Enemys erstellen
-    //
-    //
 
     this.wave = new wave(this.entities_, this.canvas, this.ctx);
-    this.wave.initialiseEnemies();
-    // entities_.create(this.canvas, this.ctx, this.waypoints, this.startingPoint, 0);
-
-    // this.enemyList = [];
-    // this.enemy = new enemy(
-    //   this.canvas,
-    //   this.ctx,
-    //   this.waypoints,
-    //   this.startingPoint
-    // );
-    // console.log(enemy);
-
-    // this.enemyList.push(this.enemy);
-    // console.log(this.enemyList);
+    this.entities_.newWave(this.wave.amountOfEnemies); 
+    //this.wave.initialiseEnemies();
 
     // Turm erstellen
     this.entities_.create_tower(70, 100);
@@ -859,7 +852,7 @@ document
 // Map beim Laden der Seite einzeichnen
 window.onload = g.map.draw;
 
-},{"./Enemy":1,"./Events":2,"./Particle":4,"./Wave":6,"./entities":7,"./map":9,"./tower":10}],9:[function(require,module,exports){
+},{"./Events":2,"./Wave":6,"./entities":7,"./map":9}],9:[function(require,module,exports){
 /*
  * Spielflaeche erzeugen
  * @author Paul
@@ -917,6 +910,4 @@ class map {
 // Klasse Exportieren
 module.exports = map;
 
-},{}],10:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"./Enemy":1,"./Particle":4,"dup":5}]},{},[8]);
+},{}]},{},[8]);

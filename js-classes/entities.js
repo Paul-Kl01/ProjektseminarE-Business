@@ -10,18 +10,19 @@ class Entities {
     this.towerList = [];
     this.enemyCounter = 0;
     this.towerCounter = 0;
+    this.win = false; 
   }
 
-  // constructor() {
-  //   this.enemyList = [];
-  //   this.towerList = [];
-  //   this.enemyCounter = 0;
-  //   this.towerCounter = 0;
-  // }
-
-  clear_enemyList = () => {
+  newWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
+    this.win = false; 
+    this.amountOfEnemies = amountOfEnemies; 
+
+    for(let j = 0; j < this.towerList.length; j++) {
+      this.towerList[j].particleList = []; 
+      this.towerList[j].particleCount = 0; 
+    }
   };
 
   draw = () => {
@@ -79,13 +80,22 @@ class Entities {
   };
 
   update = () => {
-    // this.detect_first_enemy();
 
+    var count = 0; 
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
-      if (this.enemyList[i].dead == true) continue;
+      if (this.enemyList[i].dead == true) {
+        count++; 
+        continue;
+      }
       this.enemyList[i].handleEnemy();
     }
+    if (count == this.amountOfEnemies) {
+      console.log("win"); 
+      this.win = true; 
+    }
+
+
     for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
     this.detect_enemy();
   };
