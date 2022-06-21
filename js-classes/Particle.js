@@ -9,14 +9,9 @@
 const enemy = require('./Enemy')
 const helper = require('./Helper')
 const tower = require('./tower')
-var helpers_ = new helper();
 
 class particle{
-    //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
-    // canvas = document.getElementById("canvas");
-    // ctx = this.canvas.getContext("2d");
-
-    constructor (tower, closestEnemy) { //Über tower.js aufzurufen
+    constructor(tower, closestEnemy) { //Über tower.js aufzurufen
         //eventuell Referenz auf Tower übergeben und daraus die Koordinaten ziehen, wegen dem Exportieren & Importieren von Klasse?
         this.tower = tower
         this.enemy = closestEnemy //wahrscheinlich unnötig?
