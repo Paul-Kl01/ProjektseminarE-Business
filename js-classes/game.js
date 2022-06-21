@@ -1,13 +1,13 @@
 // Import der Klassen via Node.js
 const map = require("./map");
-const turret = require("./turret");
+const tower = require("./tower");
 const entitites = require("./entities");
 const events = require("./Events");
 const enemy = require("./Enemy");
 const wave = require("./Wave");
+const particle = require("./Particle");
 
 // Instanzen erstellen
-var entities_ = new entitites();
 var events_ = new events();
 
 /*
@@ -25,8 +25,6 @@ class game {
     this.waveCounter = 0;
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
-    this.towerCount = entities_.towerCounter;
-    this.enemyCount = entities_.enemyCounter;
 
     // Zukunft
     this.timer;
@@ -39,6 +37,7 @@ class game {
     // this.event = new events(this.canvas, this.ctx);
 
     // Map Variablen
+    console.log("hio");
     this.waypoints = [
       [800, 60],
       [800, 200],
@@ -46,6 +45,7 @@ class game {
       [200, 500],
     ];
     this.startingPoint = [0, 60];
+    console.log("hio2");
 
     // Map erstellen
     this.map = new map(
@@ -57,16 +57,18 @@ class game {
       this.ctx
     );
 
+    this.entities_ = new entitites(this.startingPoint, this.waypoints);
+    this.towerCount = this.entities_.towerCounter;
+    this.enemyCount = this.entities_.enemyCounter;
     //
     //
     // Enemys erstellen
     //
     //
 
-    this.wave = new wave(entities_,this.startingPoint, this.canvas, this.ctx, this.waypoints);
+    this.wave = new wave(this.entities_, this.canvas, this.ctx);
     this.wave.initialiseEnemies();
     // entities_.create(this.canvas, this.ctx, this.waypoints, this.startingPoint, 0);
-    
 
     // this.enemyList = [];
     // this.enemy = new enemy(
@@ -81,7 +83,7 @@ class game {
     // console.log(this.enemyList);
 
     // Turm erstellen
-    this.turret = new turret(100, 100);
+    this.entities_.create_tower(70, 100);
   }
 
   init = () => {
@@ -101,10 +103,10 @@ class game {
     // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
-    entities_.draw();
-    entities_.update();
+    this.entities_.draw();
+    this.entities_.update();
     this.wave.update();
-    this.turret.draw();
+    // this.turret.draw();
     // this.enemy.draw();
     // this.enemy.handleEnemy(this.enemyList);
   };
