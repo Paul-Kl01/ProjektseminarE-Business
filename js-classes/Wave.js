@@ -11,7 +11,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Akt. Wave in-game
-        this.amountOfEnemies = 5 //Initalwert für Enemyanzahl
+        this.amountOfEnemies = 2 //Initalwert für Enemyanzahl
         this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
