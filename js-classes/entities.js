@@ -13,6 +13,7 @@ class Entities {
     this.win = false; 
   }
 
+
   newWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
@@ -36,13 +37,21 @@ class Entities {
         this.enemyList[i].color
       );
     }
-    for (let j = 0; j < this.towerList.length; j++)
+    for (let j = 0; j < this.towerList.length; j++) {
       this.drawCircle(
         this.towerList[j].x,
         this.towerList[j].y,
         this.towerList[j].radius,
         this.towerList[j].color
       );
+      // Draw Range
+      this.drawCircle(
+        this.towerList[j].x,
+        this.towerList[j].y,
+        this.towerList[j].range,
+        this.towerList[j].rangeColor
+      );
+    }
   };
 
   drawCircle(x, y, radius, color) {
@@ -91,8 +100,9 @@ class Entities {
       this.enemyList[i].handleEnemy();
     }
     if (count == this.amountOfEnemies) {
-      console.log("win"); 
       this.win = true; 
+      confirm("Win");
+      return;
     }
 
 
@@ -157,7 +167,6 @@ class Entities {
       }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
-        console.log("tot");
         this.towerList[j].shoot(last_enemy);
       }
     }
