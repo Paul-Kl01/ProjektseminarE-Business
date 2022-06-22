@@ -25,7 +25,7 @@ class enemy {
     this.wp2 = false;
     this.wp3 = false;
     this.dead = false;
-    this.covereddistance = 0;
+    this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
 
@@ -39,25 +39,34 @@ class enemy {
     this.wp4y = this.waypoints[3][1];
   }
 
+  reset = () => {
+    this.speed = 1;
+    this.coveredDistance = 0;
+    this.wp1 = false;
+    this.wp2 = false;
+    this.wp3 = false;
+    this.dead = false;
+  }
+
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
   update() {
     if (this.wp1 == false) {
       this.x += this.speed;
-      this.covereddistance += this.speed;
+      this.coveredDistance += this.speed;
     }
     if (this.wp1 == true && this.wp2 == false) {
       this.y += this.speed;
-      this.covereddistance += this.speed;
+      this.coveredDistance += this.speed;
     }
 
     if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
       this.x -= this.speed;
-      this.covereddistance += this.speed;
+      this.coveredDistance += this.speed;
     }
 
     if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
       this.y += this.speed;
-      this.covereddistance += this.speed;
+      this.coveredDistance += this.speed;
     }
   }
 
@@ -145,24 +154,24 @@ class events {
   constructor(canvas, context) {
     this.canvas = canvas;
     this.context = context;
-    this.mouse = {
-      x: 0,
-      y: 0,
-      clicked: false    
-    }
+    // this.mouse = {
+    //   x: 0,
+    //   y: 0,
+    //   clicked: false    
+    // }
   }
-    onmove = (event) => {
-      this.mouse.x = event.offsetX;
-      this.mouse.y = event.offsetY;
-    }
+    // onmove = (event) => {
+    //   this.mouse.x = event.offsetX;
+    //   this.mouse.y = event.offsetY;
+    // }
 
-     onclick = (e) => {
-      this.mouse.clicked = true;
-    }
+    //  onclick = (e) => {
+    //   this.mouse.clicked = true;
+    // }
 
-    update = () => {
-      this.mouse.clicked = false;
-    }
+    // update = () => {
+    //   this.mouse.clicked = false;
+    // }
   
 
 
@@ -266,6 +275,9 @@ class particle {
     this.radius = 1;
     this.damage = damage; //Turmschaden
     this.flag = false;
+  }
+  reset = () => {
+    this.velocity = { x: 0, y: 0 };
   }
 
   update() {
@@ -435,7 +447,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Akt. Wave in-game
-        this.amountOfEnemies = 2 //Initalwert für Enemyanzahl
+        this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
         this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
@@ -502,6 +514,24 @@ class Entities {
     this.win = false; 
   }
 
+  reset = () => {
+    for(let j = 0; j < this.towerList.length; j++) {
+      for(let i = 0; i < this.towerList[j].particleList.length; i++) {
+        this.towerList[j].particleList[i].reset();
+      }
+      this.towerList[j].particleList = []; 
+      this.towerList[j].particleCount = 0; 
+    }
+
+    for (let i = 0; i < this.enemyList.length; i++) {
+      this.enemyList[i].reset();
+    }
+    this.towerList = [];
+    this.enemyList = [];
+    this.win = false;
+    this.enemyCounter = 0;
+    this.towerCounter = 0;
+  }
 
   newWave = (amountOfEnemies) => {
     this.enemyList = [];
@@ -591,6 +621,7 @@ class Entities {
     if (count == this.amountOfEnemies) {
       this.win = true; 
       confirm("Win");
+      this.reset();
       return;
     }
 
@@ -639,21 +670,22 @@ class Entities {
           this.enemyList[i].radius
         );
 
-        if ((bool = true)) {
+        if ((bool == true)) {
           //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
           if (last_enemy === undefined) {
             last_enemy = this.enemyList[i];
           }
-        }
+        
         //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
         else {
           if (
-            this.enemyList[i].covered_distance > last_enemy.covered_distance
+            this.enemyList[i].coveredDistance > last_enemy.coveredDistance
           ) {
             last_enemy = this.enemyList[i];
           }
         }
       }
+    }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
         this.towerList[j].shoot(last_enemy);
@@ -808,6 +840,7 @@ class game {
     this.wavecounter++;
     //Leben im Prototyp auf 1;
     this.draw();
+    this.gameRunnning = false;
   };
 
   draw = () => {
@@ -824,8 +857,6 @@ class game {
       this.entities_.update();
       this.wave.update();
     } else {
-      this.gameRunnning = false;
-      location.reload();
       return;
     }
     document.getElementById("wcount").innerHTML = this.waveCounter;
@@ -847,8 +878,9 @@ class game {
     } else if (this.gameRunning == true) {
       console.log("spiel läuft");
     } else {
-      this.gameRunning = true;
+      console.log("bin im startgameif");
       this.init();
+      // this.gameRunning = true;
     }
   };
 

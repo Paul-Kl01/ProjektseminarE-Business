@@ -13,6 +13,24 @@ class Entities {
     this.win = false; 
   }
 
+  reset = () => {
+    for(let j = 0; j < this.towerList.length; j++) {
+      for(let i = 0; i < this.towerList[j].particleList.length; i++) {
+        this.towerList[j].particleList[i].reset();
+      }
+      this.towerList[j].particleList = []; 
+      this.towerList[j].particleCount = 0; 
+    }
+
+    for (let i = 0; i < this.enemyList.length; i++) {
+      this.enemyList[i].reset();
+    }
+    this.towerList = [];
+    this.enemyList = [];
+    this.win = false;
+    this.enemyCounter = 0;
+    this.towerCounter = 0;
+  }
 
   newWave = (amountOfEnemies) => {
     this.enemyList = [];
@@ -102,6 +120,7 @@ class Entities {
     if (count == this.amountOfEnemies) {
       this.win = true; 
       confirm("Win");
+      this.reset();
       return;
     }
 
@@ -150,21 +169,22 @@ class Entities {
           this.enemyList[i].radius
         );
 
-        if ((bool = true)) {
+        if ((bool == true)) {
           //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
           if (last_enemy === undefined) {
             last_enemy = this.enemyList[i];
           }
-        }
+        
         //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
         else {
           if (
-            this.enemyList[i].covered_distance > last_enemy.covered_distance
+            this.enemyList[i].coveredDistance > last_enemy.coveredDistance
           ) {
             last_enemy = this.enemyList[i];
           }
         }
       }
+    }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
         this.towerList[j].shoot(last_enemy);

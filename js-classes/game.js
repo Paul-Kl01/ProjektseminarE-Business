@@ -74,6 +74,7 @@ class game {
     this.wavecounter++;
     //Leben im Prototyp auf 1;
     this.draw();
+    this.gameRunnning = false;
   };
 
   draw = () => {
@@ -90,8 +91,6 @@ class game {
       this.entities_.update();
       this.wave.update();
     } else {
-      this.gameRunnning = false;
-      location.reload();
       return;
     }
     document.getElementById("wcount").innerHTML = this.waveCounter;
@@ -113,8 +112,9 @@ class game {
     } else if (this.gameRunning == true) {
       console.log("spiel läuft");
     } else {
-      this.gameRunning = true;
+      console.log("bin im startgameif");
       this.init();
+      // this.gameRunning = true;
     }
   };
 
