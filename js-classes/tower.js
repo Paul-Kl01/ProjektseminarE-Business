@@ -12,6 +12,7 @@ class tower {
     this.cooldownLeft = 30;
     this.particleList = [];
     this.particleCount = 0;
+    this.rangeColor = 'rgba(30, 144, 255, 0.2)';
 
     // Fallentscheidung welchen towerType der Turm hat
     if (towerType == 0) {
@@ -19,7 +20,7 @@ class tower {
       this.damage = 1;
       this.price = 10;
       this.speed = 10;
-      this.range = 10;
+      this.range = 100;
       this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
       this.particlesPerShot = 1;
     }
@@ -40,7 +41,6 @@ class tower {
     // Schaut ob der Tower wieder schießbereit ist, wenn ja, schauen ob Gegner in Reichweite, wenn ja Partikel erzeugen (= schiessen)
     if (this.cooldownLeft > 0) {
       this.cooldownLeft--;
-      console.log(this.cooldownLeft);
     }
     for (let i = 0; i < this.particleList.length; i++) {
       if (this.particleList[i].flag == true) continue;

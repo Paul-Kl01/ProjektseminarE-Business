@@ -2,7 +2,26 @@ class events {
   constructor(canvas, context) {
     this.canvas = canvas;
     this.context = context;
+    // this.mouse = {
+    //   x: 0,
+    //   y: 0,
+    //   clicked: false    
+    // }
   }
+    // onmove = (event) => {
+    //   this.mouse.x = event.offsetX;
+    //   this.mouse.y = event.offsetY;
+    // }
+
+    //  onclick = (e) => {
+    //   this.mouse.clicked = true;
+    // }
+
+    // update = () => {
+    //   this.mouse.clicked = false;
+    // }
+  
+
 
   getMousePosition = () => {
     canvas.addEventListener("mousemove", function (e) {
