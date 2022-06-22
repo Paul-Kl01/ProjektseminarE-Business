@@ -80,8 +80,8 @@ class particle {
     const angle = Math.atan2(this.enemy.y - this.y, this.enemy.x - this.x); //Bestimmt den Winkel zwischen Enemy & Particle
     this.velocity = {
       //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
-      x: 1.1 * Math.cos(angle),
-      y: 1.1 * Math.sin(angle),
+      x: 1.3 * Math.cos(angle),
+      y: 1.3 * Math.sin(angle),
     };
     this.update; //Position des Particles entsprechend updaten
   }
