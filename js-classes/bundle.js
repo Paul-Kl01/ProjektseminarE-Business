@@ -145,7 +145,26 @@ class events {
   constructor(canvas, context) {
     this.canvas = canvas;
     this.context = context;
+    this.mouse = {
+      x: 0,
+      y: 0,
+      clicked: false    
+    }
   }
+    onmove = (event) => {
+      this.mouse.x = event.offsetX;
+      this.mouse.y = event.offsetY;
+    }
+
+     onclick = (e) => {
+      this.mouse.clicked = true;
+    }
+
+    update = () => {
+      this.mouse.clicked = false;
+    }
+  
+
 
   getMousePosition = () => {
     canvas.addEventListener("mousemove", function (e) {
@@ -301,8 +320,8 @@ class particle {
     const angle = Math.atan2(this.enemy.y - this.y, this.enemy.x - this.x); //Bestimmt den Winkel zwischen Enemy & Particle
     this.velocity = {
       //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
-      x: 1.1 * Math.cos(angle),
-      y: 1.1 * Math.sin(angle),
+      x: 1.3 * Math.cos(angle),
+      y: 1.3 * Math.sin(angle),
     };
     this.update; //Position des Particles entsprechend updaten
   }
@@ -325,6 +344,7 @@ class tower {
     this.cooldownLeft = 30;
     this.particleList = [];
     this.particleCount = 0;
+    this.rangeColor = 'rgba(30, 144, 255, 0.2)';
 
     // Fallentscheidung welchen towerType der Turm hat
     if (towerType == 0) {
@@ -332,7 +352,7 @@ class tower {
       this.damage = 1;
       this.price = 10;
       this.speed = 10;
-      this.range = 10;
+      this.range = 100;
       this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
       this.particlesPerShot = 1;
     }
@@ -415,7 +435,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Akt. Wave in-game
-        this.amountOfEnemies = 5 //Initalwert für Enemyanzahl
+        this.amountOfEnemies = 2 //Initalwert für Enemyanzahl
         this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
@@ -482,6 +502,7 @@ class Entities {
     this.win = false; 
   }
 
+
   newWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
@@ -505,13 +526,21 @@ class Entities {
         this.enemyList[i].color
       );
     }
-    for (let j = 0; j < this.towerList.length; j++)
+    for (let j = 0; j < this.towerList.length; j++) {
       this.drawCircle(
         this.towerList[j].x,
         this.towerList[j].y,
         this.towerList[j].radius,
         this.towerList[j].color
       );
+      // Draw Range
+      this.drawCircle(
+        this.towerList[j].x,
+        this.towerList[j].y,
+        this.towerList[j].range,
+        this.towerList[j].rangeColor
+      );
+    }
   };
 
   drawCircle(x, y, radius, color) {
@@ -560,8 +589,9 @@ class Entities {
       this.enemyList[i].handleEnemy();
     }
     if (count == this.amountOfEnemies) {
-      console.log("win"); 
       this.win = true; 
+      confirm("Win");
+      return;
     }
 
 
@@ -626,7 +656,6 @@ class Entities {
       }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
-        console.log("tot");
         this.towerList[j].shoot(last_enemy);
       }
     }
@@ -728,12 +757,16 @@ class game {
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
 
+    // Läuft das Spiel?
+    this.gameRunning = false;
+
     // Zukunft
     this.timer;
     this.mode = 0;
     this.score = 0;
     this.remainingLifes;
     this.ressources = 0;
+    
 
     // Event erstellen
     // this.event = new events(this.canvas, this.ctx);
@@ -747,7 +780,6 @@ class game {
       [200, 500],
     ];
     this.startingPoint = [0, 60];
-    console.log("hio2");
 
     // Map erstellen
     this.map = new map(
@@ -763,19 +795,18 @@ class game {
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
 
-    this.wave = new wave(this.entities_, this.canvas, this.ctx);
-    this.entities_.newWave(this.wave.amountOfEnemies); 
+   
     //this.wave.initialiseEnemies();
 
     // Turm erstellen
-    this.entities_.create_tower(70, 100);
+    // this.entities_.create_tower(70, 100);
   }
 
   init = () => {
-    setInterval(this.draw(), 1000 / 30);
-
+    this.wave = new wave(this.entities_, this.canvas, this.ctx);
+    this.entities_.newWave(this.wave.amountOfEnemies); 
+    this.wavecounter++;
     //Leben im Prototyp auf 1;
-    this.remainigLifes = 1;
     this.draw();
   };
 
@@ -788,9 +819,16 @@ class game {
     // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
-    this.entities_.draw();
-    this.entities_.update();
-    this.wave.update();
+    if(this.entities_.win == false) {
+      this.entities_.draw();
+      this.entities_.update();
+      this.wave.update();
+    } else {
+      this.gameRunnning = false;
+      location.reload();
+      return;
+    }
+    document.getElementById("wcount").innerHTML = this.waveCounter;
     // this.turret.draw();
     // this.enemy.draw();
     // this.enemy.handleEnemy(this.enemyList);
@@ -804,11 +842,13 @@ class game {
 
   // Check ob Turm gebaut ist und ob das Spiel schon läuft
   startGame = () => {
-    if (this.towerCount == 0 && this.waveCounter == 0) {
-      this.init();
+    if (this.entities_.towerList.length == 0) {
+      confirm("Bau lieber zuerst einen Turm");
+    } else if (this.gameRunning == true) {
+      console.log("spiel läuft");
     } else {
-      alert("Spiel läuft schon.");
-      // Build Tower
+      this.gameRunning = true;
+      this.init();
     }
   };
 
@@ -820,7 +860,9 @@ class game {
     this.waveCounter = 0;
     this.ressources = 0;
     //this.timer = reset -- muss noch implementiert werden
-    this.init();
+
+    //Entities liste leeren
+    location.reload();
 
     // Entities liste = 0;
   };
@@ -848,6 +890,10 @@ document
 document
   .getElementById("btnReset")
   .addEventListener("click", g.restartGame, false);
+document.getElementById("btnBuild").addEventListener("click", function () {
+  g.entities_.create_tower(220,110);
+  g.entities_.draw();
+});
 
 // Map beim Laden der Seite einzeichnen
 window.onload = g.map.draw;
