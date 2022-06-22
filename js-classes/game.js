@@ -23,12 +23,16 @@ class game {
     // DrawList enthält alle Elemente die gezeichnet werden sollen
     this.drawList = [];
 
+    // Läuft das Spiel?
+    this.gameRunning = false;
+
     // Zukunft
     this.timer;
     this.mode = 0;
     this.score = 0;
     this.remainingLifes;
     this.ressources = 0;
+    
 
     // Event erstellen
     // this.event = new events(this.canvas, this.ctx);
@@ -42,7 +46,6 @@ class game {
       [200, 500],
     ];
     this.startingPoint = [0, 60];
-    console.log("hio2");
 
     // Map erstellen
     this.map = new map(
@@ -58,19 +61,18 @@ class game {
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
 
-    this.wave = new wave(this.entities_, this.canvas, this.ctx);
-    this.entities_.newWave(this.wave.amountOfEnemies); 
+   
     //this.wave.initialiseEnemies();
 
     // Turm erstellen
-    this.entities_.create_tower(70, 100);
+    // this.entities_.create_tower(70, 100);
   }
 
   init = () => {
-    setInterval(this.draw(), 1000 / 30);
-
+    this.wave = new wave(this.entities_, this.canvas, this.ctx);
+    this.entities_.newWave(this.wave.amountOfEnemies); 
+    this.wavecounter++;
     //Leben im Prototyp auf 1;
-    this.remainigLifes = 1;
     this.draw();
   };
 
@@ -83,9 +85,16 @@ class game {
     // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
     // for (i = 0, i <= Anzahl Klassen; i++) ...
     this.map.draw();
-    this.entities_.draw();
-    this.entities_.update();
-    this.wave.update();
+    if(this.entities_.win == false) {
+      this.entities_.draw();
+      this.entities_.update();
+      this.wave.update();
+    } else {
+      this.gameRunnning = false;
+      location.reload();
+      return;
+    }
+    document.getElementById("wcount").innerHTML = this.waveCounter;
     // this.turret.draw();
     // this.enemy.draw();
     // this.enemy.handleEnemy(this.enemyList);
@@ -99,11 +108,13 @@ class game {
 
   // Check ob Turm gebaut ist und ob das Spiel schon läuft
   startGame = () => {
-    if (this.towerCount == 0 && this.waveCounter == 0) {
-      this.init();
+    if (this.entities_.towerList.length == 0) {
+      confirm("Bau lieber zuerst einen Turm");
+    } else if (this.gameRunning == true) {
+      console.log("spiel läuft");
     } else {
-      alert("Spiel läuft schon.");
-      // Build Tower
+      this.gameRunning = true;
+      this.init();
     }
   };
 
@@ -115,7 +126,9 @@ class game {
     this.waveCounter = 0;
     this.ressources = 0;
     //this.timer = reset -- muss noch implementiert werden
-    this.init();
+
+    //Entities liste leeren
+    location.reload();
 
     // Entities liste = 0;
   };
@@ -143,6 +156,10 @@ document
 document
   .getElementById("btnReset")
   .addEventListener("click", g.restartGame, false);
+document.getElementById("btnBuild").addEventListener("click", function () {
+  g.entities_.create_tower(220,110);
+  g.entities_.draw();
+});
 
 // Map beim Laden der Seite einzeichnen
 window.onload = g.map.draw;
