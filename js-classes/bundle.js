@@ -837,7 +837,7 @@ class game {
   init = () => {
     this.wave = new wave(this.entities_, this.canvas, this.ctx);
     this.entities_.newWave(this.wave.amountOfEnemies); 
-    this.wavecounter++;
+    
     //Leben im Prototyp auf 1;
     this.draw();
     this.gameRunnning = false;
@@ -879,6 +879,7 @@ class game {
       console.log("spiel läuft");
     } else {
       console.log("bin im startgameif");
+      this.waveCounter++;
       this.init();
       // this.gameRunning = true;
     }
