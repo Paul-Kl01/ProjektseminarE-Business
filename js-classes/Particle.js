@@ -5,13 +5,10 @@
  */
 
 //Imports und Instanzerzeugung
-// const gameObject = require('./GameObject')
-// const enemy = require("./Enemy");
-const entities = require("./entities");
-var entity = new entities();
+const helper = require("./Helper");
+var helpers_ = new helper();
 
 class particle {
-
   constructor(x, y, damage, closestEnemy) {
     this.enemy = closestEnemy;
     this.x = x; //Als Startposition Koordinaten des jeweiligen Turms
@@ -29,7 +26,7 @@ class particle {
   update() {
     //Klassenvariablen updaten
     if (
-      entity.detectCollision(
+      helpers_.detectCollision(
         this.x,
         this.y,
         this.radius,
@@ -49,7 +46,7 @@ class particle {
 
   draw() {
     //Particle jeweils auf canvas zeichnen
-    entity.drawCircle(this.x, this.y, this.radius, this.color);
+    helpers_.drawCircle(this.x, this.y, this.radius, this.color);
   }
 
   /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden,
