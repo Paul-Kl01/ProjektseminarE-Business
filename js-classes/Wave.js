@@ -6,13 +6,12 @@
 
 //Notiz: Es müsste evtl. noch umgesetzt werden, dass Enemies "häufichenweise" spawnen, also nicht alle hintereinander weg?
 
-//Imports und Instanzerzeugung
-class wave { //Referenz auf Entitiesinstanz von Game übergeben
+class wave {
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
-        this.currentWave = 1 //Akt. Wave in-game
+        this.currentWave = 1 //Aktuelle Wave ingame
         this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
-        this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
+        this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
         this.ctx = ctx
@@ -22,7 +21,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             this.initialiseEnemies()
         }
-        //Neue Wave muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
+        //Neue Wave muss getriggert werden
         if(this.isStarting) {
             this.nextWave()
         }
@@ -34,7 +33,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
             this.enemySpwanCooldown--
         }
         else{
-            this.entities.create_enemy(this.canvas, this.ctx); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+            this.entities.create_enemy(this.canvas, this.ctx);
             //Neuen Cooldown random setzten
             this.enemySpwanCooldown = this.getRndInteger(50,500)
             this.amountOfEnemies--
@@ -45,12 +44,12 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
         this.currentWave++
         //EnemyAnzahl exponentiell erhöhen...
         this.enemySpwanCooldown = this.getRndInteger(50,500)
+        this.isStarting = false; //Wert wieder zurücksetzten
         this.update()
-        //Später noch Stärke der Enemies anpassen...
+        //Später noch Stärke der Enemies anpassen...bzw. andere Enemytypen übergeben
     }
 
     //Markierung, dass nächste Wave starten soll
-    //muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
     triggerNextWave() {
         this.isStarting = true
     }
