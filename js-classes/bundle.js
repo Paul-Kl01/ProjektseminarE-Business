@@ -254,20 +254,12 @@ module.exports = Helper;
  */
 
 //Imports und Instanzerzeugung
-// const gameObject = require('./GameObject')
-// const enemy = require("./Enemy");
 const helper = require("./Helper");
 var helpers_ = new helper();
 
 class particle {
-  //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
-  // canvas = document.getElementById("canvas");
-  // ctx = this.canvas.getContext("2d");
-
   constructor(x, y, damage, closestEnemy) {
-    //Über tower.js aufzurufen
-    //eventuell Referenz auf Tower übergeben und daraus die Koordinaten ziehen, wegen dem Exportieren & Importieren von Klasse?
-    this.enemy = closestEnemy; //wahrscheinlich unnötig?
+    this.enemy = closestEnemy;
     this.x = x; //Als Startposition Koordinaten des jeweiligen Turms
     this.y = y;
     this.velocity = { x: 0, y: 0 };
@@ -293,14 +285,11 @@ class particle {
       )
     ) {
       this.enemy.hit(this.damage); //Enemy bekommt Schaden übergeben
-      this.flag = true;
-      //Anschließend muss Partikel entfernt werden
+      this.flag = true; //Flag, damit Particle entfernt werden kann
     }
     this.draw();
     this.x = this.x + this.velocity.x; //Bewegung updaten
     this.y = this.y + this.velocity.y;
-    //Geschwindigkeit, mit der sich Partikel bewegt evtl. erhöhen
-    //Dafür Multiplikation mit Skalar
     this.calcPathToEnemy(); //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
   }
 
@@ -309,30 +298,14 @@ class particle {
     helpers_.drawCircle(this.x, this.y, this.radius, this.color);
   }
 
-  //Partikel als "Laser" sorgt dafür, dass mein restlichen Code direkt vollkommen unnötig wird,
-  //man bräuchte nur noch diese eine Methode & Konstruktor
-  // pathToEnemy = () => {
-  //     //Partikel als "Laser" implementieren
-  //     this.ctx.save()
-  //     this.ctx.beginPath()
-  //     this.ctx.strokeStyle = 'white';
-  // 	this.ctx.lineWidth = 1;
-  //     this.ctx.moveTo(this.x, this.y);
-  // 	this.ctx.lineTo(this.enemy.x, this.enemy.y);
-  // 	this.ctx.stroke();
-  // 	this.ctx.restore();
-  //     this.update;
-  // }
-
-  /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden
-   *Bis Enemy getroffen wurde vom Particle
+  /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden,
+   *bis Enemy getroffen wurde vom Particle
    */
   calcPathToEnemy() {
-    //Müsste im Rahmen der TowerKlasse nach Konsturktor-Aufruf des Particles einmal initial aufgerufen werden
     const angle = Math.atan2(this.enemy.y - this.y, this.enemy.x - this.x); //Bestimmt den Winkel zwischen Enemy & Particle
     this.velocity = {
       //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
-      x: 1.3 * Math.cos(angle),
+      x: 1.3 * Math.cos(angle), //Konstante im Term bestimmt die Geschwindigkeit des Particle
       y: 1.3 * Math.sin(angle),
     };
     this.update; //Position des Particles entsprechend updaten
@@ -442,53 +415,65 @@ module.exports = tower; // muss mit Klassenname übereinstimmen
 
 //Notiz: Es müsste evtl. noch umgesetzt werden, dass Enemies "häufichenweise" spawnen, also nicht alle hintereinander weg?
 
-//Imports und Instanzerzeugung
-class wave { //Referenz auf Entitiesinstanz von Game übergeben
+class wave {
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
-        this.currentWave = 1 //Akt. Wave in-game
+        this.currentWave = 1 //Aktuelle Wave ingame
         this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
-        this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
+        this.enemySpawnCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
         this.ctx = ctx
     }
 
     update(){ //Update um Klassenvariablen anzupassen
-        if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
-            this.initialiseEnemies()
-        }
-        //Neue Wave muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
+        /*
+        *   Wenn die Nächste Wave starten soll, sobald ein Enemy am vorletzten Waypoint vorbeiläuft, muss hier nur geprüft werden,
+        *   ob das der Fall ist und falls ja, die Funktion NextWave() aufrufen.
+        *   Dann könnte man sich die Methode triggerNextWave() und die zugehörige Bool sparen.
+        */
+
+        //Neue Wave muss getriggert werden
         if(this.isStarting) {
-            this.nextWave()
+            this.nextWave();
         }
+
+        if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
+            if(this.currentWave > 5) {
+                //Extra Parameter, damit Enemies zufällig stärker werden können
+                this.initialiseEnemies(this.getRndInteger(0,2)); //Erstmal Typ 0,1 & 2, sind das zu viele oder zu wenige Typen?
+            }
+            else {this.initialiseEnemies();}
+        }
+        
     }
 
-    initialiseEnemies() {
+    initialiseEnemies(enemyStrength = 0) { //Typ 0 als default Enemy?
     //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
-        if(this.enemySpwanCooldown > 0) {
-            this.enemySpwanCooldown--
+        if(this.enemySpawnCooldown > 0) {
+            this.enemySpawnCooldown--;
         }
-        else{
-            this.entities.create_enemy(this.canvas, this.ctx); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+        else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
+            this.entities.create_enemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
             //Neuen Cooldown random setzten
-            this.enemySpwanCooldown = this.getRndInteger(50,500)
-            this.amountOfEnemies--
+            this.enemySpawnCooldown = this.getRndInteger(25,230);
+            this.amountOfEnemies--;
         }
     }
     
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
-        this.currentWave++
+        this.currentWave++;
         //EnemyAnzahl exponentiell erhöhen...
-        this.enemySpwanCooldown = this.getRndInteger(50,500)
-        this.update()
-        //Später noch Stärke der Enemies anpassen...
+        this.enemySpawnCooldown = this.getRndInteger(25,300);
+        this.isStarting = false; //Wert wieder zurücksetzten
+        this.update();
+        //Später noch Stärke der Enemies anpassen...bzw. andere Enemytypen übergeben
     }
 
     //Markierung, dass nächste Wave starten soll
-    //muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
     triggerNextWave() {
-        this.isStarting = true
+        this.isStarting = true;
+        this.update();
     }
 
     //Random Zahl für bestimmtes Intervall generieren (min & max sind im Intervall inklusive)
@@ -498,6 +483,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
 }
 
 module.exports = wave;
+
 },{}],7:[function(require,module,exports){
 const Tower = require("./Tower");
 const Enemy = require("./Enemy");
@@ -880,8 +866,8 @@ class game {
     } else {
       console.log("bin im startgameif");
       this.waveCounter++;
+      this.gameRunning = true;
       this.init();
-      // this.gameRunning = true;
     }
   };
 
