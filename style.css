@@ -3,6 +3,9 @@
   margin: 0;
   box-sizing: border-box;
 }
+body {
+  background: url('./Sprinkle.svg');
+}
 
 /*section Style - parent of all */
 
@@ -18,6 +21,7 @@
 .gui {
   width: 75%;
   height: 75%;
+  box-shadow: 5px 5px 15px 5px #000000;
 }
 
 /* buttons & timer */
@@ -25,16 +29,18 @@
 .buttons {
   display: flex;
   justify-content: right;
-  background: black;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(110,110,110,1) 0%, rgba(0,0,0,1) 84%);
 }
-
 button {
   padding: 0 10px 0 10px;
-  margin: 0 10px 0 10px;
-  background: rgba(128, 128, 128, 0.541);
-  color: white;
+  margin: 0px 20px 0 10px;
+  height: 30px;
+  background: #eaeaea;
+  color: black;
   border: none;
   font-weight: bold;
+  border-radius: 10px;
 }
 
 button:hover {
@@ -46,8 +52,7 @@ button:hover {
 #timerCountDown {
   width: 75px;
   height: 50px;
-  margin: 0;
-  background: rgba(128, 128, 128, 0.541);
+  background: black;
 }
 
 p {
@@ -59,7 +64,7 @@ p {
 #waveCounter {
   width: 75px;
   height: 50px;
-  background: rgba(128, 128, 128, 0.541);
+  background: black;
   margin-left: 10px;
 }
 
