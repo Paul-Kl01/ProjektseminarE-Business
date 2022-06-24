@@ -1,6 +1,5 @@
 const Tower = require("./Tower");
 const Enemy = require("./Enemy");
-const Helper = require("./Helper");
 
 class Entities {
   constructor(startingPoint, waypoints) {
@@ -11,6 +10,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
+    this.money = 50;
   }
 
   reset = () => {
@@ -45,7 +45,7 @@ class Entities {
   };
 
   draw = () => {
-    //von jeden Enemy/Tower wird die Draw() Funktion aufgerufen
+    //von jeden Enemy/Tower/Particle wird die drawCircle() Methode aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i].dead == true) continue;
       this.drawCircle(
@@ -69,13 +69,21 @@ class Entities {
         this.towerList[j].range,
         this.towerList[j].rangeColor
       );
+
+          //Particle zeichnen
+      for (let k = 0; k < this.towerList[j].particleList.length; k++) {
+        if (this.towerList[j].particleList[k].flag == true) continue;
+        this.drawCircle(
+          this.towerList[j].particleList[k].x,
+          this.towerList[j].particleList[k].y,
+          this.towerList[j].particleList[k].radius,
+          this.towerList[j].particleList[k].color
+        );
+      };
     }
-  };
+  }
 
   drawCircle(x, y, radius, color) {
-    //Kreis zeichnen für Anzeige Reichweite/GameObjects
-    //mit Koordinaten x,y ; Radius;  Farbe
-
     //jedes Mal Holen Canavas, ctx oder im Konstruktor übergeben
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
@@ -92,9 +100,8 @@ class Entities {
     var a = x1 - x2;
     var b = y1 - y2;
     return Math.sqrt(a * a + b * b);
-  }
+  };
 
-  //detectCollision(x1,y1,r1,x2,y2,r2){
   detectCollision = (x1, y1, r1, x2, y2, r2) => {
     //wenn der abstand zw. den beiden Mittelpunkten
     //kleiner/gleich die Summer der beiden Radien -> return true
@@ -107,7 +114,6 @@ class Entities {
   };
 
   update = () => {
-
     var count = 0; 
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
@@ -124,26 +130,28 @@ class Entities {
       return;
     }
 
-
     for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
     this.detect_enemy();
+    this.detectHit(); 
+
   };
 
-  create_enemy = (canvas, ctx) => {
-    var enemy = new Enemy(canvas, ctx, this.waypoints, this.startingPoint);
+  createEnemy = (enemyType) => {
+    var enemy = new Enemy(this.waypoints, this.startingPoint,enemyType );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
     console.log(this.enemyList);
   };
 
-  create_tower = (x, y) => {
-    var tower = new Tower(x, y);
+  createTower = (x, y, towerType) => {
+    var tower = new Tower(x, y, towerType);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
     console.log(this.towerList);
-  }; //
+    this.money -= this.towerList[id].price;
+  }; 
 
-  detect_enemy() {
+  detectEnemy() {
     //leitet den Enemy, der in Towerrange ist und am meisten Weg zurück gelegt hat, an den entsp. schussbereiten Tower weiter
 
     for (let j = 0; j < this.towerList.length; j++) {
@@ -169,22 +177,20 @@ class Entities {
           this.enemyList[i].radius
         );
 
-        if ((bool == true)) {
+        if (bool == true) {
           //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
           if (last_enemy === undefined) {
             last_enemy = this.enemyList[i];
           }
-        
-        //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
-        else {
-          if (
-            this.enemyList[i].coveredDistance > last_enemy.coveredDistance
-          ) {
-            last_enemy = this.enemyList[i];
+    
+          //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
+          else {
+            if ( this.enemyList[i].coveredDistance > last_enemy.coveredDistance) {
+              last_enemy = this.enemyList[i];
+            }
           }
         }
       }
-    }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
         this.towerList[j].shoot(last_enemy);
@@ -192,7 +198,32 @@ class Entities {
     }
   }
 
-  validate_position = (x, y, radius) => {
+  detectHit(){
+    for (let j = 0; j < this.towerList.length; j++) {
+      for (let k = 0; k < this.towerList[j].particleList.length; j++) {
+        if (this.towerList[j].particleList[k].flag == true) continue;
+        var bool= this.detectCollision(
+            this.towerList[j].particleList[k].x,
+            this.towerList[j].particleList[k].y,
+            this.towerList[j].particleList[k].radius,
+            this.towerList[j].particleList[k].enemy.x,
+            this.towerList[j].particleList[k].enemy.y,
+            this.towerList[j].particleList[k].enemy.radius
+          ) 
+        if (bool == true){
+        //Enemy bekommt Schaden übergeben
+          this.towerList[j].particleList[k].enemy.hit(this.towerList[j].particleList[k].damage); 
+          this.towerList[j].particleList[k].flag = true;
+          if (this.towerList[j].particleList[k].enemy.dead == true){
+            this.money += this.towerList[j].particleList[k].enemy.lootDrop
+          }
+        }
+      }
+    }
+  }
+
+
+  validatePosition = (x, y, radius) => {
     //für alle tower -> detectCollision mit x,y,r des zu bauenden und x,y,r des ausgelesen Tower
     for (let j = 0; j < this.towerList.length; j++) {
       let bool = this.detectCollision(
@@ -258,6 +289,10 @@ class Entities {
     } //End Waypoint Schleife
     return true;
   };
+
+  towerRangePreview = (x,y,radius,color) =>{
+    this.drawCircle(x,y,radius,color)
+  }
 }
 
 module.exports = Entities;
