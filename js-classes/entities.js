@@ -129,7 +129,7 @@ class Entities {
     this.detect_enemy();
   };
 
-  create_enemy = (canvas, ctx) => {
+  createEnemy = (canvas, ctx) => {
     var enemy = new Enemy(canvas, ctx, this.waypoints, this.startingPoint);
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
