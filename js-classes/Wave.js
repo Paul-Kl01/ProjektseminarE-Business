@@ -45,7 +45,7 @@ class wave {
             this.enemySpawnCooldown--;
         }
         else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
-            this.entities.create_enemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
+            this.entities.createEnemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
             //Neuen Cooldown random setzten
             this.enemySpawnCooldown = this.getRndInteger(25,230);
             this.amountOfEnemies--;
