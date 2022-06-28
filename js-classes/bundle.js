@@ -268,7 +268,7 @@ class particle {
     this.damage = damage; //Turmschaden
     this.flag = false;
   }
-  reset = () => {
+  reset = () => { //Reset wird hier nicht benötigt, da velocity eh vorher gesetzt wird!
     this.velocity = { x: 0, y: 0 };
   }
 
@@ -419,24 +419,20 @@ class wave {
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Aktuelle Wave ingame
-        this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
+        this.amountOfEnemies = 12 //Initalwert für Enemyanzahl
+        this.enemyGroup = 6
         this.enemySpawnCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
-        this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
+        this.enemyGroupCoolDown = 0 //Initialwert
+        //this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
         this.ctx = ctx
     }
 
     update(){ //Update um Klassenvariablen anzupassen
-        /*
-        *   Wenn die Nächste Wave starten soll, sobald ein Enemy am vorletzten Waypoint vorbeiläuft, muss hier nur geprüft werden,
-        *   ob das der Fall ist und falls ja, die Funktion NextWave() aufrufen.
-        *   Dann könnte man sich die Methode triggerNextWave() und die zugehörige Bool sparen.
-        */
-
         //Neue Wave muss getriggert werden
-        if(this.isStarting) {
-            this.nextWave();
-        }
+        // if(this.isStarting) {
+        //     this.nextWave();
+        // }
 
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             if(this.currentWave > 5) {
@@ -450,14 +446,26 @@ class wave {
 
     initialiseEnemies(enemyStrength = 0) { //Typ 0 als default Enemy?
     //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
-        if(this.enemySpawnCooldown > 0) {
-            this.enemySpawnCooldown--;
+        if(this.enemyGroup > 0 && this.enemyGroupCoolDown === 0) { //Enemies dürfen ganz normal gespawnt werden
+            if(this.enemySpawnCooldown > 0) {
+                this.enemySpawnCooldown--;
+            }
+            else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
+                this.entities.createEnemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
+                //Neuen Cooldown random setzten
+                this.enemySpawnCooldown = this.getRndInteger(25,230);
+                this.amountOfEnemies--;
+                this.enemyGroup--;
+            }
         }
-        else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
-            this.entities.create_enemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
-            //Neuen Cooldown random setzten
-            this.enemySpawnCooldown = this.getRndInteger(25,230);
-            this.amountOfEnemies--;
+        else if(this.enemyGroup === 0 && this.enemyGroupCoolDown === 0) {
+            //Werte zurücksetzen
+            this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann
+            this.enemyGroup = 6;
+        }
+        else if(this.enemyGroupCoolDown > 0) {
+            //Cooldown damit neue Gruppe an Enemies spawnen kann runterzählen
+            this.enemyGroupCoolDown--;
         }
     }
     
@@ -465,16 +473,19 @@ class wave {
         this.currentWave++;
         //EnemyAnzahl exponentiell erhöhen...
         this.enemySpawnCooldown = this.getRndInteger(25,300);
-        this.isStarting = false; //Wert wieder zurücksetzten
+        this.amountOfEnemies = this.currentWave * 6;
+        this.enemyGroupCoolDown = 0;
+        this.enemyGroup = 6;
+        //this.isStarting = false; //Wert wieder zurücksetzten
         this.update();
         //Später noch Stärke der Enemies anpassen...bzw. andere Enemytypen übergeben
     }
 
     //Markierung, dass nächste Wave starten soll
-    triggerNextWave() {
-        this.isStarting = true;
-        this.update();
-    }
+    // triggerNextWave() {
+    //     this.isStarting = true;
+    //     this.update();
+    // }
 
     //Random Zahl für bestimmtes Intervall generieren (min & max sind im Intervall inklusive)
     getRndInteger(min, max) {
@@ -616,7 +627,7 @@ class Entities {
     this.detect_enemy();
   };
 
-  create_enemy = (canvas, ctx) => {
+  createEnemy = (canvas, ctx) => {
     var enemy = new Enemy(canvas, ctx, this.waypoints, this.startingPoint);
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
