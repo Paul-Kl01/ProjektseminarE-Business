@@ -10,7 +10,7 @@ class wave {
     constructor(entities, canvas, ctx) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Aktuelle Wave ingame
-        this.amountOfEnemies = 12 //Initalwert für Enemyanzahl
+        this.amountOfEnemies = Math.pow(2, this.currentWave) //Initalwert für Enemyanzahl 2^1 = 2
         this.enemyGroup = 6
         this.enemySpawnCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.enemyGroupCoolDown = 0 //Initialwert
@@ -37,19 +37,19 @@ class wave {
 
     initialiseEnemies(enemyStrength = 0) { //Typ 0 als default Enemy?
     //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
-        if(this.enemyGroup > 0 && this.enemyGroupCoolDown === 0) { //Enemies dürfen ganz normal gespawnt werden
+        if(this.enemyGroup > 0 && this.enemyGroupCoolDown == 0) { //Enemies dürfen ganz normal gespawnt werden
             if(this.enemySpawnCooldown > 0) {
                 this.enemySpawnCooldown--;
             }
             else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
                 this.entities.createEnemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
                 //Neuen Cooldown random setzten
-                this.enemySpawnCooldown = this.getRndInteger(25,230);
+                this.enemySpawnCooldown = this.getRndInteger(25,200);
                 this.amountOfEnemies--;
                 this.enemyGroup--;
             }
         }
-        else if(this.enemyGroup === 0 && this.enemyGroupCoolDown === 0) {
+        else if(this.enemyGroup == 0 && this.enemyGroupCoolDown == 0) {
             //Werte zurücksetzen
             this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann
             this.enemyGroup = 6;
@@ -63,8 +63,9 @@ class wave {
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
         //EnemyAnzahl exponentiell erhöhen...
-        this.enemySpawnCooldown = this.getRndInteger(25,300);
-        this.amountOfEnemies = this.currentWave * 6;
+        this.enemySpawnCooldown = this.getRndInteger(25,250);
+        //this.amountOfEnemies = this.currentWave * 6;
+        this.amountOfEnemies = Math.pow(2, this.currentWave) // 2^(currentWave)
         this.enemyGroupCoolDown = 0;
         this.enemyGroup = 6;
         //this.isStarting = false; //Wert wieder zurücksetzten
