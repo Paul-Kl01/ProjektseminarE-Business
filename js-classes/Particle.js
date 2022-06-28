@@ -19,7 +19,7 @@ class particle {
     this.damage = damage; //Turmschaden
     this.flag = false;
   }
-  reset = () => {
+  reset = () => { //Reset wird hier nicht benötigt, da velocity eh vorher gesetzt wird!
     this.velocity = { x: 0, y: 0 };
   }
 
