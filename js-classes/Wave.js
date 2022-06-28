@@ -12,22 +12,16 @@ class wave {
         this.currentWave = 1 //Aktuelle Wave ingame
         this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
         this.enemySpawnCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
-        this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
+        //this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
         this.ctx = ctx
     }
 
     update(){ //Update um Klassenvariablen anzupassen
-        /*
-        *   Wenn die Nächste Wave starten soll, sobald ein Enemy am vorletzten Waypoint vorbeiläuft, muss hier nur geprüft werden,
-        *   ob das der Fall ist und falls ja, die Funktion NextWave() aufrufen.
-        *   Dann könnte man sich die Methode triggerNextWave() und die zugehörige Bool sparen.
-        */
-
         //Neue Wave muss getriggert werden
-        if(this.isStarting) {
-            this.nextWave();
-        }
+        // if(this.isStarting) {
+        //     this.nextWave();
+        // }
 
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             if(this.currentWave > 5) {
@@ -56,16 +50,17 @@ class wave {
         this.currentWave++;
         //EnemyAnzahl exponentiell erhöhen...
         this.enemySpawnCooldown = this.getRndInteger(25,300);
-        this.isStarting = false; //Wert wieder zurücksetzten
+        this.amountOfEnemies = this.currentWave * 6
+        //this.isStarting = false; //Wert wieder zurücksetzten
         this.update();
         //Später noch Stärke der Enemies anpassen...bzw. andere Enemytypen übergeben
     }
 
     //Markierung, dass nächste Wave starten soll
-    triggerNextWave() {
-        this.isStarting = true;
-        this.update();
-    }
+    // triggerNextWave() {
+    //     this.isStarting = true;
+    //     this.update();
+    // }
 
     //Random Zahl für bestimmtes Intervall generieren (min & max sind im Intervall inklusive)
     getRndInteger(min, max) {
