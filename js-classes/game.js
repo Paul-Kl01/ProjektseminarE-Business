@@ -114,8 +114,8 @@ class game {
     } else {
       console.log("bin im startgameif");
       this.waveCounter++;
+      this.gameRunning = true;
       this.init();
-      // this.gameRunning = true;
     }
   };
 

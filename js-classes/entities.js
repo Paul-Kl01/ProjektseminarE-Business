@@ -117,6 +117,7 @@ class Entities {
 
   };
 
+
   createEnemy = (enemyType) => {
     var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
     var id = this.enemyCounter++;
