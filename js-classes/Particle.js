@@ -27,9 +27,6 @@ class particle {
     this.damage = damage; //Turmschaden
     this.flag = false;
   }
-  reset = () => {
-    this.velocity = { x: 0, y: 0 };
-  }
 
   update() {
     //Klassenvariablen updaten

@@ -69,7 +69,7 @@ class game {
   }
 
   init = () => {
-    this.wave = new wave(this.entities_, this.canvas, this.ctx);
+    this.wave = new wave(this.entities_);
     this.entities_.newWave(this.wave.amountOfEnemies); 
     
     //Leben im Prototyp auf 1;
@@ -158,7 +158,7 @@ document
   .getElementById("btnReset")
   .addEventListener("click", g.restartGame, false);
 document.getElementById("btnBuild").addEventListener("click", function () {
-  g.entities_.create_tower(220,110);
+  g.entities_.createTower(220,110);
   g.entities_.draw();
 });
 

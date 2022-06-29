@@ -1,30 +1,28 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const wave = require("./Wave");
 
-var initialEnemyx = 0;
-var initialEnemyy = 60;
-var dx = 2;
-var dy = 2;
-var waypoints = [];
-var enemyList = [];
-let frame = 0;
-var enemyColor = "red";
-var enemyRadius = 1;
+// var initialEnemyx = 0;
+// var initialEnemyy = 60;
+// var dx = 2;
+// var dy = 2;
+// var waypoints = [];
+// var enemyList = [];
+// let frame = 0;
+// var enemyColor = "red";
+// var enemyRadius = 1;
 
 class enemy {
-  constructor(canvas, ctx, waypoints, startingPoint) {
+  constructor(waypoints, startingPoint, enemyType) {
     this.radius = 5;
     this.color = "red";
     this.status = 1;
     this.speed = 1;
-    this.canvas = canvas;
-    this.ctx = ctx;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.wp1 = false;
     this.wp2 = false;
     this.wp3 = false;
     this.dead = false;
+    this.enemyType = enemyType;
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
@@ -37,15 +35,6 @@ class enemy {
     this.wp3y = this.waypoints[2][1];
     this.wp4x = this.waypoints[3][0];
     this.wp4y = this.waypoints[3][1];
-  }
-
-  reset = () => {
-    this.speed = 1;
-    this.coveredDistance = 0;
-    this.wp1 = false;
-    this.wp2 = false;
-    this.wp3 = false;
-    this.dead = false;
   }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
@@ -135,10 +124,10 @@ class enemy {
 }
 
 // Ersten Enemy erstellen
-function drawEnemy() {
-  enemyList.push(new enemy(0, 60));
-  enemyList[1].this.draw();
-}
+// function drawEnemy() {
+//   enemyList.push(new enemy(0, 60));
+//   enemyList[1].this.draw();
+// }
 
 //Redirect zur Gameover Site
 //Alternative: bool variable die den animation Aufruf stoppt.
@@ -149,7 +138,7 @@ function GameOver() {
 
 module.exports = enemy;
 
-},{"./Wave":6}],2:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 class events {
   constructor(canvas, context) {
     this.canvas = canvas;
@@ -275,9 +264,6 @@ class particle {
     this.radius = 1;
     this.damage = damage; //Turmschaden
     this.flag = false;
-  }
-  reset = () => {
-    this.velocity = { x: 0, y: 0 };
   }
 
   update() {
@@ -444,14 +430,12 @@ module.exports = tower; // muss mit Klassenname übereinstimmen
 
 //Imports und Instanzerzeugung
 class wave { //Referenz auf Entitiesinstanz von Game übergeben
-    constructor(entities, canvas, ctx) {
+    constructor(entities) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Akt. Wave in-game
         this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
         this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
-        this.canvas = canvas
-        this.ctx = ctx
     }
 
     update(){ //Update um Klassenvariablen anzupassen
@@ -470,7 +454,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
             this.enemySpwanCooldown--
         }
         else{
-            this.entities.create_enemy(this.canvas, this.ctx); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+            this.entities.createEnemy(1); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
             //Neuen Cooldown random setzten
             this.enemySpwanCooldown = this.getRndInteger(50,500)
             this.amountOfEnemies--
@@ -501,7 +485,6 @@ module.exports = wave;
 },{}],7:[function(require,module,exports){
 const Tower = require("./Tower");
 const Enemy = require("./Enemy");
-const Helper = require("./Helper");
 
 class Entities {
   constructor(startingPoint, waypoints) {
@@ -512,25 +495,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
-  }
-
-  reset = () => {
-    for(let j = 0; j < this.towerList.length; j++) {
-      for(let i = 0; i < this.towerList[j].particleList.length; i++) {
-        this.towerList[j].particleList[i].reset();
-      }
-      this.towerList[j].particleList = []; 
-      this.towerList[j].particleCount = 0; 
-    }
-
-    for (let i = 0; i < this.enemyList.length; i++) {
-      this.enemyList[i].reset();
-    }
-    this.towerList = [];
-    this.enemyList = [];
-    this.win = false;
-    this.enemyCounter = 0;
-    this.towerCounter = 0;
+    this.money = 50;
   }
 
   newWave = (amountOfEnemies) => {
@@ -546,7 +511,7 @@ class Entities {
   };
 
   draw = () => {
-    //von jeden Enemy/Tower wird die Draw() Funktion aufgerufen
+    //von jeden Enemy/Tower/Particle wird die drawCircle() Methode aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i].dead == true) continue;
       this.drawCircle(
@@ -570,13 +535,21 @@ class Entities {
         this.towerList[j].range,
         this.towerList[j].rangeColor
       );
+
+          //Particle zeichnen
+      for (let k = 0; k < this.towerList[j].particleList.length; k++) {
+        if (this.towerList[j].particleList[k].flag == true) continue;
+        this.drawCircle(
+          this.towerList[j].particleList[k].x,
+          this.towerList[j].particleList[k].y,
+          this.towerList[j].particleList[k].radius,
+          this.towerList[j].particleList[k].color
+        );
+      };
     }
-  };
+  }
 
   drawCircle(x, y, radius, color) {
-    //Kreis zeichnen für Anzeige Reichweite/GameObjects
-    //mit Koordinaten x,y ; Radius;  Farbe
-
     //jedes Mal Holen Canavas, ctx oder im Konstruktor übergeben
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
@@ -593,9 +566,8 @@ class Entities {
     var a = x1 - x2;
     var b = y1 - y2;
     return Math.sqrt(a * a + b * b);
-  }
+  };
 
-  //detectCollision(x1,y1,r1,x2,y2,r2){
   detectCollision = (x1, y1, r1, x2, y2, r2) => {
     //wenn der abstand zw. den beiden Mittelpunkten
     //kleiner/gleich die Summer der beiden Radien -> return true
@@ -608,7 +580,6 @@ class Entities {
   };
 
   update = () => {
-
     var count = 0; 
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
@@ -625,26 +596,28 @@ class Entities {
       return;
     }
 
-
     for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
-    this.detect_enemy();
+    this.detectEnemy();
+    this.detectHit(); 
+
   };
 
-  create_enemy = (canvas, ctx) => {
-    var enemy = new Enemy(canvas, ctx, this.waypoints, this.startingPoint);
+  createEnemy = (enemyType) => {
+    var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
     console.log(this.enemyList);
   };
 
-  create_tower = (x, y) => {
-    var tower = new Tower(x, y);
+  createTower = (x, y, towerType) => {
+    var tower = new Tower(x, y, towerType);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
     console.log(this.towerList);
-  }; //
+    this.money -= this.towerList[id].price;
+  }; 
 
-  detect_enemy() {
+  detectEnemy() {
     //leitet den Enemy, der in Towerrange ist und am meisten Weg zurück gelegt hat, an den entsp. schussbereiten Tower weiter
 
     for (let j = 0; j < this.towerList.length; j++) {
@@ -670,22 +643,20 @@ class Entities {
           this.enemyList[i].radius
         );
 
-        if ((bool == true)) {
+        if (bool == true) {
           //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
           if (last_enemy === undefined) {
             last_enemy = this.enemyList[i];
           }
-        
-        //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
-        else {
-          if (
-            this.enemyList[i].coveredDistance > last_enemy.coveredDistance
-          ) {
-            last_enemy = this.enemyList[i];
+    
+          //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
+          else {
+            if ( this.enemyList[i].coveredDistance > last_enemy.coveredDistance) {
+              last_enemy = this.enemyList[i];
+            }
           }
         }
       }
-    }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
         this.towerList[j].shoot(last_enemy);
@@ -693,7 +664,32 @@ class Entities {
     }
   }
 
-  validate_position = (x, y, radius) => {
+  detectHit(){
+    for (let j = 0; j < this.towerList.length; j++) {
+      for (let k = 0; k < this.towerList[j].particleList.length; k++) {
+        if (this.towerList[j].particleList[k].flag == true) continue;
+        var bool= this.detectCollision(
+            this.towerList[j].particleList[k].x,
+            this.towerList[j].particleList[k].y,
+            this.towerList[j].particleList[k].radius,
+            this.towerList[j].particleList[k].enemy.x,
+            this.towerList[j].particleList[k].enemy.y,
+            this.towerList[j].particleList[k].enemy.radius
+          ) 
+        if (bool == true){
+        //Enemy bekommt Schaden übergeben
+          this.towerList[j].particleList[k].enemy.hit(this.towerList[j].particleList[k].damage); 
+          this.towerList[j].particleList[k].flag = true;
+          if (this.towerList[j].particleList[k].enemy.dead == true){
+            this.money += this.towerList[j].particleList[k].enemy.lootDrop
+          }
+        }
+      }
+    }
+  }
+
+
+  validatePosition = (x, y, radius) => {
     //für alle tower -> detectCollision mit x,y,r des zu bauenden und x,y,r des ausgelesen Tower
     for (let j = 0; j < this.towerList.length; j++) {
       let bool = this.detectCollision(
@@ -759,11 +755,15 @@ class Entities {
     } //End Waypoint Schleife
     return true;
   };
+
+  towerRangePreview = (x,y,radius,color) =>{
+    this.drawCircle(x,y,radius,color)
+  }
 }
 
 module.exports = Entities;
 
-},{"./Enemy":1,"./Helper":3,"./Tower":5}],8:[function(require,module,exports){
+},{"./Enemy":1,"./Tower":5}],8:[function(require,module,exports){
 // Import der Klassen via Node.js
 const map = require("./map");
 const entitites = require("./entities");
@@ -835,7 +835,7 @@ class game {
   }
 
   init = () => {
-    this.wave = new wave(this.entities_, this.canvas, this.ctx);
+    this.wave = new wave(this.entities_);
     this.entities_.newWave(this.wave.amountOfEnemies); 
     
     //Leben im Prototyp auf 1;
@@ -924,7 +924,7 @@ document
   .getElementById("btnReset")
   .addEventListener("click", g.restartGame, false);
 document.getElementById("btnBuild").addEventListener("click", function () {
-  g.entities_.create_tower(220,110);
+  g.entities_.createTower(220,110);
   g.entities_.draw();
 });
 

@@ -8,14 +8,12 @@
 
 //Imports und Instanzerzeugung
 class wave { //Referenz auf Entitiesinstanz von Game übergeben
-    constructor(entities, canvas, ctx) {
+    constructor(entities) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Akt. Wave in-game
         this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
         this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
         this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
-        this.canvas = canvas
-        this.ctx = ctx
     }
 
     update(){ //Update um Klassenvariablen anzupassen
@@ -34,7 +32,7 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
             this.enemySpwanCooldown--
         }
         else{
-            this.entities.create_enemy(this.canvas, this.ctx); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
+            this.entities.createEnemy(1); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
             //Neuen Cooldown random setzten
             this.enemySpwanCooldown = this.getRndInteger(50,500)
             this.amountOfEnemies--
