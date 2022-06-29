@@ -4,12 +4,8 @@
  *
  */
 
-//Imports und Instanzerzeugung
-const helper = require("./Helper");
-var helpers_ = new helper();
-
 class particle {
-  constructor(x, y, damage, closestEnemy) {
+  constructor(x, y, damage, closestEnemy, speed) {
     this.enemy = closestEnemy;
     this.x = x; //Als Startposition Koordinaten des jeweiligen Turms
     this.y = y;
@@ -18,32 +14,13 @@ class particle {
     this.radius = 1;
     this.damage = damage; //Turmschaden
     this.flag = false;
+    this.speed = speed;
   }
 
   update() {
-    //Klassenvariablen updaten
-    if (
-      helpers_.detectCollision(
-        this.x,
-        this.y,
-        this.radius,
-        this.enemy.x,
-        this.enemy.y,
-        this.enemy.radius
-      )
-    ) {
-      this.enemy.hit(this.damage); //Enemy bekommt Schaden übergeben
-      this.flag = true; //Flag, damit Particle entfernt werden kann
-    }
-    this.draw();
     this.x = this.x + this.velocity.x; //Bewegung updaten
     this.y = this.y + this.velocity.y;
     this.calcPathToEnemy(); //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
-  }
-
-  draw() {
-    //Particle jeweils auf canvas zeichnen
-    helpers_.drawCircle(this.x, this.y, this.radius, this.color);
   }
 
   /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden,
@@ -53,8 +30,8 @@ class particle {
     const angle = Math.atan2(this.enemy.y - this.y, this.enemy.x - this.x); //Bestimmt den Winkel zwischen Enemy & Particle
     this.velocity = {
       //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
-      x: 1.3 * Math.cos(angle), //Konstante im Term bestimmt die Geschwindigkeit des Particle
-      y: 1.3 * Math.sin(angle),
+      x: this.speed * Math.cos(angle), //Konstante im Term bestimmt die Geschwindigkeit des Particle
+      y: this.speed * Math.sin(angle),
     };
     this.update; //Position des Particles entsprechend updaten
   }

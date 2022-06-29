@@ -67,6 +67,13 @@ p {
   height: 50px;
   background: black;
   margin-left: 10px;
+  border: 1px solid white;
+}
+#wcount {
+  color: white;
+  position: absolute;
+  top: 20%;
+  left: 50%;
 }
 
 #canvas {

@@ -7,7 +7,7 @@
 //Notiz: Es müsste evtl. noch umgesetzt werden, dass Enemies "häufichenweise" spawnen, also nicht alle hintereinander weg?
 
 class wave {
-    constructor(entities, canvas, ctx) {
+    constructor(entities) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1 //Aktuelle Wave ingame
         this.amountOfEnemies = Math.pow(2, this.currentWave) //Initalwert für Enemyanzahl 2^1 = 2
@@ -15,8 +15,6 @@ class wave {
         this.enemySpawnCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.enemyGroupCoolDown = 0 //Initialwert
         //this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
-        this.canvas = canvas
-        this.ctx = ctx
 
     }
 
@@ -43,7 +41,7 @@ class wave {
                 this.enemySpawnCooldown--;
             }
             else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
-                this.entities.createEnemy(this.canvas, this.ctx);//CreateMethode der EnemyTyp übergeben wird
+                this.entities.createEnemy(enemyStrength);//CreateMethode der EnemyTyp übergeben wird
                 //Neuen Cooldown random setzten
                 this.enemySpawnCooldown = this.getRndInteger(25,200);
                 this.amountOfEnemies--;

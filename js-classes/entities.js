@@ -13,7 +13,7 @@ class Entities {
     this.money = 50;
   }
 
-  newWave = (amountOfEnemies) => {
+  nextWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
     this.win = false; 
@@ -106,7 +106,7 @@ class Entities {
     }
     if (count == this.amountOfEnemies) {
       this.win = true; 
-      confirm("Win");
+      
       return;
     }
 
@@ -124,8 +124,8 @@ class Entities {
     console.log(this.enemyList);
   };
 
-  createTower = (x, y, towerType) => {
-    var tower = new Tower(x, y, towerType);
+  createTower = (x, y, towerType, towerSettings) => {
+    var tower = new Tower(x, y, towerType, towerSettings);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
     console.log(this.towerList);
@@ -192,7 +192,7 @@ class Entities {
             this.towerList[j].particleList[k].enemy.radius
           ) 
         if (bool == true){
-        //Enemy bekommt Schaden übergeben
+        // Enemy bekommt Schaden übergeben
           this.towerList[j].particleList[k].enemy.hit(this.towerList[j].particleList[k].damage); 
           this.towerList[j].particleList[k].flag = true;
           if (this.towerList[j].particleList[k].enemy.dead == true){
