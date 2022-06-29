@@ -17,6 +17,7 @@ class wave {
         //this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
         this.canvas = canvas
         this.ctx = ctx
+
     }
 
     update(){ //Update um Klassenvariablen anzupassen
@@ -49,6 +50,7 @@ class wave {
                 this.enemyGroup--;
             }
         }
+
         else if(this.enemyGroup == 0 && this.enemyGroupCoolDown == 0) {
             //Werte zurücksetzen
             this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann

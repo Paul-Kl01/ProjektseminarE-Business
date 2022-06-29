@@ -1,29 +1,27 @@
-const wave = require("./Wave");
 
-var initialEnemyx = 0;
-var initialEnemyy = 60;
-var dx = 2;
-var dy = 2;
-var waypoints = [];
-var enemyList = [];
-let frame = 0;
-var enemyColor = "red";
-var enemyRadius = 1;
+// var initialEnemyx = 0;
+// var initialEnemyy = 60;
+// var dx = 2;
+// var dy = 2;
+// var waypoints = [];
+// var enemyList = [];
+// let frame = 0;
+// var enemyColor = "red";
+// var enemyRadius = 1;
 
 class enemy {
-  constructor(canvas, ctx, waypoints, startingPoint) {
+  constructor(waypoints, startingPoint, enemyType) {
     this.radius = 5;
     this.color = "red";
     this.status = 1;
     this.speed = 1;
-    this.canvas = canvas;
-    this.ctx = ctx;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.wp1 = false;
     this.wp2 = false;
     this.wp3 = false;
     this.dead = false;
+    this.enemyType = enemyType;
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
@@ -36,15 +34,6 @@ class enemy {
     this.wp3y = this.waypoints[2][1];
     this.wp4x = this.waypoints[3][0];
     this.wp4y = this.waypoints[3][1];
-  }
-
-  reset = () => {
-    this.speed = 1;
-    this.coveredDistance = 0;
-    this.wp1 = false;
-    this.wp2 = false;
-    this.wp3 = false;
-    this.dead = false;
   }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
@@ -134,10 +123,10 @@ class enemy {
 }
 
 // Ersten Enemy erstellen
-function drawEnemy() {
-  enemyList.push(new enemy(0, 60));
-  enemyList[1].this.draw();
-}
+// function drawEnemy() {
+//   enemyList.push(new enemy(0, 60));
+//   enemyList[1].this.draw();
+// }
 
 //Redirect zur Gameover Site
 //Alternative: bool variable die den animation Aufruf stoppt.
