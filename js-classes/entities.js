@@ -13,25 +13,6 @@ class Entities {
     this.money = 50;
   }
 
-  reset = () => {
-    for(let j = 0; j < this.towerList.length; j++) {
-      for(let i = 0; i < this.towerList[j].particleList.length; i++) {
-        this.towerList[j].particleList[i].reset();
-      }
-      this.towerList[j].particleList = []; 
-      this.towerList[j].particleCount = 0; 
-    }
-
-    for (let i = 0; i < this.enemyList.length; i++) {
-      this.enemyList[i].reset();
-    }
-    this.towerList = [];
-    this.enemyList = [];
-    this.win = false;
-    this.enemyCounter = 0;
-    this.towerCounter = 0;
-  }
-
   newWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
@@ -131,13 +112,13 @@ class Entities {
     }
 
     for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
-    this.detect_enemy();
+    this.detectEnemy();
     this.detectHit(); 
 
   };
 
   createEnemy = (enemyType) => {
-    var enemy = new Enemy(this.waypoints, this.startingPoint,enemyType );
+    var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
     console.log(this.enemyList);
@@ -200,7 +181,7 @@ class Entities {
 
   detectHit(){
     for (let j = 0; j < this.towerList.length; j++) {
-      for (let k = 0; k < this.towerList[j].particleList.length; j++) {
+      for (let k = 0; k < this.towerList[j].particleList.length; k++) {
         if (this.towerList[j].particleList[k].flag == true) continue;
         var bool= this.detectCollision(
             this.towerList[j].particleList[k].x,
