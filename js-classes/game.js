@@ -4,7 +4,6 @@ const entitites = require("./entities");
 const events = require("./Events");
 const wave = require("./Wave");
 
-
 /*
  * Bündeln der Klassen
  * @author Constantin
@@ -31,12 +30,19 @@ class game {
       this.remainingLifes;
       this.ressources = 20;
 
-
       // Drop Tower Mode, damit um Mauszeiger gezeichnet werden kann.
       this.dropTowerMode = false;
       // Wenn der Start Game Button gedrückt wurde ändert sich die Flag
       this.startGamePressed = false;
+      this.towerType = 0;
 
+
+      this.pause = false;
+      // Eigenschaften eines Turmes
+      this.towerSettings = [
+         [10, 15, '#1E90FF', 100],
+         [20, 15, '#00bb2d', 100]
+      ];
 
       // Map Variablen
       this.waypoints = [
@@ -64,38 +70,43 @@ class game {
 
    init = () => {
       this.gameRunnning = true;
-      this.wave = new wave(this.entities_, this.canvas, this.ctx);
-      this.entities_.newWave(this.wave.amountOfEnemies);
+      this.wave = new wave(this.entities_);
+      this.entities_.nextWave(this.wave.amountOfEnemies);
       //Leben im Prototyp auf 1;
       if (this.initCounter == 0) this.draw();
       this.initCounter = 1;
-      document.getElementById("wcount").innerHTML = this.waveCounter;
-      this.wave.nextWave();
    };
-
+   
    draw = () => {
       // Animation starten
+      if (this.pause == false) {
       window.requestAnimationFrame(this.draw)
+      
       // Clear Canvas
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       // Map zeichnen
       this.map.draw();
-
+      
       /* EventListening für Maus-Interaktion: */
       this.drawTowerMouse();
-
+      
       // Zeichen aller Entities
       this.entities_.draw();
-
+      
       // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
       if (this.entities_.win == false) {
          if (this.startGamePressed == true) {
             this.entities_.update();
             this.wave.update();
          }
+      } else {        
+         this.wave.nextWave();
+         this.entities_.nextWave(this.wave.amountOfEnemies);
       }
-      // Wave-Counter
-   
+      
+      document.getElementById("wcount").innerHTML = this.wave.currentWave;
+      
+   } 
 
    };
 
@@ -107,14 +118,21 @@ class game {
       if (this.dropTowerMode) {
          this.canvas.addEventListener("mousemove", this.events_.onmove);
          this.canvas.addEventListener("click", this.events_.onclick);
-         this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, 15, "#1E90FF");
-         this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, 100, "rgba(30, 144, 255, 0.2)");
+         if (this.entities_.validatePosition(this.events_.mouse.x,this.events_.mouse.y, this.towerSettings[this.towerType][1]) == false ) {
+            this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, this.towerSettings[this.towerType][1], "#000000");
+            this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, this.towerSettings[this.towerType][3], "rgba(30, 144, 255, 0.2)");         
+         } else {
+            this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, this.towerSettings[this.towerType][1], this.towerSettings[this.towerType][2]);
+            this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, this.towerSettings[this.towerType][3], "rgba(30, 144, 255, 0.2)");
+         }
       }
       if (this.events_.mouse.clicked == true) {
-         this.entities_.create_tower(this.events_.mouse.x, this.events_.mouse.y);
-         this.events_.mouse.clicked = false;
-         this.dropTowerMode = false
-         this.canvas.removeEventListener("click", this.events_.onclick);
+         if (this.entities_.validatePosition(this.events_.mouse.x,this.events_.mouse.y, this.towerSettings[this.towerType][1] ) == true ) {
+            this.entities_.createTower(this.events_.mouse.x, this.events_.mouse.y, 0, this.towerSettings);
+            this.events_.mouse.clicked = false;
+            this.dropTowerMode = false
+            this.canvas.removeEventListener("click", this.events_.onclick);
+         }
       }
    }
 
@@ -138,9 +156,12 @@ class game {
       location.reload();
    };
 
-   pauseGame() {
+   pauseGame = () => {
       /* Timer stoppen, Waves "anhalten"
           at the Moment keine Ahnung wie das implementiert werden soll */
+          this.pause = !this.pause;
+          if (this.pause == false) this.draw();
+         //  window.cancelAnimationFrame(this.draw);
    }
 
    gameOver = () => {
@@ -160,7 +181,7 @@ document
    .addEventListener("click", g.startGame, false);
 document
    .getElementById("btnReset")
-   .addEventListener("click", g.restartGame, false);
+   .addEventListener("click", g.pauseGame, false);
 
 /* Tower Build */
 // count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.
@@ -171,6 +192,7 @@ document.getElementById("btnBuild").addEventListener("click", function() {
       g.init();
       count++;
    }
+   g.towerType = 0;
    g.drawTowerMouse();
    // g.entities_.create_tower(220,110);
    // g.entities_.draw();
