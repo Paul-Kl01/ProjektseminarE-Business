@@ -4,8 +4,6 @@ const entitites = require("./entities");
 const events = require("./Events");
 const wave = require("./Wave");
 
-// Instanzen erstellen
-var events_ = new events();
 
 /*
  * Bündeln der Klassen
@@ -14,137 +12,143 @@ var events_ = new events();
  */
 
 class game {
-  constructor() {
-    // Canvas erstellen
-    this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContext("2d");
+   constructor() {
+      // Canvas erstellen
+      this.canvas = document.getElementById("canvas");
+      this.ctx = this.canvas.getContext("2d");
 
-    this.waveCounter = 0;
-    // DrawList enthält alle Elemente die gezeichnet werden sollen
-    this.drawList = [];
+      this.events_ = new events(this.canvas, this.ctx);
+      this.waveCounter = 0;
+      // Läuft das Spiel?
+      this.gameRunning = false;
+      // Counter für init-Funktion, da sonst Animation-Loop entsteht
+      this.initCounter = 0;
 
-    // Läuft das Spiel?
-    this.gameRunning = false;
+      // Zukunft
+      this.timer;
+      this.mode = 0;
+      this.score = 0;
+      this.remainingLifes;
+      this.ressources = 20;
 
-    // Zukunft
-    this.timer;
-    this.mode = 0;
-    this.score = 0;
-    this.remainingLifes;
-    this.ressources = 0;
-    
 
-    // Event erstellen
-    // this.event = new events(this.canvas, this.ctx);
+      // Drop Tower Mode, damit um Mauszeiger gezeichnet werden kann.
+      this.dropTowerMode = false;
+      // Wenn der Start Game Button gedrückt wurde ändert sich die Flag
+      this.startGamePressed = false;
 
-    // Map Variablen
-    console.log("hio");
-    this.waypoints = [
-      [800, 60],
-      [800, 200],
-      [200, 200],
-      [200, 500],
-    ];
-    this.startingPoint = [0, 60];
 
-    // Map erstellen
-    this.map = new map(
-      "#F08080",
-      "#eee",
-      this.waypoints,
-      this.startingPoint,
-      this.canvas,
-      this.ctx
-    );
+      // Map Variablen
+      this.waypoints = [
+         [800, 60],
+         [800, 200],
+         [200, 200],
+         [200, 500],
+      ];
+      this.startingPoint = [0, 60];
 
-    this.entities_ = new entitites(this.startingPoint, this.waypoints);
-    this.towerCount = this.entities_.towerCounter;
-    this.enemyCount = this.entities_.enemyCounter;
+      // Map erstellen
+      this.map = new map(
+         "#F08080",
+         "#eee",
+         this.waypoints,
+         this.startingPoint,
+         this.canvas,
+         this.ctx
+      );
 
-   
-    //this.wave.initialiseEnemies();
+      this.entities_ = new entitites(this.startingPoint, this.waypoints);
+      this.towerCount = this.entities_.towerCounter;
+      this.enemyCount = this.entities_.enemyCounter;
+   }
 
-    // Turm erstellen
-    // this.entities_.create_tower(70, 100);
-  }
+   init = () => {
+      this.gameRunnning = true;
+      this.wave = new wave(this.entities_, this.canvas, this.ctx);
+      this.entities_.newWave(this.wave.amountOfEnemies);
+      //Leben im Prototyp auf 1;
+      if (this.initCounter == 0) this.draw();
+      this.initCounter = 1;
+      document.getElementById("wcount").innerHTML = this.waveCounter;
+      this.wave.nextWave();
+   };
 
-  init = () => {
-    this.wave = new wave(this.entities_, this.canvas, this.ctx);
-    this.entities_.newWave(this.wave.amountOfEnemies); 
-    
-    //Leben im Prototyp auf 1;
-    this.draw();
-    this.gameRunnning = false;
-  };
+   draw = () => {
+      // Animation starten
+      window.requestAnimationFrame(this.draw)
+      // Clear Canvas
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // Map zeichnen
+      this.map.draw();
 
-  draw = () => {
-    window.requestAnimationFrame(this.draw);
-    // Clear Canvas
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      /* EventListening für Maus-Interaktion: */
+      this.drawTowerMouse();
 
-    // Game.restartGame();
-    // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
-    // for (i = 0, i <= Anzahl Klassen; i++) ...
-    this.map.draw();
-    if(this.entities_.win == false) {
+      // Zeichen aller Entities
       this.entities_.draw();
-      this.entities_.update();
-      this.wave.update();
-    } else {
-      return;
-    }
-    document.getElementById("wcount").innerHTML = this.waveCounter;
-    // this.turret.draw();
-    // this.enemy.draw();
-    // this.enemy.handleEnemy(this.enemyList);
-  };
 
-  update() {
-    //Unklar, ruft eventull update() der anderen Klassen auf.
-    /* In beispiel wurden die Aufrufe der Methoden über eine List geregelt, welche über einen
-            Trigger vervollstäändigt wurden */
-  }
+      // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
+      if (this.entities_.win == false) {
+         if (this.startGamePressed == true) {
+            this.entities_.update();
+            this.wave.update();
+         }
+      }
+      // Wave-Counter
+   
 
-  // Check ob Turm gebaut ist und ob das Spiel schon läuft
-  startGame = () => {
-    if (this.entities_.towerList.length == 0) {
-      confirm("Bau lieber zuerst einen Turm");
-    } else if (this.gameRunning == true) {
-      console.log("spiel läuft");
-    } else {
-      console.log("bin im startgameif");
-      this.waveCounter++;
-      this.init();
-      // this.gameRunning = true;
-    }
-  };
+   };
 
-  // alle Werte 0 setzen, entities löschen
-  // Würde restartMethode in reset umbenennen.
-  restartGame = () => {
-    // Reset Score, WaveCounter, Ressources, timer
-    this.score = 0;
-    this.waveCounter = 0;
-    this.ressources = 0;
-    //this.timer = reset -- muss noch implementiert werden
+   /* EventListening für Maus-Interaktion:
+      Wenn der DropTowerMode True ist, dann wird ein Kreis um den Mauszeiger im Bereich des Canvas gezeichnet
+      Wenn dann geklickt wird, dann wird ein Turm an dieser Stelle gebaut und der EventListener bricht ab.
+     */
+   drawTowerMouse = () => {
+      if (this.dropTowerMode) {
+         this.canvas.addEventListener("mousemove", this.events_.onmove);
+         this.canvas.addEventListener("click", this.events_.onclick);
+         this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, 15, "#1E90FF");
+         this.entities_.drawCircle(this.events_.mouse.x, this.events_.mouse.y, 100, "rgba(30, 144, 255, 0.2)");
+      }
+      if (this.events_.mouse.clicked == true) {
+         this.entities_.create_tower(this.events_.mouse.x, this.events_.mouse.y);
+         this.events_.mouse.clicked = false;
+         this.dropTowerMode = false
+         this.canvas.removeEventListener("click", this.events_.onclick);
+      }
+   }
 
-    //Entities liste leeren
-    location.reload();
+   // Check ob Turm gebaut ist und ob das Spiel schon läuft
+   startGame = () => {
+      if (this.entities_.towerList.length == 0) {
+         confirm("Bau lieber zuerst einen Turm");
+      } else if (this.gameRunning == true) {
+         console.log("spiel läuft");
+      } else {
+         console.log("bin im startgameif");
+         this.startGamePressed = true;
+         this.waveCounter++;
+         this.init();
+         // this.gameRunning = true;
+      }
+   };
 
-    // Entities liste = 0;
-  };
+   // Lädt Seite neu
+   restartGame = () => {
+      location.reload();
+   };
 
-  pauseGame() {
-    /* Timer stoppen, Waves "anhalten"
-        at the Moment keine Ahnung wie das implementiert werden soll */
-  }
+   pauseGame() {
+      /* Timer stoppen, Waves "anhalten"
+          at the Moment keine Ahnung wie das implementiert werden soll */
+   }
 
-  gameOver = () => {
-    if (this.remainigLifes == 0) {
-      this.restartGame();
-      alert("Game Over");
-    }
-  };
+   gameOver = () => {
+      if (this.remainigLifes == 0) {
+         this.restartGame();
+         alert("Game Over");
+      }
+   };
 }
 
 // Neue Instanz des Spiels
@@ -152,14 +156,24 @@ const g = new game();
 
 // Verankerung der Buttons mit den Funktionen
 document
-  .getElementById("btnStart")
-  .addEventListener("click", g.startGame, false);
+   .getElementById("btnStart")
+   .addEventListener("click", g.startGame, false);
 document
-  .getElementById("btnReset")
-  .addEventListener("click", g.restartGame, false);
-document.getElementById("btnBuild").addEventListener("click", function () {
-  g.entities_.create_tower(220,110);
-  g.entities_.draw();
+   .getElementById("btnReset")
+   .addEventListener("click", g.restartGame, false);
+
+/* Tower Build */
+// count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.
+var count = 0;
+document.getElementById("btnBuild").addEventListener("click", function() {
+   g.dropTowerMode = true;
+   if (count == 0) {
+      g.init();
+      count++;
+   }
+   g.drawTowerMouse();
+   // g.entities_.create_tower(220,110);
+   // g.entities_.draw();
 });
 
 // Map beim Laden der Seite einzeichnen

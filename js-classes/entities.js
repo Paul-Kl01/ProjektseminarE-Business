@@ -120,7 +120,6 @@ class Entities {
     if (count == this.amountOfEnemies) {
       this.win = true; 
       confirm("Win");
-      this.reset();
       return;
     }
 
