@@ -14,8 +14,8 @@ class enemy {
     this.radius = 5;
     this.color = "red";
     this.status = 1;
-    this.speed = 1;
-    this.lootDrop = 5;
+    this.speed = 1.25;
+    this.lootDrop = 3;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.wp1 = false;

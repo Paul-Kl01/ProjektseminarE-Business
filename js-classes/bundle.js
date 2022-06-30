@@ -15,8 +15,8 @@ class enemy {
     this.radius = 5;
     this.color = "red";
     this.status = 1;
-    this.speed = 1;
-    this.lootDrop = 5;
+    this.speed = 1.25;
+    this.lootDrop = 3;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.wp1 = false;
@@ -229,16 +229,15 @@ module.exports = particle;
 const particle = require("./Particle");
 
 class tower {
-  constructor(x, y, towerType, towerSettings) {
-    this.price = towerSettings[towerType][0];
-    this.radius = towerSettings[towerType][1];
-    this.color = towerSettings[towerType][2];
-    this.range = towerSettings[towerType][3];
+  constructor(x, y, towerSettings) {
+    this.price = towerSettings[0];
+    this.radius = towerSettings[1];
+    this.color = towerSettings[2];
+    this.range = towerSettings[3];
     this.x = x;
     this.y = y;
-    this.towerType = towerType;
-    this.cooldownLeft = 30;
-    this.cooldown = 120;
+    this.cooldownLeft = 0;
+    this.cooldown = 200;
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
@@ -423,7 +422,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
-    this.money = 50;
+    this.money = 10;
   }
 
   nextWave = (amountOfEnemies) => {
@@ -537,8 +536,8 @@ class Entities {
     console.log(this.enemyList);
   };
 
-  createTower = (x, y, towerType, towerSettings) => {
-    var tower = new Tower(x, y, towerType, towerSettings);
+  createTower = (x, y, towerSettings) => {
+    var tower = new Tower(x, y, towerSettings);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
     console.log(this.towerList);
@@ -595,7 +594,7 @@ class Entities {
   detectHit(){
     for (let j = 0; j < this.towerList.length; j++) {
       for (let k = 0; k < this.towerList[j].particleList.length; k++) {
-        if (this.towerList[j].particleList[k].flag == true) continue;
+        if (this.towerList[j].particleList[k].flag == true || this.towerList[j].particleList[k].enemy.dead == true) continue;
         var bool= this.detectCollision(
             this.towerList[j].particleList[k].x,
             this.towerList[j].particleList[k].y,
@@ -635,8 +634,8 @@ class Entities {
     for (let i = -1; i < this.waypoints.length - 1; i++) {
       //Für Starting Point
       if (i == -1) {
-        var x1 = this.startingPoint[0][0];
-        var y1 = this.startingPoint[0][1];
+        var x1 = this.startingPoint[0];
+        var y1 = this.startingPoint[1];
       }
       //auslesen aktueller/start waypoint x1, y1
       else {
@@ -710,43 +709,45 @@ class game {
       this.canvas = document.getElementById("canvas");
       this.ctx = this.canvas.getContext("2d");
 
-      this.events_ = new events(this.canvas, this.ctx);
-      this.waveCounter = 0;
+      /* Initalisierung der Variablen:
+      */
       // Läuft das Spiel?
       this.gameRunning = false;
       // Counter für init-Funktion, da sonst Animation-Loop entsteht
       this.initCounter = 0;
-
-      // Zukunft
-      this.timer;
-      this.mode = 0;
-      this.score = 0;
+      // Life Counter
       this.remainingLifes;
-      this.ressources = 20;
-
       // Drop Tower Mode, damit um Mauszeiger gezeichnet werden kann.
       this.dropTowerMode = false;
       // Wenn der Start Game Button gedrückt wurde ändert sich die Flag
       this.startGamePressed = false;
+      // Tower Typ
       this.towerType = 0;
-
-
+      // Pause-Flag
       this.pause = false;
+      /* ---------------------------------------------------- */
+
+      // Event Instanz zum Maus-Handling
+      this.events_ = new events(this.canvas, this.ctx);
+ 
       // Eigenschaften eines Turmes
       this.towerSettings = [
-         [10, 15, '#1E90FF', 100],
-         [20, 15, '#00bb2d', 100]
+         [10, 15, '#1E90FF', 100, 120],
+         [20, 15, '#00bb2d', 100, ]
+      // Price, Radius, Color, Range, Cooldown, Damage
       ];
-
+      
       // Map Variablen
       this.waypoints = [
-         [800, 60],
-         [800, 200],
-         [200, 200],
-         [200, 500],
-      ];
+            [800, 60],
+            [800, 200],
+            [200, 200],
+            [200, 500],
+         ]
+         
+      
       this.startingPoint = [0, 60];
-
+      
       // Map erstellen
       this.map = new map(
          "#F08080",
@@ -755,18 +756,18 @@ class game {
          this.startingPoint,
          this.canvas,
          this.ctx
-      );
-
+         );
+         
       this.entities_ = new entitites(this.startingPoint, this.waypoints);
       this.towerCount = this.entities_.towerCounter;
       this.enemyCount = this.entities_.enemyCounter;
+      document.getElementById("coinCount").innerHTML = this.entities_.money;
    }
 
    init = () => {
       this.gameRunnning = true;
       this.wave = new wave(this.entities_);
       this.entities_.nextWave(this.wave.amountOfEnemies);
-      //Leben im Prototyp auf 1;
       if (this.initCounter == 0) this.draw();
       this.initCounter = 1;
    };
@@ -798,8 +799,9 @@ class game {
          this.entities_.nextWave(this.wave.amountOfEnemies);
       }
       
+      // Anzeige von WaveCount und Coins
       document.getElementById("wcount").innerHTML = this.wave.currentWave;
-      
+      document.getElementById("coinCount").innerHTML = this.entities_.money;     
    } 
 
    };
@@ -822,10 +824,13 @@ class game {
       }
       if (this.events_.mouse.clicked == true) {
          if (this.entities_.validatePosition(this.events_.mouse.x,this.events_.mouse.y, this.towerSettings[this.towerType][1] ) == true ) {
-            this.entities_.createTower(this.events_.mouse.x, this.events_.mouse.y, 0, this.towerSettings);
+            this.entities_.createTower(this.events_.mouse.x, this.events_.mouse.y, this.towerSettings[this.towerType]);
             this.events_.mouse.clicked = false;
             this.dropTowerMode = false
             this.canvas.removeEventListener("click", this.events_.onclick);
+         } else {
+            this.canvas.removeEventListener("click", this.events_.onclick);           
+            this.events_.mouse.clicked = false;
          }
       }
    }
@@ -839,7 +844,6 @@ class game {
       } else {
          console.log("bin im startgameif");
          this.startGamePressed = true;
-         this.waveCounter++;
          this.init();
          // this.gameRunning = true;
       }

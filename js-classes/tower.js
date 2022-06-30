@@ -1,16 +1,15 @@
 const particle = require("./Particle");
 
 class tower {
-  constructor(x, y, towerType, towerSettings) {
-    this.price = towerSettings[towerType][0];
-    this.radius = towerSettings[towerType][1];
-    this.color = towerSettings[towerType][2];
-    this.range = towerSettings[towerType][3];
+  constructor(x, y, towerSettings) {
+    this.price = towerSettings[0];
+    this.radius = towerSettings[1];
+    this.color = towerSettings[2];
+    this.range = towerSettings[3];
     this.x = x;
     this.y = y;
-    this.towerType = towerType;
-    this.cooldownLeft = 30;
-    this.cooldown = 120;
+    this.cooldownLeft = 0;
+    this.cooldown = 200;
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';

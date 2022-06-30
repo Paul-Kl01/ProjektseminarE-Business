@@ -10,7 +10,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
-    this.money = 50;
+    this.money = 10;
   }
 
   nextWave = (amountOfEnemies) => {
@@ -124,8 +124,8 @@ class Entities {
     console.log(this.enemyList);
   };
 
-  createTower = (x, y, towerType, towerSettings) => {
-    var tower = new Tower(x, y, towerType, towerSettings);
+  createTower = (x, y, towerSettings) => {
+    var tower = new Tower(x, y, towerSettings);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
     console.log(this.towerList);
@@ -182,7 +182,7 @@ class Entities {
   detectHit(){
     for (let j = 0; j < this.towerList.length; j++) {
       for (let k = 0; k < this.towerList[j].particleList.length; k++) {
-        if (this.towerList[j].particleList[k].flag == true) continue;
+        if (this.towerList[j].particleList[k].flag == true || this.towerList[j].particleList[k].enemy.dead == true) continue;
         var bool= this.detectCollision(
             this.towerList[j].particleList[k].x,
             this.towerList[j].particleList[k].y,
@@ -222,8 +222,8 @@ class Entities {
     for (let i = -1; i < this.waypoints.length - 1; i++) {
       //Für Starting Point
       if (i == -1) {
-        var x1 = this.startingPoint[0][0];
-        var y1 = this.startingPoint[0][1];
+        var x1 = this.startingPoint[0];
+        var y1 = this.startingPoint[1];
       }
       //auslesen aktueller/start waypoint x1, y1
       else {
