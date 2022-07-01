@@ -31,7 +31,7 @@ class tower {
   shoot = (enemy, amount = 1) => {
     // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
     for (var i = 1; i <= amount; i++) {
-      var particle_ = new particle(this.x, this.y, this.damage, enemy, this.speed);
+      var particle_ = new particle(this.x, this.y, this.damage, enemy, this.speed, this.range);
       var id = this.particleCount++;
       this.particleList[id] = particle_;
       console.log(this.particleList);
