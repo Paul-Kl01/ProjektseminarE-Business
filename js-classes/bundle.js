@@ -959,6 +959,28 @@ function outsideClick(e) {
   }
 }
 
+// Button Dropdown
+const buildTower = document.querySelector("#btnBuild");
+
+buildTower.addEventListener("click", myFunction);
+
+function myFunction() {
+  document.querySelector("#dropdown").classList.toggle("show");
+}
+
+window.onclick = function (event) {
+  if (!event.target.matches(".dropbtn")) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains("show")) {
+        openDropdown.classList.remove("show");
+      }
+    }
+  }
+};
+
 },{"./Events":2,"./Wave":5,"./entities":6,"./map":8}],8:[function(require,module,exports){
 /*
  * Spielflaeche erzeugen
