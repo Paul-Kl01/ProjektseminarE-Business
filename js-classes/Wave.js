@@ -3,9 +3,6 @@
  * @author Nicole
  *
  */
-
-//Notiz: Es müsste evtl. noch umgesetzt werden, dass Enemies "häufichenweise" spawnen, also nicht alle hintereinander weg?
-
 class wave {
     constructor(entities) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
