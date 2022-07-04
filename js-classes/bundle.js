@@ -919,7 +919,7 @@ document
 /* Tower Build */
 // count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.
 var count = 0;
-document.getElementById("btnBuild").addEventListener("click", function () {
+document.getElementById("d1").addEventListener("click", function () {
   g.dropTowerMode = true;
   if (count == 0) {
     g.init();
@@ -930,12 +930,26 @@ document.getElementById("btnBuild").addEventListener("click", function () {
   // g.entities_.create_tower(220,110);
   // g.entities_.draw();
 });
+document.getElementById("d2").addEventListener("click", function () {
+  g.dropTowerMode = true;
+  if (count == 0) {
+    g.init();
+    count++;
+  }
+  g.towerType = 1;
+  g.drawTowerMouse();
+  // g.entities_.create_tower(220,110);
+  // g.entities_.draw();
+});
+
+
+
+
 
 // Pop Up laden
-window.onload = openModal;
-
 // Map beim Laden der Seite einzeichnen
-window.onload = g.map.draw;
+window.addEventListener("load", g.map.draw);
+window.addEventListener("load", openModal);
 
 // Pop Up Rules
 const modal = document.querySelector("#modal");
@@ -958,23 +972,34 @@ function outsideClick(e) {
   if (e.target == modal) {
     modal.style.display = "none";
   }
+}
+
+function test(e) {
   if (e.target == buildTower) {
     buildTower.style.display = "none";
+  } else {
+    buildTower.style.display = "block";
   }
 }
 
 // Button Dropdown
 const buildTower = document.querySelector("#btnBuild");
+const pause = document.querySelector("#btnStart");
+const start = document.querySelector("#btnReset");
 const d1 = document.querySelector("#d1");
 const d2 = document.querySelector("#d2");
 
 buildTower.addEventListener("click", toggle);
+buildTower.addEventListener("click", test);
 
 d1.addEventListener("click", close);
 d2.addEventListener("click", close);
 
 function close() {
   buildTower.style.display = "block";
+  start.style.display = "flex";
+  pause.style.display = "flex";
+
 }
 
 function toggle() {
