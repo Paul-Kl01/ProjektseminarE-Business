@@ -737,7 +737,7 @@ class game {
       // Price, Radius, Color, Range, Cooldown, Damage
     ];
 
-    // Map Variablen
+    // Map Waypoints
     this.waypoints = [
       [800, 60],
       [800, 200],
@@ -745,6 +745,7 @@ class game {
       [200, 500],
     ];
 
+    // Map StartingPoints
     this.startingPoint = [0, 60];
 
     // Map erstellen
@@ -956,8 +957,9 @@ function closeModal() {
 function outsideClick(e) {
   if (e.target == modal) {
     modal.style.display = "none";
-    d1.classList.toggle("show");
-    d2.classList.toggle("show");
+  }
+  if (e.target == buildTower) {
+    buildTower.style.display = "none";
   }
 }
 
@@ -966,9 +968,16 @@ const buildTower = document.querySelector("#btnBuild");
 const d1 = document.querySelector("#d1");
 const d2 = document.querySelector("#d2");
 
-buildTower.addEventListener("click", myFunction);
+buildTower.addEventListener("click", toggle);
 
-function myFunction() {
+d1.addEventListener("click", close);
+d2.addEventListener("click", close);
+
+function close() {
+  buildTower.style.display = "block";
+}
+
+function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 }
 

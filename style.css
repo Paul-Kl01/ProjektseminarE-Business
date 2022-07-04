@@ -188,3 +188,7 @@ p {
 .show {
   display: block;
 }
+
+#btnBuild {
+  display: block;
+}
