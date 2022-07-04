@@ -48,7 +48,7 @@ class particle {
   inRange(x1,y1,r1,x2,y2,r2) {
     var a = x1 - (x2);
     var b = y1 - (y2);
-    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 50) { //Der Wert 50 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
+    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 100) { //Der Wert 100 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
       return true;
     }
     return false;
