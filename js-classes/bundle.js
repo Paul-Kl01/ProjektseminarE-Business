@@ -956,11 +956,15 @@ function closeModal() {
 function outsideClick(e) {
   if (e.target == modal) {
     modal.style.display = "none";
+    d1.classList.toggle("show");
+    d2.classList.toggle("show");
   }
 }
 
 // Button Dropdown
 const buildTower = document.querySelector("#btnBuild");
+const d1 = document.querySelector("#d1");
+const d2 = document.querySelector("#d2");
 
 buildTower.addEventListener("click", myFunction);
 
