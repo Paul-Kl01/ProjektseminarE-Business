@@ -32,6 +32,9 @@ class game {
     this.towerType = 0;
     // Pause-Flag
     this.pause = false;
+    // Map-Typ (0 = default)
+    this.mapType = 0;
+    this.map;
     /* ---------------------------------------------------- */
 
     // Event Instanz zum Maus-Handling
@@ -44,31 +47,9 @@ class game {
       // Price, Radius, Color, Range, Cooldown, Damage
     ];
 
-    // Map Waypoints
-    this.waypoints = [
-      [800, 60],
-      [800, 200],
-      [200, 200],
-      [200, 500],
-    ];
+    // MapTyp unterscheidung, falls Schwer, sonst default
 
-    // Map StartingPoints
-    this.startingPoint = [0, 60];
 
-    // Map erstellen
-    this.map = new map(
-      "#F08080",
-      "#eee",
-      this.waypoints,
-      this.startingPoint,
-      this.canvas,
-      this.ctx
-    );
-
-    this.entities_ = new entitites(this.startingPoint, this.waypoints);
-    this.towerCount = this.entities_.towerCounter;
-    this.enemyCount = this.entities_.enemyCounter;
-    document.getElementById("coinCount").innerHTML = this.entities_.money;
   }
 
   init = () => {
@@ -78,7 +59,47 @@ class game {
     if (this.initCounter == 0) this.draw();
     this.initCounter = 1;
   };
+  
+  // Create Map zur Unterscheidung der Map Typen
+  createMap = (mapType) => {
+    if (mapType == 1) {
+      this.waypoints = [
+        [800, 60],
+        [800, 220],
+        [200, 150],
+        [200, 200],
+      ];
+      // Map StartingPoints
+      this.startingPoint = [0, 60];
+    } else {
+      // Map Waypoints
+      this.waypoints = [
+        [800, 60],
+        [800, 200],
+        [200, 200],
+        [200, 500],
+      ];
+  
+      // Map StartingPoints
+      this.startingPoint = [0, 60];
+    }
+    // Map erstellen
+    this.map = new map(
+      "#F08080",
+      "#eee",
+      this.waypoints,
+      this.startingPoint,
+      this.canvas,
+      this.ctx
+    );
+    this.map.draw();
 
+    // Konstruktor von Entities kann erst aufgerufen werden, wenn die Map erstellt ist
+    this.entities_ = new entitites(this.startingPoint, this.waypoints);
+    this.towerCount = this.entities_.towerCounter;
+    this.enemyCount = this.entities_.enemyCounter;
+    document.getElementById("coinCount").innerHTML = this.entities_.money;
+  }
   draw = () => {
     // Animation starten
     if (this.pause == false) {
@@ -248,6 +269,12 @@ document.getElementById("d2").addEventListener("click", function () {
   // g.entities_.create_tower(220,110);
   // g.entities_.draw();
 });
+document.getElementById("mapAuswahl").addEventListener("click", function () {
+  g.mapType = 1;
+  g.createMap(g.mapType);
+  console.log(g.map);
+  g.map.draw;
+});
 
 
 
@@ -255,7 +282,7 @@ document.getElementById("d2").addEventListener("click", function () {
 
 // Pop Up laden
 // Map beim Laden der Seite einzeichnen
-window.addEventListener("load", g.map.draw);
+window.addEventListener("load", g.createMap(g.mapType));
 window.addEventListener("load", openModal);
 
 // Pop Up Rules
