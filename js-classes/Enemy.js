@@ -1,14 +1,15 @@
 const wave = require("./Wave");
 
-var initialEnemyx = 0;
-var initialEnemyy = 60;
-var dx = 2;
-var dy = 2;
-var waypoints = [];
-var enemyList = [];
-let frame = 0;
-var enemyColor = "red";
-var enemyRadius = 1;
+//var initialEnemyx = 0;
+//var initialEnemyy = 60;
+// var dx = 2;
+// var dy = 2;
+// var waypoints = [];
+// var enemyList = [];
+// let frame = 0;
+//var enemyColor = "red";
+//var enemyRadius = 1;
+
 
 class enemy {
   constructor(canvas, ctx, waypoints, startingPoint) {
@@ -16,17 +17,22 @@ class enemy {
     this.color = "red";
     this.status = 1;
     this.speed = 1;
-    this.canvas = canvas;
+    this.maxHealth = 3;
+    this.remainingLife = maxHealth;
+    this.futureDamage;
+    /*this.canvas = canvas;
     this.ctx = ctx;
-    this.waypoints = waypoints;
+    this.waypoints = waypoints;*/
     this.startingPoint = startingPoint;
-    this.wp1 = false;
-    this.wp2 = false;
-    this.wp3 = false;
     this.dead = false;
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
+    this.waypoints = waypoints;
+
+    this.wp1 = false;
+    this.wp2 = false;
+    this.wp3 = false;
 
     this.wp1x = this.waypoints[0][0];
     this.wp1y = this.waypoints[0][1];
@@ -36,6 +42,15 @@ class enemy {
     this.wp3y = this.waypoints[2][1];
     this.wp4x = this.waypoints[3][0];
     this.wp4y = this.waypoints[3][1];
+
+    for(let i =1; i <= this.waypoints.length; i++){
+      this["wpx" + i] = waypoints[i][0];
+      this["wpy" + i] = waypoints[i][1];
+    }
+
+    for(let i = 1; i <= this.waypoints-length; i++){
+      eval("wp"+i) = false;
+    }
   }
 
   reset = () => {
@@ -67,6 +82,8 @@ class enemy {
       this.y += this.speed;
       this.coveredDistance += this.speed;
     }
+
+    
   }
 
   draw() {
@@ -88,6 +105,8 @@ class enemy {
       this.update();
       // this.draw();
 
+
+
       //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
 
       if (this.x == this.wp1x && this.y == this.wp1y) {
@@ -100,6 +119,7 @@ class enemy {
         this.wp3 = true;
       }
 
+
       // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
       //Koordinaten Hard coded für Prototyp
       if (
@@ -109,27 +129,17 @@ class enemy {
         GameOver;
       }
 
-      // Konstant neue Gegner erzeugen
-      // if (frame % 100 === 0) {
-      //   enemyList.push(new enemy(0, 60));
-      // }
 
-      //Kollisionsprüfung von Gegner mit Partikel Platzhalter
-      // if (this.detectCollision == true) {
-      //   this.status = 0; //
-      //   //enemyList health - x
-      //   //hier würde Schaden übergeben
-      // }
+
       
-      // //Gegner aus dem Arraay löschen 'töten'
-      // if (this.status == 0) {
-      //   enemyList.splice(i, 1);
-      //   i--;
-      // }
+
     
   }
   hit(damage) {
-    this.dead = true;
+    this.remainingLife -= damage;
+    if (this.remainingLife = 0){
+        this.dead = true;
+      }
   }
 }
 
