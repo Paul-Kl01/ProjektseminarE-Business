@@ -234,7 +234,7 @@ class particle {
   inRange(x1,y1,r1,x2,y2,r2) {
     var a = x1 - (x2);
     var b = y1 - (y2);
-    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 50) { //Der Wert 50 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
+    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 100) { //Der Wert 50 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
       return true;
     }
     return false;
@@ -346,7 +346,7 @@ class wave {
     constructor(entities) {
         this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.currentWave = 1; //Aktuelle Wave ingame
-        this.amountOfEnemies = Math.pow(2, this.currentWave); //Initalwert für Enemyanzahl 2^1 = 2
+        this.amountOfEnemies = 1; //Initalwert für Enemyanzahl
         this.enemyGroup = 6;
         this.enemySpawnCooldown = 1; //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.enemyGroupCoolDown = 0; //Initialwert
@@ -355,21 +355,25 @@ class wave {
         this.currentMinCooldown = 50;
         this.currentMaxCooldown = 400;
         this.cooldownDecrement = 5;
-        //this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
-
+        this.amountOfBosses = 0; //Wie viele Bosskämpfe in der aktuellen Welle
+        this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
     }
 
     update(){ //Update um Klassenvariablen anzupassen
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             if(this.currentWave > 5) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
-                this.initialiseEnemies(this.getRndInteger(0,2)); //Erstmal Typ 0,1 & 2, sind das zu viele oder zu wenige Typen?
+                this.initialiseEnemies(this.getRndInteger(1,2)); //Erstmal Typ 0,1 & 2
             }
             else {this.initialiseEnemies();}
+            if(this.currentWave % 10 == 0 && this.amountOfBosses > 0) {
+                this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
+                this.amountOfBosses--;
+            }
         }
     }
 
-    initialiseEnemies(enemyStrength = 0) { //Typ 1 als default Enemy, Typ 0 = Boss
+    initialiseEnemies(enemyStrength = 1) { //Typ 1 als default Enemy, da Typ 0 = Boss
     //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
         if(this.enemyGroup > 0 && this.enemyGroupCoolDown == 0) { //Enemies dürfen ganz normal gespawnt werden
             if(this.enemySpawnCooldown > 0) {
@@ -399,6 +403,10 @@ class wave {
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
 
+        if(this.currentWave % 10 == 0) {
+            this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen
+        }
+
         //Cooldown für Enemies verringern
         if(this.currentMaxCooldown > this.maxCooldown) {
             this.currentMaxCooldown = this.currentMaxCooldown - this.cooldownDecrement;
@@ -408,7 +416,7 @@ class wave {
         }
         this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
         
-        this.amountOfEnemies = Math.pow(2, this.currentWave); // 2^(currentWave)
+        this.amountOfEnemies = Math.pow((this.currentWave - 1),2); //(currentWave -1)^2
         this.enemyGroupCoolDown = 0;
         this.enemyGroup = 6;
         
