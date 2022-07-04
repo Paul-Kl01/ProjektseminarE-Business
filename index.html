@@ -6,21 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tower Defense</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <section id="game">
       <div class="gui">
         <div class="buttons">
+          <!-- Pop Up -->
+          <button id="btnModal" class="button">Rules</button>
+          <div id="modal" class="modal">
+            <div class="modal-content">
+              <div class="modal-body">
+                <span class="close">&times;</span>
+                <p>
+                  1. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </p>
+                <p>
+                  1. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </p>
+                <p>
+                  1. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </p>
+                <p>
+                  1. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </p>
+                <p>
+                  1. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Buttons -->
           <div id="money">
             <p>Coins</p>
-            <p id="coinCount"""></p>
+            <p id="coinCount"></p>
           </div>
           <button id="btnStart">Start Game</button>
           <button id="btnReset">Pause Game</button>
-          <button id="btnBuild">Build Tower</button>
+          <button id="btnBuild" class="dropbtn">Build Tower</button>
+          <div id="dropdown" class="dropdown-content">
+            <button id="d1">Tower1</button>
+            <button id="d2">Tower2</button>
+          </div>
           <div id="waveCounter">
             <p id="headWave">Welle</p>
             <p id="wcount"></p>
@@ -29,7 +61,6 @@
         <canvas id="canvas" width="1000px" height="500px"></canvas>
       </div>
     </section>
-
     <script src="./js-classes/bundle.js"></script>
   </body>
 </html>
