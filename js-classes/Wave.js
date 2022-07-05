@@ -24,7 +24,7 @@ class wave {
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             if(this.currentWave > 5) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
-                this.initialiseEnemies(this.getRndInteger(1,2)); //Erstmal Typ 0,1 & 2
+                this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
             }
             else {this.initialiseEnemies();}
             if(this.currentWave % 10 == 0 && this.amountOfBosses > 0) {
