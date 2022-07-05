@@ -77,7 +77,7 @@ class wave {
         }
         this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
         
-        this.amountOfEnemies = Math.pow((this.currentWave - 1),2); //(currentWave -1)^2
+        this.amountOfEnemies = Math.pow((this.currentWave),2); //(currentWave)^2
         this.enemyGroupCoolDown = 0;
         this.enemyGroup = 6;
         
