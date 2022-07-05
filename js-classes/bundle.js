@@ -1,73 +1,80 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const wave = require("./Wave");
-
-var initialEnemyx = 0;
-var initialEnemyy = 60;
-var dx = 2;
-var dy = 2;
-var waypoints = [];
-var enemyList = [];
-let frame = 0;
-var enemyColor = "red";
-var enemyRadius = 1;
-
 class enemy {
-  constructor(canvas, ctx, waypoints, startingPoint) {
-    this.radius = 5;
-    this.color = "red";
-    this.status = 1;
-    this.speed = 1;
-    this.canvas = canvas;
-    this.ctx = ctx;
+  constructor(waypoints, startingPoint, enemyType) {
+    this.enemySettings= [[15,"gold",1,20,20],
+                [5,"red",1,3,3],
+                [3,"orange",2,4,1],
+                [7,"purple",1,5,5]];
+    //radius, color, speed, lootDrop, Health
+    //erster Eintrag ist Boss Gegner
+    this.enemyType = enemyType;
+    this.radius = this.enemySettings[this.enemyType][0];
+    this.color = this.enemySettings[this.enemyType][1];
+    this.speed = this.enemySettings[this.enemyType][2];
+    this.lootDrop = this.enemySettings[this.enemyType][3];
+    this.Health = this.enemySettings[this.enemyType][4];
+    this.remainingLife = this.Health;
+    this.futureDamage = 0;
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
-    this.wp1 = false;
-    this.wp2 = false;
-    this.wp3 = false;
+    this.lastwp = -1;
     this.dead = false;
+    this.reached = false;
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
 
-    this.wp1x = this.waypoints[0][0];
-    this.wp1y = this.waypoints[0][1];
-    this.wp2x = this.waypoints[1][0];
-    this.wp2y = this.waypoints[1][1];
-    this.wp3x = this.waypoints[2][0];
-    this.wp3y = this.waypoints[2][1];
-    this.wp4x = this.waypoints[3][0];
-    this.wp4y = this.waypoints[3][1];
   }
 
-  reset = () => {
-    this.speed = 1;
-    this.coveredDistance = 0;
-    this.wp1 = false;
-    this.wp2 = false;
-    this.wp3 = false;
-    this.dead = false;
-  }
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
   update() {
-    if (this.wp1 == false) {
-      this.x += this.speed;
-      this.coveredDistance += this.speed;
+
+    if (this.lastwp == -1) {
+      var x1 = this.startingPoint[0];
+      var y1 = this.startingPoint[1];
     }
-    if (this.wp1 == true && this.wp2 == false) {
-      this.y += this.speed;
-      this.coveredDistance += this.speed;
+    //auslesen aktueller/start waypoint x1, y1
+    else {
+      var x1 = this.waypoints[this.lastwp][0];
+      var y1 = this.waypoints[this.lastwp][1];
     }
 
-    if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
-      this.x -= this.speed;
-      this.coveredDistance += this.speed;
-    }
+    //auslesen nächster waypint i+1
+    var x2 = this.waypoints[this.lastwp + 1][0];
+    var y2 = this.waypoints[this.lastwp + 1][1];
 
-    if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
-      this.y += this.speed;
-      this.coveredDistance += this.speed;
-    }
+
+    
+
+      if(x1 < x2){ //rechts
+        this.x += this.speed;
+        this.coveredDistance += this.speed;
+      }
+      if(x1 > x2){ //links
+        this.x -= this.speed;
+        this.coveredDistance += this.speed;
+      }
+      if(y1 < y2){ //oben
+        this.y += this.speed;
+        this.coveredDistance += this.speed;
+      }
+      if(y1 > y2){ //unten
+        this.y -= this.speed;
+        this.coveredDistance += this.speed;
+
+      }
+      if(this.x == x2 && this.y == y2){
+        this.lastwp += 1;
+      }
+
+      if (this.lastwp == this.waypoints.length-1) {
+        this.reached = true;
+        this.dead = true;
+
+      }
+
+    
   }
 
   draw() {
@@ -78,305 +85,165 @@ class enemy {
     this.ctx.fill();
     this.ctx.closePath();
   }
-
-  // Logik
-  handleEnemy() {
-    // console.log("handle", enemyList);
-    // if (enemyList.length == 0) {
-    //   this.drawEnemy;
-    // }
-
-      this.update();
-      // this.draw();
-
-      //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
-
-      if (this.x == this.wp1x && this.y == this.wp1y) {
-        this.wp1 = true;
-      }
-      if (this.x == this.wp2x && this.y == this.wp2y) {
-        this.wp2 = true;
-      }
-      if (this.x == this.wp3x && this.y == this.wp3y) {
-        this.wp3 = true;
-      }
-
-      // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
-      //Koordinaten Hard coded für Prototyp
-      if (
-        this.x + this.radius == 200 &&
-        this.x + this.radius == 500
-      ) {
-        GameOver;
-      }
-
-      // Konstant neue Gegner erzeugen
-      // if (frame % 100 === 0) {
-      //   enemyList.push(new enemy(0, 60));
-      // }
-
-      //Kollisionsprüfung von Gegner mit Partikel Platzhalter
-      // if (this.detectCollision == true) {
-      //   this.status = 0; //
-      //   //enemyList health - x
-      //   //hier würde Schaden übergeben
-      // }
-      
-      // //Gegner aus dem Arraay löschen 'töten'
-      // if (this.status == 0) {
-      //   enemyList.splice(i, 1);
-      //   i--;
-      // }
-    
-  }
   hit(damage) {
-    this.dead = true;
+    this.remainingLife -= damage;
+    if(this.remainingLife <= 0){
+      this.dead = true;
+      this.futureDamage -= damage;
+    }
+
   }
 }
 
-// Ersten Enemy erstellen
-function drawEnemy() {
-  enemyList.push(new enemy(0, 60));
-  enemyList[1].this.draw();
-}
-
-//Redirect zur Gameover Site
-//Alternative: bool variable die den animation Aufruf stoppt.
-function GameOver() {
-  window.location.replace(gameover.html);
-  clearInterval(interval);
-}
 
 module.exports = enemy;
 
-},{"./Wave":6}],2:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 class events {
   constructor(canvas, context) {
     this.canvas = canvas;
     this.context = context;
-    // this.mouse = {
-    //   x: 0,
-    //   y: 0,
-    //   clicked: false    
-    // }
+    this.rect = canvas.getBoundingClientRect();
+    this.scaleX = this.canvas.width / this.rect.width;
+    this.scaleY = this.canvas.height / this.rect.height;
+    this.mouse = {
+      x: 0,
+      y: 0,
+      clicked: false, 
+    }
   }
-    // onmove = (event) => {
-    //   this.mouse.x = event.offsetX;
-    //   this.mouse.y = event.offsetY;
-    // }
+    onmove = (e) => {
+      this.mouse.x = (e.clientX - this.rect.left) * this.scaleX
+      this.mouse.y = (e.clientY - this.rect.top) * this.scaleY
+    }
 
-    //  onclick = (e) => {
-    //   this.mouse.clicked = true;
-    // }
+     onclick = (e) => {
+      this.mouse.clicked = true;
+    }
 
-    // update = () => {
-    //   this.mouse.clicked = false;
-    // }
+    update = () => {
+      this.mouse.clicked = false;
+    }
   
 
 
-  getMousePosition = () => {
-    canvas.addEventListener("mousemove", function (e) {
-      console.log("Test");
-      var cRect = canvas.getBoundingClientRect(); // Gets CSS pos, and width/height
-      var canvasX = Math.round(e.clientX - cRect.left); // Subtract the 'left' of the canvas
-      var canvasY = Math.round(e.clientY - cRect.top); // from the X/Y positions to make
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // (0,0) the top left of the canvas
-      ctx.fillText("X: " + canvasX + ", Y: " + canvasY, 10, 20);
-      console.log(canvasX, canvasY);
-    });
-  };
+//   getMousePosition = () => {
+//     canvas.addEventListener("mousemove", function (e) {
+//       console.log("Test");
+//       var cRect = canvas.getBoundingClientRect(); // Gets CSS pos, and width/height
+//       var canvasX = Math.round(e.clientX - cRect.left); // Subtract the 'left' of the canvas
+//       var canvasY = Math.round(e.clientY - cRect.top); // from the X/Y positions to make
+//       ctx.clearRect(0, 0, canvas.width, canvas.height); // (0,0) the top left of the canvas
+//       ctx.fillText("X: " + canvasX + ", Y: " + canvasY, 10, 20);
+//       console.log(canvasX, canvasY);
+//     });
+//   };
 }
 
 module.exports = events;
 
 },{}],3:[function(require,module,exports){
-class Helper {
-  //constructor(canvas,ctx ){
-  //this.canvas = canvas;
-  //this.ctx = ctx;
-  //}
-  //constructor(){
-  //this.canvas = document.getElementById("canvas");
-  //this.ctx = this.canvas.getContext("2d");
-  //}
-
-  //detectDistance(x1,y1,x2,y2){
-  detectDistance(x1, y1, x2, y2) {
-    //Abstand zwischen zwei Punkten d = Wurzel( (x1-x2)^2 + (y1-y2)^2 )
-    var a = x1 - x2;
-    var b = y1 - y2;
-    return Math.sqrt(a * a + b * b);
-  }
-
-  //detectCollision(x1,y1,r1,x2,y2,r2){
-  detectCollision(x1, y1, r1, x2, y2, r2) {
-    //wenn der abstand zw. den beiden Mittelpunkten
-    //kleiner/gleich die Summer der beiden Radien -> return true
-
-    var distance = this.detectDistance(x1, y1, x2, y2);
-    if (distance <= r1 + r2) {
-      return true;
-    }
-    return false;
-  }
-
-  drawCircle(x, y, radius, color) {
-    //Kreis zeichnen für Anzeige Reichweite/GameObjects
-    //mit Koordinaten x,y ; Radius;  Farbe
-
-    //jedes Mal Holen Canavas, ctx oder im Konstruktor übergeben
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
-
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    ctx.fill();
-    ctx.closePath();
-  }
-
-  //drawCircle = (x, y, radius, color) => {
-  //this.ctx.beginPath();
-  //this.ctx.fillStyle = color;
-  //this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  //this.ctx.fill();
-  //this.ctx.closePath();
-  //}
-}
-module.exports = Helper;
-
-},{}],4:[function(require,module,exports){
 /*
  * Partikelerzeugung zum Abschießen der Enemies
  * @author Nicole
  *
  */
-
-//Imports und Instanzerzeugung
-// const gameObject = require('./GameObject')
-// const enemy = require("./Enemy");
-const helper = require("./Helper");
-var helpers_ = new helper();
-
 class particle {
-  //eigene Klassen-Referenz auf canvas & context, da auf Game kein Zugriff
-  // canvas = document.getElementById("canvas");
-  // ctx = this.canvas.getContext("2d");
-
-  constructor(x, y, damage, closestEnemy) {
-    //Über tower.js aufzurufen
-    //eventuell Referenz auf Tower übergeben und daraus die Koordinaten ziehen, wegen dem Exportieren & Importieren von Klasse?
-    this.enemy = closestEnemy; //wahrscheinlich unnötig?
+  constructor(x, y, damage, closestEnemy, speed, range) {
+    this.enemy = closestEnemy;
     this.x = x; //Als Startposition Koordinaten des jeweiligen Turms
     this.y = y;
-    this.velocity = { x: 0, y: 0 };
+    this.velocity = { x: speed, y: speed };
     this.color = "#483d8b";
     this.radius = 1;
     this.damage = damage; //Turmschaden
     this.flag = false;
-  }
-  reset = () => {
-    this.velocity = { x: 0, y: 0 };
+    this.speed = speed;
+    this.towerX = x;
+    this.towerY = y;
+    this.towerRange = range;
   }
 
   update() {
-    //Klassenvariablen updaten
-    if (
-      helpers_.detectCollision(
-        this.x,
-        this.y,
-        this.radius,
-        this.enemy.x,
-        this.enemy.y,
-        this.enemy.radius
-      )
-    ) {
-      this.enemy.hit(this.damage); //Enemy bekommt Schaden übergeben
-      this.flag = true;
-      //Anschließend muss Partikel entfernt werden
-    }
-    this.draw();
     this.x = this.x + this.velocity.x; //Bewegung updaten
     this.y = this.y + this.velocity.y;
-    //Geschwindigkeit, mit der sich Partikel bewegt evtl. erhöhen
-    //Dafür Multiplikation mit Skalar
-    this.calcPathToEnemy(); //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
+    if(this.inRange(this.x,this.y,this.radius,this.towerX,this.towerY,this.towerRange)) {
+      this.calcPathToEnemy(); //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
+    }
+    else{
+      this.flag = true; //Flag wird gesetzt sobald Particle zu weit aus der TowerRange raus ist
+    }
   }
 
-  draw() {
-    //Particle jeweils auf canvas zeichnen
-    helpers_.drawCircle(this.x, this.y, this.radius, this.color);
-  }
-
-  //Partikel als "Laser" sorgt dafür, dass mein restlichen Code direkt vollkommen unnötig wird,
-  //man bräuchte nur noch diese eine Methode & Konstruktor
-  // pathToEnemy = () => {
-  //     //Partikel als "Laser" implementieren
-  //     this.ctx.save()
-  //     this.ctx.beginPath()
-  //     this.ctx.strokeStyle = 'white';
-  // 	this.ctx.lineWidth = 1;
-  //     this.ctx.moveTo(this.x, this.y);
-  // 	this.ctx.lineTo(this.enemy.x, this.enemy.y);
-  // 	this.ctx.stroke();
-  // 	this.ctx.restore();
-  //     this.update;
-  // }
-
-  /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden
-   *Bis Enemy getroffen wurde vom Particle
+  /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden,
+   *bis Enemy getroffen wurde vom Particle
    */
   calcPathToEnemy() {
-    //Müsste im Rahmen der TowerKlasse nach Konsturktor-Aufruf des Particles einmal initial aufgerufen werden
     const angle = Math.atan2(this.enemy.y - this.y, this.enemy.x - this.x); //Bestimmt den Winkel zwischen Enemy & Particle
     this.velocity = {
       //Bestimmt Ratio anhand welcher Particle zum Enemy gepusht wird und speichert dies in der velocity
-      x: 1.3 * Math.cos(angle),
-      y: 1.3 * Math.sin(angle),
+      x: this.speed * Math.cos(angle), //Konstante this.speed bestimmt die Geschwindigkeit des Particle
+      y: this.speed * Math.sin(angle),
     };
     this.update; //Position des Particles entsprechend updaten
+  }
+
+  //Stellt sicher, dass Particle nicht zu weit außerhalb der TowerRange existieren kann
+  //1 -> Particle , 2 -> TowerRange
+  inRange(x1,y1,r1,x2,y2,r2) {
+    var a = x1 - (x2);
+    var b = y1 - (y2);
+    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 50) { //Der Wert 50 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
+      return true;
+    }
+    return false;
   }
 }
 
 module.exports = particle;
 
-},{"./Helper":3}],5:[function(require,module,exports){
-const enemy = require("./Enemy");
+},{}],4:[function(require,module,exports){
 const particle = require("./Particle");
 
 class tower {
-  constructor(x, y, towerType = 0) {
-    this.radius = 15; // Größe des Turmkreises
-    //towerId; // woher?
-    this.color = "#1E90FF"; // Blau = gut ^^
+  constructor(x, y, towerSettings) {
+    this.price = towerSettings[0];
+    this.radius = towerSettings[1];
+    this.color = towerSettings[2];
+    this.range = towerSettings[3];
+
+    this.damage = towerSettings[5];
+
     this.x = x;
     this.y = y;
-    this.towerType = towerType;
-    this.cooldownLeft = 30;
+    this.cooldownLeft = 0;
+    this.cooldown = 200;
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
-
+    this.speed = 1.3;
     // Fallentscheidung welchen towerType der Turm hat
-    if (towerType == 0) {
-      // Standardturm
-      this.damage = 1;
-      this.price = 10;
-      this.speed = 10;
-      this.range = 100;
-      this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
-      this.particlesPerShot = 1;
-    }
+    /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */
+
+
+    // if (towerType == 0) {
+    //   // Standardturm
+    //   this.damage = 1;
+    //   this.price = 10;
+    //   this.range = 100;
+    //   this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
+    //   this.particlesPerShot = 1;
+    // }
   }
 
   shoot = (enemy, amount = 1) => {
     // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
     for (var i = 1; i <= amount; i++) {
-      var particle_ = new particle(this.x, this.y, this.damage, enemy);
+      var particle_ = new particle(this.x, this.y, this.damage, enemy, this.speed, this.range);
       var id = this.particleCount++;
       this.particleList[id] = particle_;
       console.log(this.particleList);
+      enemy.futureDamage += this.damage;
     }
     this.cooldownLeft = this.cooldown; // Cooldown wieder hochgesetzt
   };
@@ -432,64 +299,117 @@ class tower {
 }
 
 module.exports = tower; // muss mit Klassenname übereinstimmen
-
-},{"./Enemy":1,"./Particle":4}],6:[function(require,module,exports){
+},{"./Particle":3}],5:[function(require,module,exports){
 /*
  * Verwaltung der Waves im Spiel
  * @author Nicole
  *
  */
-
-//Notiz: Es müsste evtl. noch umgesetzt werden, dass Enemies "häufichenweise" spawnen, also nicht alle hintereinander weg?
-
-//Imports und Instanzerzeugung
-class wave { //Referenz auf Entitiesinstanz von Game übergeben
-    constructor(entities, canvas, ctx) {
+class wave {
+    constructor(entities) {
         this.entities = entities //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
-        this.currentWave = 1 //Akt. Wave in-game
-        this.amountOfEnemies = 6 //Initalwert für Enemyanzahl
-        this.enemySpwanCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spwanen
-        this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
-        this.canvas = canvas
-        this.ctx = ctx
+        this.currentWave = 1 //Aktuelle Wave ingame
+        this.amountOfEnemies = Math.pow(2, this.currentWave) //Initalwert für Enemyanzahl 2^1 = 2
+        this.enemyGroup = 6
+        this.enemySpawnCooldown = 1 //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
+        this.enemyGroupCoolDown = 0 //Initialwert
+        //this.isStarting = false //Boolean um zu markieren, wann neue Wave startet
+
     }
 
     update(){ //Update um Klassenvariablen anzupassen
+        //Neue Wave muss getriggert werden
+        // if(this.isStarting) {
+        //     this.nextWave();
+        // }
+
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
-            this.initialiseEnemies()
+            if(this.currentWave % 5 ==0){
+                this.intiialiseBossWave(0) //Bosswelle alle 5 Wellen -Felix
+            }
+            
+            else if(this.currentWave > 5) {
+                //Extra Parameter, damit Enemies zufällig stärker werden können
+                this.initialiseEnemies(this.getRndInteger(1,3)); //Erstmal Typ 0,1 & 2, sind das zu viele oder zu wenige Typen?
+            }
+
+            else {this.initialiseEnemies();}
         }
-        //Neue Wave muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
-        if(this.isStarting) {
-            this.nextWave()
+        
+    }
+
+    initialiseEnemies(enemyStrength = 1) { //Typ 0 als default Enemy? // Geändert zu Typ als default. Typ 0 = Boss -Felix
+    //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
+        if(this.enemyGroup > 0 && this.enemyGroupCoolDown == 0) { //Enemies dürfen ganz normal gespawnt werden
+            if(this.enemySpawnCooldown > 0) {
+                this.enemySpawnCooldown--;
+            }
+            else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
+                this.entities.createEnemy(enemyStrength);//CreateMethode der EnemyTyp übergeben wird
+                //Neuen Cooldown random setzten
+                this.enemySpawnCooldown = this.getRndInteger(25,200);
+                this.amountOfEnemies--;
+                this.enemyGroup--;
+            }
+        }
+
+        else if(this.enemyGroup == 0 && this.enemyGroupCoolDown == 0) {
+            //Werte zurücksetzen
+            this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann
+            this.enemyGroup = 6;
+        }
+        else if(this.enemyGroupCoolDown > 0) {
+            //Cooldown damit neue Gruppe an Enemies spawnen kann runterzählen
+            this.enemyGroupCoolDown--;
+
         }
     }
 
-    initialiseEnemies() {
-    //ruft create-method der Klasse Entities auf, um Enemies zu erzeugen
-        if(this.enemySpwanCooldown > 0) {
-            this.enemySpwanCooldown--
+    intiialiseBossWave(enemyStrength = 0){
+        if(this.enemyGroup > 0 && this.enemyGroupCoolDown == 0) { //Enemies dürfen ganz normal gespawnt werden
+            if(this.enemySpawnCooldown > 0) {
+                this.enemySpawnCooldown--;
+            }
+            else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
+                this.entities.createEnemy(enemyStrength);//CreateMethode der EnemyTyp übergeben wird
+                //Neuen Cooldown random setzten
+                this.enemySpawnCooldown = this.getRndInteger(25,200);
+                this.amountOfEnemies--;
+                this.enemyGroup--;
+            }
         }
-        else{
-            this.entities.create_enemy(this.canvas, this.ctx); //(this.enemyStartPos) StartPosition der Enemies muss mitübergeben werden
-            //Neuen Cooldown random setzten
-            this.enemySpwanCooldown = this.getRndInteger(50,500)
-            this.amountOfEnemies--
+
+        else if(this.enemyGroup == 0 && this.enemyGroupCoolDown == 0) {
+            //Werte zurücksetzen
+            this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann
+            this.enemyGroup = 2;
         }
+        else if(this.enemyGroupCoolDown > 0) {
+            //Cooldown damit neue Gruppe an Enemies spawnen kann runterzählen
+            this.enemyGroupCoolDown--;
+
+        }
+
     }
     
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
-        this.currentWave++
+        this.currentWave++;
         //EnemyAnzahl exponentiell erhöhen...
-        this.enemySpwanCooldown = this.getRndInteger(50,500)
-        this.update()
-        //Später noch Stärke der Enemies anpassen...
+        this.enemySpawnCooldown = this.getRndInteger(25,250);
+        //this.amountOfEnemies = this.currentWave * 6;
+        this.amountOfEnemies = Math.pow(2, this.currentWave) // 2^(currentWave)
+        this.enemyGroupCoolDown = 0;
+        this.enemyGroup = 6;
+        //this.isStarting = false; //Wert wieder zurücksetzten
+        this.update();
+        //Später noch Stärke der Enemies anpassen...bzw. andere Enemytypen übergeben
     }
 
     //Markierung, dass nächste Wave starten soll
-    //muss getriggert werden, irgendwie über Game und dem Ablauf des Timers bis zur nächsten Welle
-    triggerNextWave() {
-        this.isStarting = true
-    }
+    // triggerNextWave() {
+    //     this.isStarting = true;
+    //     this.update();
+    // }
 
     //Random Zahl für bestimmtes Intervall generieren (min & max sind im Intervall inklusive)
     getRndInteger(min, max) {
@@ -498,10 +418,10 @@ class wave { //Referenz auf Entitiesinstanz von Game übergeben
 }
 
 module.exports = wave;
-},{}],7:[function(require,module,exports){
+
+},{}],6:[function(require,module,exports){
 const Tower = require("./Tower");
 const Enemy = require("./Enemy");
-const Helper = require("./Helper");
 
 class Entities {
   constructor(startingPoint, waypoints) {
@@ -512,32 +432,16 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
+    this.money = 10;
+    this.deaths = 0;
   }
 
-  reset = () => {
-    for(let j = 0; j < this.towerList.length; j++) {
-      for(let i = 0; i < this.towerList[j].particleList.length; i++) {
-        this.towerList[j].particleList[i].reset();
-      }
-      this.towerList[j].particleList = []; 
-      this.towerList[j].particleCount = 0; 
-    }
-
-    for (let i = 0; i < this.enemyList.length; i++) {
-      this.enemyList[i].reset();
-    }
-    this.towerList = [];
-    this.enemyList = [];
-    this.win = false;
-    this.enemyCounter = 0;
-    this.towerCounter = 0;
-  }
-
-  newWave = (amountOfEnemies) => {
+  nextWave = (amountOfEnemies) => {
     this.enemyList = [];
     this.enemyCounter = 0;
     this.win = false; 
     this.amountOfEnemies = amountOfEnemies; 
+    this.deaths = 0;
 
     for(let j = 0; j < this.towerList.length; j++) {
       this.towerList[j].particleList = []; 
@@ -546,7 +450,7 @@ class Entities {
   };
 
   draw = () => {
-    //von jeden Enemy/Tower wird die Draw() Funktion aufgerufen
+    //von jeden Enemy/Tower/Particle wird die drawCircle() Methode aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i].dead == true) continue;
       this.drawCircle(
@@ -570,13 +474,21 @@ class Entities {
         this.towerList[j].range,
         this.towerList[j].rangeColor
       );
+
+          //Particle zeichnen
+      for (let k = 0; k < this.towerList[j].particleList.length; k++) {
+        if (this.towerList[j].particleList[k].flag == true) continue;
+        this.drawCircle(
+          this.towerList[j].particleList[k].x,
+          this.towerList[j].particleList[k].y,
+          this.towerList[j].particleList[k].radius,
+          this.towerList[j].particleList[k].color
+        );
+      };
     }
-  };
+  }
 
   drawCircle(x, y, radius, color) {
-    //Kreis zeichnen für Anzeige Reichweite/GameObjects
-    //mit Koordinaten x,y ; Radius;  Farbe
-
     //jedes Mal Holen Canavas, ctx oder im Konstruktor übergeben
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
@@ -593,9 +505,8 @@ class Entities {
     var a = x1 - x2;
     var b = y1 - y2;
     return Math.sqrt(a * a + b * b);
-  }
+  };
 
-  //detectCollision(x1,y1,r1,x2,y2,r2){
   detectCollision = (x1, y1, r1, x2, y2, r2) => {
     //wenn der abstand zw. den beiden Mittelpunkten
     //kleiner/gleich die Summer der beiden Radien -> return true
@@ -608,43 +519,49 @@ class Entities {
   };
 
   update = () => {
-
     var count = 0; 
+    var count_deaths = 0;
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i].dead == true) {
-        count++; 
+        count++;
+        if(this.enemyList[i].reached == true){
+          count_deaths ++;
+        }
         continue;
       }
-      this.enemyList[i].handleEnemy();
+      this.enemyList[i].update();
     }
+    this.deaths = count_deaths;
     if (count == this.amountOfEnemies) {
       this.win = true; 
-      confirm("Win");
-      this.reset();
+      
       return;
     }
 
-
     for (let j = 0; j < this.towerList.length; j++) this.towerList[j].update();
-    this.detect_enemy();
+    this.detectEnemy();
+    this.detectHit(); 
+
   };
 
-  create_enemy = (canvas, ctx) => {
-    var enemy = new Enemy(canvas, ctx, this.waypoints, this.startingPoint);
+
+  createEnemy = (enemyType) => {
+    var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
     console.log(this.enemyList);
   };
 
-  create_tower = (x, y) => {
-    var tower = new Tower(x, y);
+  createTower = (x, y, towerSettings) => {
+    var tower = new Tower(x, y, towerSettings);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
     console.log(this.towerList);
-  }; //
+    this.money -= this.towerList[id].price;
+  }; 
 
-  detect_enemy() {
+  detectEnemy() {
     //leitet den Enemy, der in Towerrange ist und am meisten Weg zurück gelegt hat, an den entsp. schussbereiten Tower weiter
 
     for (let j = 0; j < this.towerList.length; j++) {
@@ -670,22 +587,20 @@ class Entities {
           this.enemyList[i].radius
         );
 
-        if ((bool == true)) {
+        if (bool == true) {
           //wenn erster der in Reichweite-> als Vergleichswert(last_enemie) zw.speichern
           if (last_enemy === undefined) {
             last_enemy = this.enemyList[i];
           }
-        
-        //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
-        else {
-          if (
-            this.enemyList[i].coveredDistance > last_enemy.coveredDistance
-          ) {
-            last_enemy = this.enemyList[i];
+    
+          //sonst Abgleich ob zurück gelegter Weg des aktuellen Enemy größer als bei Vergleichs-Enemie;
+          else {
+            if ( this.enemyList[i].coveredDistance > last_enemy.coveredDistance) {
+              last_enemy = this.enemyList[i];
+            }
           }
         }
       }
-    }
       //wenn last_enemy initialisiert-> Weiterleiten an Tower
       if (last_enemy !== undefined) {
         this.towerList[j].shoot(last_enemy);
@@ -693,7 +608,32 @@ class Entities {
     }
   }
 
-  validate_position = (x, y, radius) => {
+  detectHit(){
+    for (let j = 0; j < this.towerList.length; j++) {
+      for (let k = 0; k < this.towerList[j].particleList.length; k++) {
+        if (this.towerList[j].particleList[k].flag == true || this.towerList[j].particleList[k].enemy.dead == true) continue;
+        var bool= this.detectCollision(
+            this.towerList[j].particleList[k].x,
+            this.towerList[j].particleList[k].y,
+            this.towerList[j].particleList[k].radius,
+            this.towerList[j].particleList[k].enemy.x,
+            this.towerList[j].particleList[k].enemy.y,
+            this.towerList[j].particleList[k].enemy.radius
+          ) 
+        if (bool == true){
+        // Enemy bekommt Schaden übergeben
+          this.towerList[j].particleList[k].enemy.hit(this.towerList[j].particleList[k].damage); 
+          this.towerList[j].particleList[k].flag = true;
+          if (this.towerList[j].particleList[k].enemy.dead == true){
+            this.money += this.towerList[j].particleList[k].enemy.lootDrop
+          }
+        }
+      }
+    }
+  }
+
+
+  validatePosition = (x, y, radius) => {
     //für alle tower -> detectCollision mit x,y,r des zu bauenden und x,y,r des ausgelesen Tower
     for (let j = 0; j < this.towerList.length; j++) {
       let bool = this.detectCollision(
@@ -711,8 +651,8 @@ class Entities {
     for (let i = -1; i < this.waypoints.length - 1; i++) {
       //Für Starting Point
       if (i == -1) {
-        var x1 = this.startingPoint[0][0];
-        var y1 = this.startingPoint[0][1];
+        var x1 = this.startingPoint[0];
+        var y1 = this.startingPoint[1];
       }
       //auslesen aktueller/start waypoint x1, y1
       else {
@@ -759,19 +699,24 @@ class Entities {
     } //End Waypoint Schleife
     return true;
   };
+
+  towerRangePreview = (x,y,radius,color) =>{
+    this.drawCircle(x,y,radius,color)
+  }
+
+
+
+  
 }
 
 module.exports = Entities;
 
-},{"./Enemy":1,"./Helper":3,"./Tower":5}],8:[function(require,module,exports){
+},{"./Enemy":1,"./Tower":4}],7:[function(require,module,exports){
 // Import der Klassen via Node.js
 const map = require("./map");
 const entitites = require("./entities");
 const events = require("./Events");
 const wave = require("./Wave");
-
-// Instanzen erstellen
-var events_ = new events();
 
 /*
  * Bündeln der Klassen
@@ -785,34 +730,73 @@ class game {
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
 
-    this.waveCounter = 0;
-    // DrawList enthält alle Elemente die gezeichnet werden sollen
-    this.drawList = [];
-
+    /* Initalisierung der Variablen:
+     */
     // Läuft das Spiel?
     this.gameRunning = false;
+    // Counter für init-Funktion, da sonst Animation-Loop entsteht
+    this.initCounter = 0;
+    // Life Counter
+    this.remainingLifes = 3;
+    // Drop Tower Mode, damit um Mauszeiger gezeichnet werden kann.
+    this.dropTowerMode = false;
+    // Wenn der Start Game Button gedrückt wurde ändert sich die Flag
+    this.startGamePressed = false;
+    // Tower Typ
+    this.towerType = 0;
+    // Pause-Flag
+    this.pause = false;
+    // Map-Typ (0 = default)
+    this.mapType = 0;
+    this.map;
+    /* ---------------------------------------------------- */
 
-    // Zukunft
-    this.timer;
-    this.mode = 0;
-    this.score = 0;
-    this.remainingLifes;
-    this.ressources = 0;
-    
+    // Event Instanz zum Maus-Handling
+    this.events_ = new events(this.canvas, this.ctx);
 
-    // Event erstellen
-    // this.event = new events(this.canvas, this.ctx);
-
-    // Map Variablen
-    console.log("hio");
-    this.waypoints = [
-      [800, 60],
-      [800, 200],
-      [200, 200],
-      [200, 500],
+    // Eigenschaften eines Turmes
+    this.towerSettings = [
+      [10, 15, "#1E90FF", 100, 120, 2],
+      [20, 15, "#00bb2d", 100],
+      // Price, Radius, Color, Range, Cooldown, Damage
     ];
-    this.startingPoint = [0, 60];
 
+    // MapTyp unterscheidung, falls Schwer, sonst default
+
+
+  }
+
+  init = () => {
+    this.gameRunnning = true;
+    this.wave = new wave(this.entities_);
+    this.entities_.nextWave(this.wave.amountOfEnemies);
+    if (this.initCounter == 0) this.draw();
+    this.initCounter = 1;
+  };
+  
+  // Create Map zur Unterscheidung der Map Typen
+  createMap = (mapType) => {
+    if (mapType == 1) {
+      this.waypoints = [
+        [800, 60],
+        [800, 220],
+        [200, 150],
+        [200, 200],
+      ];
+      // Map StartingPoints
+      this.startingPoint = [0, 60];
+    } else {
+      // Map Waypoints
+      this.waypoints = [
+        [800, 60],
+        [800, 200],
+        [200, 200],
+        [200, 500],
+      ];
+  
+      // Map StartingPoints
+      this.startingPoint = [0, 60];
+    }
     // Map erstellen
     this.map = new map(
       "#F08080",
@@ -822,54 +806,117 @@ class game {
       this.canvas,
       this.ctx
     );
+    this.map.draw();
 
+    // Konstruktor von Entities kann erst aufgerufen werden, wenn die Map erstellt ist
     this.entities_ = new entitites(this.startingPoint, this.waypoints);
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
-
-   
-    //this.wave.initialiseEnemies();
-
-    // Turm erstellen
-    // this.entities_.create_tower(70, 100);
+    document.getElementById("coinCount").innerHTML = this.entities_.money;
   }
-
-  init = () => {
-    this.wave = new wave(this.entities_, this.canvas, this.ctx);
-    this.entities_.newWave(this.wave.amountOfEnemies); 
-    
-    //Leben im Prototyp auf 1;
-    this.draw();
-    this.gameRunnning = false;
-  };
-
   draw = () => {
-    window.requestAnimationFrame(this.draw);
-    // Clear Canvas
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // Animation starten
+    if (this.pause == false) {
+      window.requestAnimationFrame(this.draw);
 
-    // Game.restartGame();
-    // Aufruf der Draw Methoden der Anderen Klassen? Eventuell drawList?
-    // for (i = 0, i <= Anzahl Klassen; i++) ...
-    this.map.draw();
-    if(this.entities_.win == false) {
+      // Clear Canvas
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // Map zeichnen
+      this.map.draw();
+
+      /* EventListening für Maus-Interaktion: */
+      this.drawTowerMouse();
+
+      // Zeichen aller Entities
       this.entities_.draw();
-      this.entities_.update();
-      this.wave.update();
-    } else {
-      return;
+
+      console.log(this.remainingLifes - this.entities_.deaths);
+      if((this.remainingLifes - this.entities_.deaths) == 0) this.gameOver();
+
+
+
+      // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
+      if (this.entities_.win == false) {
+        if (this.startGamePressed == true) {
+          this.entities_.update();
+          this.wave.update();
+        }
+      } else {
+        this.remainingLifes -= this.entities_.deaths;
+        this.wave.nextWave();
+        this.entities_.nextWave(this.wave.amountOfEnemies);
+      }
+
+      // Anzeige von WaveCount und Coins
+      document.getElementById("wcount").innerHTML = this.wave.currentWave;
+      document.getElementById("coinCount").innerHTML = this.entities_.money;
     }
-    document.getElementById("wcount").innerHTML = this.waveCounter;
-    // this.turret.draw();
-    // this.enemy.draw();
-    // this.enemy.handleEnemy(this.enemyList);
   };
 
-  update() {
-    //Unklar, ruft eventull update() der anderen Klassen auf.
-    /* In beispiel wurden die Aufrufe der Methoden über eine List geregelt, welche über einen
-            Trigger vervollstäändigt wurden */
-  }
+  /* EventListening für Maus-Interaktion:
+      Wenn der DropTowerMode True ist, dann wird ein Kreis um den Mauszeiger im Bereich des Canvas gezeichnet
+      Wenn dann geklickt wird, dann wird ein Turm an dieser Stelle gebaut und der EventListener bricht ab.
+     */
+  drawTowerMouse = () => {
+    if (this.dropTowerMode) {
+      this.canvas.addEventListener("mousemove", this.events_.onmove);
+      this.canvas.addEventListener("click", this.events_.onclick);
+      if (
+        this.entities_.validatePosition(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1]
+        ) == false
+      ) {
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1],
+          "#000000"
+        );
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][3],
+          "rgba(30, 144, 255, 0.2)"
+        );
+      } else {
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1],
+          this.towerSettings[this.towerType][2]
+        );
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][3],
+          "rgba(30, 144, 255, 0.2)"
+        );
+      }
+    }
+    if (this.events_.mouse.clicked == true) {
+      if (
+        this.entities_.validatePosition(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1]
+        ) == true
+      ) {
+        this.entities_.createTower(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType]
+        );
+        this.events_.mouse.clicked = false;
+        this.dropTowerMode = false;
+        this.canvas.removeEventListener("click", this.events_.onclick);
+      } else {
+        this.canvas.removeEventListener("click", this.events_.onclick);
+        this.events_.mouse.clicked = false;
+      }
+    }
+  };
 
   // Check ob Turm gebaut ist und ob das Spiel schon läuft
   startGame = () => {
@@ -879,37 +926,30 @@ class game {
       console.log("spiel läuft");
     } else {
       console.log("bin im startgameif");
-      this.waveCounter++;
+      this.startGamePressed = true;
       this.init();
       // this.gameRunning = true;
     }
   };
 
-  // alle Werte 0 setzen, entities löschen
-  // Würde restartMethode in reset umbenennen.
+  // Lädt Seite neu
   restartGame = () => {
-    // Reset Score, WaveCounter, Ressources, timer
-    this.score = 0;
-    this.waveCounter = 0;
-    this.ressources = 0;
-    //this.timer = reset -- muss noch implementiert werden
-
-    //Entities liste leeren
     location.reload();
-
-    // Entities liste = 0;
   };
 
-  pauseGame() {
+  pauseGame = () => {
     /* Timer stoppen, Waves "anhalten"
-        at the Moment keine Ahnung wie das implementiert werden soll */
-  }
+          at the Moment keine Ahnung wie das implementiert werden soll */
+    this.pause = !this.pause;
+    if (this.pause == false) this.draw();
+    //  window.cancelAnimationFrame(this.draw);
+  };
 
   gameOver = () => {
-    if (this.remainigLifes == 0) {
+    //if (this.remainigLifes == 0) {
       this.restartGame();
       alert("Game Over");
-    }
+    //}
   };
 }
 
@@ -922,16 +962,118 @@ document
   .addEventListener("click", g.startGame, false);
 document
   .getElementById("btnReset")
-  .addEventListener("click", g.restartGame, false);
-document.getElementById("btnBuild").addEventListener("click", function () {
-  g.entities_.create_tower(220,110);
-  g.entities_.draw();
+  .addEventListener("click", g.pauseGame, false);
+
+/* Tower Build */
+// count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.
+var count = 0;
+document.getElementById("d1").addEventListener("click", function () {
+  g.dropTowerMode = true;
+  if (count == 0) {
+    g.init();
+    count++;
+  }
+  g.towerType = 0;
+  g.drawTowerMouse();
+  // g.entities_.create_tower(220,110);
+  // g.entities_.draw();
+});
+document.getElementById("d2").addEventListener("click", function () {
+  g.dropTowerMode = true;
+  if (count == 0) {
+    g.init();
+    count++;
+  }
+  g.towerType = 1;
+  g.drawTowerMouse();
+  // g.entities_.create_tower(220,110);
+  // g.entities_.draw();
+});
+document.getElementById("mapAuswahl").addEventListener("click", function () {
+  g.mapType = 1;
+  g.createMap(g.mapType);
+  console.log(g.map);
+  g.map.draw;
 });
 
-// Map beim Laden der Seite einzeichnen
-window.onload = g.map.draw;
 
-},{"./Events":2,"./Wave":6,"./entities":7,"./map":9}],9:[function(require,module,exports){
+
+
+
+// Pop Up laden
+// Map beim Laden der Seite einzeichnen
+window.addEventListener("load", g.createMap(g.mapType));
+window.addEventListener("load", openModal);
+
+// Pop Up Rules
+const modal = document.querySelector("#modal");
+const modalBtn = document.querySelector("#btnModal");
+const closeBtn = document.querySelector(".close");
+
+modalBtn.addEventListener("click", openModal);
+closeBtn.addEventListener("click", closeModal);
+window.addEventListener("click", outsideClick);
+
+function openModal() {
+  modal.style.display = "block";
+}
+
+function closeModal() {
+  modal.style.display = "none";
+}
+
+function outsideClick(e) {
+  if (e.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+function test(e) {
+  if (e.target == buildTower) {
+    buildTower.style.display = "none";
+  } else {
+    buildTower.style.display = "block";
+  }
+}
+
+// Button Dropdown
+const buildTower = document.querySelector("#btnBuild");
+const pause = document.querySelector("#btnStart");
+const start = document.querySelector("#btnReset");
+const d1 = document.querySelector("#d1");
+const d2 = document.querySelector("#d2");
+
+buildTower.addEventListener("click", toggle);
+buildTower.addEventListener("click", test);
+
+d1.addEventListener("click", close);
+d2.addEventListener("click", close);
+
+function close() {
+  buildTower.style.display = "block";
+  start.style.display = "flex";
+  pause.style.display = "flex";
+
+}
+
+function toggle() {
+  document.querySelector("#dropdown").classList.toggle("show");
+}
+
+window.onclick = function (event) {
+  if (!event.target.matches(".dropbtn")) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains("show")) {
+        openDropdown.classList.remove("show");
+      }
+    }
+  }
+};
+
+},{"./Events":2,"./Wave":5,"./entities":6,"./map":8}],8:[function(require,module,exports){
 /*
  * Spielflaeche erzeugen
  * @author Paul
@@ -989,4 +1131,4 @@ class map {
 // Klasse Exportieren
 module.exports = map;
 
-},{}]},{},[8]);
+},{}]},{},[7]);

@@ -1,38 +1,44 @@
-const enemy = require("./Enemy");
 const particle = require("./Particle");
 
 class tower {
-  constructor(x, y, towerType = 0) {
-    this.radius = 15; // Größe des Turmkreises
-    //towerId; // woher?
-    this.color = "#1E90FF"; // Blau = gut ^^
+  constructor(x, y, towerSettings) {
+    this.price = towerSettings[0];
+    this.radius = towerSettings[1];
+    this.color = towerSettings[2];
+    this.range = towerSettings[3];
+
+    this.damage = towerSettings[5];
+
     this.x = x;
     this.y = y;
-    this.towerType = towerType;
-    this.cooldownLeft = 30;
+    this.cooldownLeft = 0;
+    this.cooldown = 200;
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
-
+    this.speed = 1.3;
     // Fallentscheidung welchen towerType der Turm hat
-    if (towerType == 0) {
-      // Standardturm
-      this.damage = 1;
-      this.price = 10;
-      this.speed = 10;
-      this.range = 100;
-      this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
-      this.particlesPerShot = 1;
-    }
+    /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */
+
+
+    // if (towerType == 0) {
+    //   // Standardturm
+    //   this.damage = 1;
+    //   this.price = 10;
+    //   this.range = 100;
+    //   this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
+    //   this.particlesPerShot = 1;
+    // }
   }
 
   shoot = (enemy, amount = 1) => {
     // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
     for (var i = 1; i <= amount; i++) {
-      var particle_ = new particle(this.x, this.y, this.damage, enemy);
+      var particle_ = new particle(this.x, this.y, this.damage, enemy, this.speed, this.range);
       var id = this.particleCount++;
       this.particleList[id] = particle_;
       console.log(this.particleList);
+      enemy.futureDamage += this.damage;
     }
     this.cooldownLeft = this.cooldown; // Cooldown wieder hochgesetzt
   };
