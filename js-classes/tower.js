@@ -9,18 +9,18 @@ class tower {
     this.x = x;
     this.y = y;
     this.cooldownLeft = 0;
-    this.cooldown = 200;
+    this.cooldown = towerSettings[4];
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
     this.speed = 1.3;
+    this.damage = towerSettings[5];
     // Fallentscheidung welchen towerType der Turm hat
     /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */
 
 
     // if (towerType == 0) {
     //   // Standardturm
-    //   this.damage = 1;
     //   this.price = 10;
     //   this.range = 100;
     //   this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
@@ -34,7 +34,6 @@ class tower {
       var particle_ = new particle(this.x, this.y, this.damage, enemy, this.speed, this.range);
       var id = this.particleCount++;
       this.particleList[id] = particle_;
-      console.log(this.particleList);
     }
     this.cooldownLeft = this.cooldown; // Cooldown wieder hochgesetzt
   };

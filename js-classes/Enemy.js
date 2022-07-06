@@ -1,62 +1,77 @@
-
-// var initialEnemyx = 0;
-// var initialEnemyy = 60;
-// var dx = 2;
-// var dy = 2;
-// var waypoints = [];
-// var enemyList = [];
-// let frame = 0;
-// var enemyColor = "red";
-// var enemyRadius = 1;
-
 class enemy {
   constructor(waypoints, startingPoint, enemyType) {
-    this.radius = 5;
-    this.color = "red";
-    this.status = 1;
-    this.speed = 1.25;
-    this.lootDrop = 3;
+    this.enemySettings= [[15,"gold",1,20,20],
+                [5,"red",1,1,1],
+                [5,"orange",1.25,4,1],
+                [7,"purple",1,5,5]];
+    //radius, color, speed, lootDrop, Health
+    //erster Eintrag ist Boss Gegner
+    this.enemyType = enemyType;
+    this.radius = this.enemySettings[this.enemyType][0];
+    this.color = this.enemySettings[this.enemyType][1];
+    this.speed = this.enemySettings[this.enemyType][2];
+    this.lootDrop = this.enemySettings[this.enemyType][3];
+    this.health = this.enemySettings[this.enemyType][4];
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
-    this.wp1 = false;
-    this.wp2 = false;
-    this.wp3 = false;
+    this.lastwp = -1;
     this.dead = false;
-    this.enemyType = enemyType;
+    this.reached = false;
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
 
-    this.wp1x = this.waypoints[0][0];
-    this.wp1y = this.waypoints[0][1];
-    this.wp2x = this.waypoints[1][0];
-    this.wp2y = this.waypoints[1][1];
-    this.wp3x = this.waypoints[2][0];
-    this.wp3y = this.waypoints[2][1];
-    this.wp4x = this.waypoints[3][0];
-    this.wp4y = this.waypoints[3][1];
   }
+
 
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
   update() {
-    if (this.wp1 == false) {
-      this.x += this.speed;
-      this.coveredDistance += this.speed;
+
+    if (this.lastwp == -1) {
+      var x1 = this.startingPoint[0];
+      var y1 = this.startingPoint[1];
     }
-    if (this.wp1 == true && this.wp2 == false) {
-      this.y += this.speed;
-      this.coveredDistance += this.speed;
+    //auslesen aktueller/start waypoint x1, y1
+    else {
+      var x1 = this.waypoints[this.lastwp][0];
+      var y1 = this.waypoints[this.lastwp][1];
     }
 
-    if (this.wp1 == true && this.wp2 === true && this.wp3 == false) {
-      this.x -= this.speed;
-      this.coveredDistance += this.speed;
-    }
+    //auslesen nächster waypint i+1
+    var x2 = this.waypoints[this.lastwp + 1][0];
+    var y2 = this.waypoints[this.lastwp + 1][1];
 
-    if (this.wp1 == true && this.wp2 == true && this.wp3 == true) {
-      this.y += this.speed;
-      this.coveredDistance += this.speed;
-    }
+
+    
+
+      if(x1 < x2){ //rechts
+        this.x += this.speed;
+        this.coveredDistance += this.speed;
+      }
+      if(x1 > x2){ //links
+        this.x -= this.speed;
+        this.coveredDistance += this.speed;
+      }
+      if(y1 < y2){ //oben
+        this.y += this.speed;
+        this.coveredDistance += this.speed;
+      }
+      if(y1 > y2){ //unten
+        this.y -= this.speed;
+        this.coveredDistance += this.speed;
+
+      }
+      if(this.x == x2 && this.y == y2){
+        this.lastwp += 1;
+      }
+
+      if (this.lastwp == this.waypoints.length-1) {
+        this.reached = true;
+        this.dead = true;
+
+      }
+
+    
   }
 
   draw() {
@@ -67,73 +82,14 @@ class enemy {
     this.ctx.fill();
     this.ctx.closePath();
   }
-
-  // Logik
-  handleEnemy() {
-    // console.log("handle", enemyList);
-    // if (enemyList.length == 0) {
-    //   this.drawEnemy;
-    // }
-
-      this.update();
-      // this.draw();
-
-      //Check für jeden Gegner, ob er einen Wegpunkt erreicht hat.
-
-      if (this.x == this.wp1x && this.y == this.wp1y) {
-        this.wp1 = true;
-      }
-      if (this.x == this.wp2x && this.y == this.wp2y) {
-        this.wp2 = true;
-      }
-      if (this.x == this.wp3x && this.y == this.wp3y) {
-        this.wp3 = true;
-      }
-
-      // trigger Game Over wenn Gegner letzten Wegpunkt erreicht.
-      //Koordinaten Hard coded für Prototyp
-      if (
-        this.x + this.radius == 200 &&
-        this.x + this.radius == 500
-      ) {
-        GameOver;
-      }
-
-      // Konstant neue Gegner erzeugen
-      // if (frame % 100 === 0) {
-      //   enemyList.push(new enemy(0, 60));
-      // }
-
-      //Kollisionsprüfung von Gegner mit Partikel Platzhalter
-      // if (this.detectCollision == true) {
-      //   this.status = 0; //
-      //   //enemyList health - x
-      //   //hier würde Schaden übergeben
-      // }
-      
-      // //Gegner aus dem Arraay löschen 'töten'
-      // if (this.status == 0) {
-      //   enemyList.splice(i, 1);
-      //   i--;
-      // }
-    
-  }
   hit(damage) {
-    this.dead = true;
+    this.health -= damage;
+    if(this.health <= 0){
+      this.dead = true;
+    }
+
   }
 }
 
-// Ersten Enemy erstellen
-// function drawEnemy() {
-//   enemyList.push(new enemy(0, 60));
-//   enemyList[1].this.draw();
-// }
-
-//Redirect zur Gameover Site
-//Alternative: bool variable die den animation Aufruf stoppt.
-function GameOver() {
-  window.location.replace(gameover.html);
-  clearInterval(interval);
-}
 
 module.exports = enemy;

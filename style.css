@@ -86,11 +86,14 @@ p {
 #money {
   height: 50px;
   width: 100px;
-  margin-right: 10px;
+  margin-right: 6px;
   color: #ffff;
 }
 
 #coinCount {
+  font-size: 20px;
+}
+#lifeCount {
   font-size: 20px;
 }
 

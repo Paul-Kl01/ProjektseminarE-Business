@@ -23,7 +23,7 @@ class game {
     // Counter für init-Funktion, da sonst Animation-Loop entsteht
     this.initCounter = 0;
     // Life Counter
-    this.remainingLifes;
+    this.remainingLifes = 3;
     // Drop Tower Mode, damit um Mauszeiger gezeichnet werden kann.
     this.dropTowerMode = false;
     // Wenn der Start Game Button gedrückt wurde ändert sich die Flag
@@ -42,8 +42,8 @@ class game {
 
     // Eigenschaften eines Turmes
     this.towerSettings = [
-      [10, 15, "#1E90FF", 100, 120],
-      [20, 15, "#00bb2d", 100],
+      [10, 15, "#1E90FF", 100, 120, 1],
+      [20, 15, "#00bb2d", 150, 200, 3],
       // Price, Radius, Color, Range, Cooldown, Damage
     ];
 
@@ -66,7 +66,7 @@ class game {
       this.waypoints = [
         [800, 60],
         [800, 220],
-        [200, 150],
+        [200, 220],
         [200, 200],
       ];
       // Map StartingPoints
@@ -99,6 +99,7 @@ class game {
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
     document.getElementById("coinCount").innerHTML = this.entities_.money;
+    document.getElementById("lifeCount").innerHTML = this.remainingLifes-this.entities_.deaths;
   }
   draw = () => {
     // Animation starten
@@ -113,8 +114,12 @@ class game {
       /* EventListening für Maus-Interaktion: */
       this.drawTowerMouse();
 
+      
       // Zeichen aller Entities
       this.entities_.draw();
+      
+      if((this.remainingLifes - this.entities_.deaths) == 0) this.gameOver();
+
 
       // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
       if (this.entities_.win == false) {
@@ -123,6 +128,7 @@ class game {
           this.wave.update();
         }
       } else {
+        this.remainingLifes -= this.entities_.deaths;
         this.wave.nextWave();
         this.entities_.nextWave(this.wave.amountOfEnemies);
       }
@@ -130,6 +136,7 @@ class game {
       // Anzeige von WaveCount und Coins
       document.getElementById("wcount").innerHTML = this.wave.currentWave;
       document.getElementById("coinCount").innerHTML = this.entities_.money;
+      document.getElementById("lifeCount").innerHTML = this.remainingLifes-this.entities_.deaths;
     }
   };
 
@@ -146,7 +153,7 @@ class game {
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == false
+        ) == false || this.entities_.money < this.towerSettings[this.towerType][0]
       ) {
         this.entities_.drawCircle(
           this.events_.mouse.x,
@@ -175,13 +182,13 @@ class game {
         );
       }
     }
-    if (this.events_.mouse.clicked == true) {
+    if (this.events_.mouse.clicked == true && this.dropTowerMode == true) {
       if (
         this.entities_.validatePosition(
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == true
+        ) == true && this.entities_.money >= this.towerSettings[this.towerType][0]
       ) {
         this.entities_.createTower(
           this.events_.mouse.x,
@@ -202,15 +209,15 @@ class game {
   startGame = () => {
     if (this.entities_.towerList.length == 0) {
       confirm("Bau lieber zuerst einen Turm");
-    } else if (this.gameRunning == true) {
-      console.log("spiel läuft");
-    } else {
-      console.log("bin im startgameif");
+    } else if (this.startGamePressed == false) {
       this.startGamePressed = true;
       this.init();
-      // this.gameRunning = true;
+    } else {
+      alert("spiel läuft");
     }
+      // this.gameRunning = true;
   };
+  
 
   // Lädt Seite neu
   restartGame = () => {
@@ -226,10 +233,11 @@ class game {
   };
 
   gameOver = () => {
-    if (this.remainigLifes == 0) {
-      this.restartGame();
-      alert("Game Over");
-    }
+    // this.restartGame();
+    this.pause = true;
+    this.startGamePressed = false;
+    alert("Game Over: \n Du hast: " + this.wave.currentWave + " Welle(n) geschafft! \n Herzlichen Glückwunsch");
+    this.restartGame();
   };
 }
 
@@ -255,8 +263,11 @@ document.getElementById("d1").addEventListener("click", function () {
   }
   g.towerType = 0;
   g.drawTowerMouse();
-  // g.entities_.create_tower(220,110);
-  // g.entities_.draw();
+
+  //Escape aus Baumodus
+  window.addEventListener('keydown', function(e) {
+    if (e.key === "Escape") g.dropTowerMode = false;
+  })
 });
 document.getElementById("d2").addEventListener("click", function () {
   g.dropTowerMode = true;
@@ -266,19 +277,25 @@ document.getElementById("d2").addEventListener("click", function () {
   }
   g.towerType = 1;
   g.drawTowerMouse();
-  // g.entities_.create_tower(220,110);
-  // g.entities_.draw();
+
+  // Escape out of Baumodus
+  window.addEventListener('keydown', function(e) {
+    if (e.key === "Escape") g.dropTowerMode = false;
+  })
 });
 document.getElementById("mapAuswahl").addEventListener("click", function () {
-  if(g.mapType == 0) {
-    g.mapType = 1;
-    g.createMap(g.mapType);
-    console.log(g.map);
-    g.map.draw;
+  if (confirm("Soll die Map gewechselt werden?") == false) {
+    return;
   } else {
-    g.mapType = 0;
-    g.createMap(g.mapType)
-    g.map.draw;
+    if(g.mapType == 0) {
+      g.mapType = 1;
+      g.createMap(g.mapType);
+      g.map.draw;
+    } else {
+      g.mapType = 0;
+      g.createMap(g.mapType)
+      g.map.draw;
+    }
   }
 });
 

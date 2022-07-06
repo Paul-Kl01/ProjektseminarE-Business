@@ -22,12 +22,16 @@ class particle {
   update() {
     this.x = this.x + this.velocity.x; //Bewegung updaten
     this.y = this.y + this.velocity.y;
+    
+    if(this.enemy.dead == true) this.flag = true;
+
     if(this.inRange(this.x,this.y,this.radius,this.towerX,this.towerY,this.towerRange)) {
       this.calcPathToEnemy(); //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
     }
     else{
       this.flag = true; //Flag wird gesetzt sobald Particle zu weit aus der TowerRange raus ist
     }
+    
   }
 
   /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden,
