@@ -27,10 +27,10 @@ class wave {
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
             }
             else {this.initialiseEnemies();}
-            if(this.currentWave % 10 == 0 && this.amountOfBosses > 0) {
-                this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
+        }
+        else if(this.currentWave % 5 == 0 && this.amountOfBosses > 0){
+            this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
                 this.amountOfBosses--;
-            }
         }
     }
 
@@ -64,7 +64,7 @@ class wave {
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
 
-        if(this.currentWave % 10 == 0) {
+        if(this.currentWave % 5 == 0) {
             this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen
         }
 
