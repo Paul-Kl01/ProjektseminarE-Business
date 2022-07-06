@@ -363,14 +363,18 @@ function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 
   // Tower Button Farbe ändern
-  if (g.entities_.money >= 10) {
+  if (g.entities_.money >= 10 && g.entities_.money < 20) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
+    d2.style.background = "white";
+    d2.style.color = "black";
   } else if (g.entities_.money >= 20) {
     // Tower 2
     d2.style.background = "green";
     d2.style.color = "white";
+    d1.style.background = "green";
+    d1.style.color = "white";
   } else {
     d1.style.background = "white";
     d2.style.background = "white";
