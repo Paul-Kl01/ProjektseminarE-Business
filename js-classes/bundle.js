@@ -978,10 +978,16 @@ document.getElementById("d2").addEventListener("click", function () {
   // g.entities_.draw();
 });
 document.getElementById("mapAuswahl").addEventListener("click", function () {
-  g.mapType = 1;
-  g.createMap(g.mapType);
-  console.log(g.map);
-  g.map.draw;
+  if(g.mapType == 0) {
+    g.mapType = 1;
+    g.createMap(g.mapType);
+    console.log(g.map);
+    g.map.draw;
+  } else {
+    g.mapType = 0;
+    g.createMap(g.mapType)
+    g.map.draw;
+  }
 });
 
 
@@ -1014,15 +1020,13 @@ function outsideClick(e) {
   if (e.target == modal) {
     modal.style.display = "none";
   }
-}
-
-function test(e) {
   if (e.target == buildTower) {
     buildTower.style.display = "none";
   } else {
-    buildTower.style.display = "block";
+    buildTower.style.display = 'flex';
   }
 }
+
 
 // Button Dropdown
 const buildTower = document.querySelector("#btnBuild");
@@ -1032,16 +1036,12 @@ const d1 = document.querySelector("#d1");
 const d2 = document.querySelector("#d2");
 
 buildTower.addEventListener("click", toggle);
-buildTower.addEventListener("click", test);
 
 d1.addEventListener("click", close);
 d2.addEventListener("click", close);
 
 function close() {
-  buildTower.style.display = "block";
-  start.style.display = "flex";
-  pause.style.display = "flex";
-
+  buildTower.style.display = "flex";
 }
 
 function toggle() {
