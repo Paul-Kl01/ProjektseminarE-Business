@@ -48,8 +48,6 @@ class game {
     ];
 
     // MapTyp unterscheidung, falls Schwer, sonst default
-
-
   }
 
   init = () => {
@@ -59,15 +57,21 @@ class game {
     if (this.initCounter == 0) this.draw();
     this.initCounter = 1;
   };
-  
+
   // Create Map zur Unterscheidung der Map Typen
   createMap = (mapType) => {
     if (mapType == 1) {
       this.waypoints = [
-        [800, 60],
-        [800, 220],
-        [200, 220],
+        [300, 60],
+        [300, 200],
         [200, 200],
+        [200, 320],
+        [440, 320],
+        [440, 100],
+        [700, 100],
+        [700, 400],
+        [900, 400],
+        [900, 500],
       ];
       // Map StartingPoints
       this.startingPoint = [0, 60];
@@ -79,7 +83,7 @@ class game {
         [200, 200],
         [200, 500],
       ];
-  
+
       // Map StartingPoints
       this.startingPoint = [0, 60];
     }
@@ -99,8 +103,9 @@ class game {
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
     document.getElementById("coinCount").innerHTML = this.entities_.money;
-    document.getElementById("lifeCount").innerHTML = this.remainingLifes-this.entities_.deaths;
-  }
+    document.getElementById("lifeCount").innerHTML =
+      this.remainingLifes - this.entities_.deaths;
+  };
   draw = () => {
     // Animation starten
     if (this.pause == false) {
@@ -114,12 +119,10 @@ class game {
       /* EventListening für Maus-Interaktion: */
       this.drawTowerMouse();
 
-      
       // Zeichen aller Entities
       this.entities_.draw();
-      
-      if((this.remainingLifes - this.entities_.deaths) == 0) this.gameOver();
 
+      if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
 
       // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
       if (this.entities_.win == false) {
@@ -136,7 +139,8 @@ class game {
       // Anzeige von WaveCount und Coins
       document.getElementById("wcount").innerHTML = this.wave.currentWave;
       document.getElementById("coinCount").innerHTML = this.entities_.money;
-      document.getElementById("lifeCount").innerHTML = this.remainingLifes-this.entities_.deaths;
+      document.getElementById("lifeCount").innerHTML =
+        this.remainingLifes - this.entities_.deaths;
     }
   };
 
@@ -153,7 +157,8 @@ class game {
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == false || this.entities_.money < this.towerSettings[this.towerType][0]
+        ) == false ||
+        this.entities_.money < this.towerSettings[this.towerType][0]
       ) {
         this.entities_.drawCircle(
           this.events_.mouse.x,
@@ -188,7 +193,8 @@ class game {
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == true && this.entities_.money >= this.towerSettings[this.towerType][0]
+        ) == true &&
+        this.entities_.money >= this.towerSettings[this.towerType][0]
       ) {
         this.entities_.createTower(
           this.events_.mouse.x,
@@ -215,9 +221,8 @@ class game {
     } else {
       alert("spiel läuft");
     }
-      // this.gameRunning = true;
+    // this.gameRunning = true;
   };
-  
 
   // Lädt Seite neu
   restartGame = () => {
@@ -236,7 +241,11 @@ class game {
     // this.restartGame();
     this.pause = true;
     this.startGamePressed = false;
-    alert("Game Over: \n Du hast: " + this.wave.currentWave + " Welle(n) geschafft! \n Herzlichen Glückwunsch");
+    alert(
+      "Game Over: \n Du hast: " +
+        this.wave.currentWave +
+        " Welle(n) geschafft! \n Herzlichen Glückwunsch"
+    );
     this.restartGame();
   };
 }
@@ -265,10 +274,11 @@ document.getElementById("d1").addEventListener("click", function () {
   g.drawTowerMouse();
 
   //Escape aus Baumodus
-  window.addEventListener('keydown', function(e) {
+  window.addEventListener("keydown", function (e) {
     if (e.key === "Escape") g.dropTowerMode = false;
-  })
+  });
 });
+
 document.getElementById("d2").addEventListener("click", function () {
   g.dropTowerMode = true;
   if (count == 0) {
@@ -279,29 +289,26 @@ document.getElementById("d2").addEventListener("click", function () {
   g.drawTowerMouse();
 
   // Escape out of Baumodus
-  window.addEventListener('keydown', function(e) {
+  window.addEventListener("keydown", function (e) {
     if (e.key === "Escape") g.dropTowerMode = false;
-  })
+  });
 });
+
 document.getElementById("mapAuswahl").addEventListener("click", function () {
   if (confirm("Soll die Map gewechselt werden?") == false) {
     return;
   } else {
-    if(g.mapType == 0) {
+    if (g.mapType == 0) {
       g.mapType = 1;
       g.createMap(g.mapType);
       g.map.draw;
     } else {
       g.mapType = 0;
-      g.createMap(g.mapType)
+      g.createMap(g.mapType);
       g.map.draw;
     }
   }
 });
-
-
-
-
 
 // Pop Up laden
 // Map beim Laden der Seite einzeichnen
@@ -332,10 +339,9 @@ function outsideClick(e) {
   if (e.target == buildTower) {
     buildTower.style.display = "none";
   } else {
-    buildTower.style.display = 'flex';
+    buildTower.style.display = "flex";
   }
 }
-
 
 // Button Dropdown
 const buildTower = document.querySelector("#btnBuild");
@@ -355,6 +361,26 @@ function close() {
 
 function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
+
+  // Tower Button Farbe ändern
+  if (g.entities_.money >= 10 && g.entities_.money < 20) {
+    // Tower 1
+    d1.style.background = "green";
+    d1.style.color = "white";
+    d2.style.background = "white";
+    d2.style.color = "black";
+  } else if (g.entities_.money >= 20) {
+    // Tower 2
+    d2.style.background = "green";
+    d2.style.color = "white";
+    d1.style.background = "green";
+    d1.style.color = "white";
+  } else {
+    d1.style.background = "white";
+    d2.style.background = "white";
+    d1.style.color = "black";
+    d2.style.color = "black";
+  }
 }
 
 window.onclick = function (event) {

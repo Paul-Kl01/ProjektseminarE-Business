@@ -37,6 +37,7 @@ body {
     rgba(0, 0, 0, 1) 84%
   );
 }
+
 button {
   padding: 0 10px 0 10px;
   margin: 0px 20px 0 10px;
@@ -171,7 +172,7 @@ p {
 /*Dropdown Tower Button*/
 
 /* The container <div> - needed to position the dropdown content */
- .dropdown {
+.dropdown {
   position: relative;
   display: inline-block;
 }
@@ -191,3 +192,22 @@ p {
   display: flex;
 }
 
+/* Tower Info */
+.tower-info {
+  width: 20%;
+  height: 60%;
+  margin-left: 30px;
+  border-radius: 5px;
+  text-align: left;
+  box-shadow: 3px 3px 10px 3px #000000;
+  background-color: #1b3852;
+}
+
+.tower-info p {
+  text-decoration: underline;
+}
+
+.tower {
+  color: white;
+  padding-left: 30px;
+}
