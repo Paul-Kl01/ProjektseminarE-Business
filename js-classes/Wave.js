@@ -4,7 +4,7 @@
  *
  */
 class wave {
-    constructor(entities, mapType) {
+    constructor(entities, mapType = 0) { //default mapType = 0
         this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.mapType = mapType + 1;
         this.currentWave = 1; //Aktuelle Wave ingame
@@ -23,14 +23,17 @@ class wave {
 
     update(){ //Update um Klassenvariablen anzupassen
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
-            if(this.currentWave > 5) {
+            let random = this.getRndInteger(1,10); //Randomzahl um zu bestimmen, wann Boss gespawn wird
+            if(random == 5 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
+                if(this.currentWave > 5 ) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
+                }
+                else {this.initialiseEnemies();}
             }
-            else {this.initialiseEnemies();}
-        } else if (this.currentWave % 5 == 0 && this.amountOfBosses > 0) {
-            this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
-            this.amountOfBosses--;
+            else if(this.currentWave % 5 == 0 && this.amountOfBosses > 0){
+                this.initialiseEnemies(0); //Boss alle k Wellen spawnen lassen
+            }
         }
     }
 
@@ -46,6 +49,9 @@ class wave {
                 this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
                 this.amountOfEnemies--;
                 this.enemyGroup--;
+                if(enemyStrength == 0) {
+                    this.amountOfBosses--;
+                }
             }
         }
 
