@@ -1,7 +1,7 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 class enemy {
   constructor(waypoints, startingPoint, enemyType) {
-    this.enemySettings= [[15,"gold",1,20,20],
+    this.enemySettings= [[15,"green",1,20,20],
                 [5,"red",1,1,1],
                 [5,"orange",1.25,4,1],
                 [7,"purple",1,5,5]];
@@ -287,7 +287,7 @@ module.exports = tower; // muss mit Klassenname übereinstimmen
  *
  */
 class wave {
-    constructor(entities, mapType) {
+    constructor(entities, mapType = 0) { //default mapType = 0
         this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         this.mapType = mapType + 1;
         this.currentWave = 1; //Aktuelle Wave ingame
@@ -305,15 +305,21 @@ class wave {
     }
 
     update(){ //Update um Klassenvariablen anzupassen
+        console.log("RestEnemies: " + this.amountOfEnemies);
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
-            if(this.currentWave > 5) {
+            let random = this.getRndInteger(1,10); //Randomzahl um zu bestimmen, wann Boss gespawn wird
+            if(random == 5 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
+                if(this.currentWave > 5 ) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
+                }
+                else {this.initialiseEnemies();}
             }
-            else {this.initialiseEnemies();}
-        } else if (this.currentWave % 5 == 0 && this.amountOfBosses > 0) {
-            this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
-            this.amountOfBosses--;
+            else if(this.currentWave % 5 == 0 && this.amountOfBosses > 0){
+                this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
+                //this.amountOfBosses--;
+                console.log("Bossanzahl: " + this.amountOfBosses);
+            }
         }
     }
 
@@ -329,6 +335,10 @@ class wave {
                 this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
                 this.amountOfEnemies--;
                 this.enemyGroup--;
+                if(enemyStrength == 0) {
+                    this.amountOfBosses--;
+                    console.log("BOSS DRAUSSEN!");
+                }
             }
         }
 
