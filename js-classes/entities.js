@@ -11,6 +11,7 @@ class Entities {
     this.towerCounter = 0;
     this.win = false; 
     this.money = 10;
+    this.deaths = 0;
   }
 
   nextWave = (amountOfEnemies) => {
@@ -18,6 +19,7 @@ class Entities {
     this.enemyCounter = 0;
     this.win = false; 
     this.amountOfEnemies = amountOfEnemies; 
+    this.deaths = 0;
 
     for(let j = 0; j < this.towerList.length; j++) {
       this.towerList[j].particleList = []; 
@@ -96,14 +98,19 @@ class Entities {
 
   update = () => {
     var count = 0; 
+    var count_deaths = 0;
     //von jeden Enemy/Tower wird die Update() Funktion aufgerufen
     for (let i = 0; i < this.enemyList.length; i++) {
       if (this.enemyList[i].dead == true) {
-        count++; 
+        count++;
+        if(this.enemyList[i].reached == true){
+          count_deaths ++;
+        }
         continue;
       }
-      this.enemyList[i].handleEnemy();
+      this.enemyList[i].update();
     }
+    this.deaths = count_deaths;
     if (count == this.amountOfEnemies) {
       this.win = true; 
       
@@ -121,14 +128,12 @@ class Entities {
     var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
-    console.log(this.enemyList);
   };
 
   createTower = (x, y, towerSettings) => {
     var tower = new Tower(x, y, towerSettings);
     var id = this.towerCounter++;
     this.towerList[id] = tower;
-    console.log(this.towerList);
     this.money -= this.towerList[id].price;
   }; 
 
@@ -144,9 +149,6 @@ class Entities {
       for (let i = 0; i < this.enemyList.length; i++) {
         //Enmie schon tot?
         if (this.enemyList[i].dead == true) continue;
-        //Enemie schon anvisiert und dadurch tot?
-        if (this.enemyList[i].futureDamage >= this.enemyList[i].remainingLife)
-          continue;
 
         //Enemie in Tower Range?
         var bool = this.detectCollision(
@@ -263,17 +265,13 @@ class Entities {
       for (let j = start; j < finish; j++) {
         let bool;
         if (change_x == true)
-          bool = this.detectCollision(j, y1, 50, x, y, radius);
-        else bool = this.detectCollision(x1, j, 50, x, y, radius);
+          bool = this.detectCollision(j, y1, 35, x, y, radius);
+        else bool = this.detectCollision(x1, j, 35, x, y, radius);
         if (bool == true) return false;
       }
     } //End Waypoint Schleife
     return true;
-  };
-
-  towerRangePreview = (x,y,radius,color) =>{
-    this.drawCircle(x,y,radius,color)
-  }
+  };  
 }
 
 module.exports = Entities;
