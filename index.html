@@ -17,27 +17,28 @@
     <section id="game">
       <div class="gui">
         <div class="buttons">
-          <button id="mapAuswahl">Change Map</button>
+          <button id="mapAuswahl">Mapwechsel</button>
           <!-- Pop Up -->
-          <button id="btnModal" class="button">Rules</button>
+          <button id="btnModal" class="button">Regeln</button>
           <div id="modal" class="modal">
             <div class="modal-content">
               <div class="modal-body">
                 <span class="close">&times;</span>
-                <p>
+                <p style="font-size:25px; text-decoration: underline;">
                   Towerdefence - Spielregeln
                 </p>
                 <br>
-                <p >
+                <p>
                   Baue Türme um dich gegen die Gegner zu verteidigen. <br>
                   Pro Welle spawnt eine gewisse Anzahl an Gegner, die mit jeder Welle größer wird. <br>
                   Läuft ein Gegner bis zum Ende durch, wird ein Leben abgezogen.
                 </p>
                 <br>
                 <p>
-                  Drücke ESC im Baumodus, um einen Towerbau abzubrechen. <br>
-                  Wechsle die Map über „Change Map“ und versuche dich an einem anderen Level. <br> 
-                  Für jeden Tower werden jederzeit die Statusinformationen rechts angezeigt. <br>
+                  Drücke ESC im Baumodus, um den Turmbau abzubrechen. <br>
+                  Wechsle die Map über „Mapwechsel“ und versuche dich an einem anderen Level. <br> 
+                  Für jeden Turmtyp werden die Statusinformationen rechts angezeigt. <br>
+                  Die aktuelle Welle bestimmt die maximale Anzahl an Türmen. <br>
                   Platziere Türme mit Bedacht!
                 </p>
                 <br>
@@ -53,15 +54,15 @@
             <p id="lifeCount"></p>
           </div>
           <div id="money">
-            <p>Coins</p>
+            <p>Münzen</p>
             <p id="coinCount"></p>
           </div>
           <button id="btnStart">Start</button>
           <button id="btnReset">Pause</button>
-          <button id="btnBuild" class="dropbtn">Build</button>
+          <button id="btnBuild" class="dropbtn">Bauen</button>
           <div id="dropdown" class="dropdown-content">
-            <button id="d1">Tower1</button>
-            <button id="d2">Tower2</button>
+            <button id="d1">Turm1</button>
+            <button id="d2">Turm2</button>
           </div>
           <div id="waveCounter">
             <p id="headWave">Welle</p>
@@ -71,20 +72,20 @@
         <canvas id="canvas" width="1000px" height="500px"></canvas>
       </div>
       <div class="tower-info">
-        <p>Tower Info</p>
+        <p>Turm Info</p>
         <div class="tower">
-          <b>Tower 1:</b>
-          <li>Kosten: 30 Coins</li>
-          <li>Range: klein</li>
-          <li>Schaden: 1</li>
+          <b>Turm 1:</b>
+          <li>Kosten: 30 Münzen</li>
+          <li>Reichweite: klein</li>
+          <li>Schaden: gering</li>
           <li>Schussfrequenz: mittel</li>
           <br />
         </div>
         <div class="tower">
-          <b>Tower 2:</b>
-          <li>Kosten: 70 Coins</li>
-          <li>Range: mittel</li>
-          <li>Schaden: 3</li>
+          <b>Turm 2:</b>
+          <li>Kosten: 85 Münzen</li>
+          <li>Reichweite: mittel</li>
+          <li>Schaden: hoch</li>
           <li>Schussfrequenz: langsam</li>
           <br>
         </div>
