@@ -1,17 +1,10 @@
 class enemy {
-  constructor(waypoints, startingPoint, enemyType) {
-    this.enemySettings= [[15,"gold",1,20,20],
-                [5,"red",1,1,1],
-                [5,"orange",1.25,4,1],
-                [7,"purple",1,5,5]];
-    //radius, color, speed, lootDrop, Health
-    //erster Eintrag ist Boss Gegner
-    this.enemyType = enemyType;
-    this.radius = this.enemySettings[this.enemyType][0];
-    this.color = this.enemySettings[this.enemyType][1];
-    this.speed = this.enemySettings[this.enemyType][2];
-    this.lootDrop = this.enemySettings[this.enemyType][3];
-    this.health = this.enemySettings[this.enemyType][4];
+  constructor(waypoints, startingPoint, enemySettings) {
+    this.radius = enemySettings[0];
+    this.color = enemySettings[1];
+    this.speed = enemySettings[2];
+    this.lootDrop = enemySettings[3];
+    this.health = enemySettings[4];
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.lastwp = -1;
@@ -20,7 +13,6 @@ class enemy {
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
-
   }
 
 

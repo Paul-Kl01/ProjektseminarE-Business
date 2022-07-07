@@ -10,7 +10,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
-    this.money = 10;
+    this.money = 50;
     this.deaths = 0;
   }
 
@@ -44,13 +44,6 @@ class Entities {
         this.towerList[j].y,
         this.towerList[j].radius,
         this.towerList[j].color
-      );
-      // Draw Range
-      this.drawCircle(
-        this.towerList[j].x,
-        this.towerList[j].y,
-        this.towerList[j].range,
-        this.towerList[j].rangeColor
       );
 
           //Particle zeichnen
@@ -124,8 +117,8 @@ class Entities {
   };
 
 
-  createEnemy = (enemyType) => {
-    var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
+  createEnemy = (enemySettings) => {
+    var enemy = new Enemy(this.waypoints, this.startingPoint, enemySettings );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
   };
@@ -215,7 +208,7 @@ class Entities {
         this.towerList[j].radius,
         x,
         y,
-        radius
+        radius + 45
       );
       if (bool == true) return false;
     }
@@ -265,7 +258,10 @@ class Entities {
       for (let j = start; j < finish; j++) {
         let bool;
         if (change_x == true)
-          bool = this.detectCollision(j, y1, 35, x, y, radius);
+          if (i == -1 && j == 0) 
+            bool = this.detectCollision(j, y1, 150, x, y, radius);
+          else
+            bool = this.detectCollision(j, y1, 35, x, y, radius);
         else bool = this.detectCollision(x1, j, 35, x, y, radius);
         if (bool == true) return false;
       }

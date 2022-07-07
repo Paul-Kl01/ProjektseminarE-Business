@@ -13,7 +13,7 @@ class tower {
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
-    this.speed = 1.3;
+    this.speed = towerSettings[6];
     this.damage = towerSettings[5];
     // Fallentscheidung welchen towerType der Turm hat
     /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */

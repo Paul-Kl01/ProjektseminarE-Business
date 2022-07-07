@@ -5,17 +5,25 @@
  */
 class wave {
     constructor(entities, mapType = 0) { //default mapType = 0
-        this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
-        this.mapType = mapType + 1;
         this.currentWave = 1; //Aktuelle Wave ingame
+        this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
+        //erster Eintrag ist Boss Gegner
+        this.enemySettings = 
+                [[15,"gold", 1, 20, this.currentWave],
+                [5,"red", 1, 1, 1],
+                [5,"#67f2cb", 1.25, 4 ,1],
+                [7,"purple", 1, 5, 3]];
+            //radius, color, speed, lootDrop, Health
+
+        this.mapType = mapType + 1;
         this.amountOfEnemies = 1 * this.mapType; //Initalwert für Enemyanzahl abhängig vom mapType
         this.enemyGroup = 6;
         this.enemySpawnCooldown = 1; //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.enemyGroupCoolDown = 0; //Initialwert
-        this.minCooldown = 20;
-        this.maxCooldown = 150;
+        this.minCooldown = 10;
+        this.maxCooldown = 80;
         this.currentMinCooldown = 50;
-        this.currentMaxCooldown = 400;
+        this.currentMaxCooldown = 150;
         this.cooldownDecrement = 10;
         this.amountOfBosses = 0; //Wie viele Bosskämpfe in der aktuellen Welle
         this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
@@ -44,7 +52,7 @@ class wave {
                 this.enemySpawnCooldown--;
             }
             else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
-                this.entities.createEnemy(enemyStrength);//CreateMethode der EnemyTyp übergeben wird
+                this.entities.createEnemy(this.enemySettings[enemyStrength]);//CreateMethode der EnemyTyp übergeben wird
                 //Neuen Cooldown random setzten
                 this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
                 this.amountOfEnemies--;
@@ -69,6 +77,7 @@ class wave {
     
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
+        this.enemySettings[0][4] = this.currentWave;
 
         if(this.currentWave % 5 == 0) {
             this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen

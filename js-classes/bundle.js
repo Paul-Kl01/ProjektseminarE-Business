@@ -1,18 +1,11 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 class enemy {
-  constructor(waypoints, startingPoint, enemyType) {
-    this.enemySettings= [[15,"green",1,20,20],
-                [5,"red",1,1,1],
-                [5,"orange",1.25,4,1],
-                [7,"purple",1,5,5]];
-    //radius, color, speed, lootDrop, Health
-    //erster Eintrag ist Boss Gegner
-    this.enemyType = enemyType;
-    this.radius = this.enemySettings[this.enemyType][0];
-    this.color = this.enemySettings[this.enemyType][1];
-    this.speed = this.enemySettings[this.enemyType][2];
-    this.lootDrop = this.enemySettings[this.enemyType][3];
-    this.health = this.enemySettings[this.enemyType][4];
+  constructor(waypoints, startingPoint, enemySettings) {
+    this.radius = enemySettings[0];
+    this.color = enemySettings[1];
+    this.speed = enemySettings[2];
+    this.lootDrop = enemySettings[3];
+    this.health = enemySettings[4];
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.lastwp = -1;
@@ -21,7 +14,6 @@ class enemy {
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
-
   }
 
 
@@ -204,7 +196,7 @@ class tower {
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
-    this.speed = 1.3;
+    this.speed = towerSettings[6];
     this.damage = towerSettings[5];
     // Fallentscheidung welchen towerType der Turm hat
     /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */
@@ -288,27 +280,34 @@ module.exports = tower; // muss mit Klassenname übereinstimmen
  */
 class wave {
     constructor(entities, mapType = 0) { //default mapType = 0
-        this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
-        this.mapType = mapType + 1;
         this.currentWave = 1; //Aktuelle Wave ingame
-        this.amountOfEnemies = 1; //Initalwert für Enemyanzahl
+        this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
+        //erster Eintrag ist Boss Gegner
+        this.enemySettings = 
+                [[15,"gold", 1, 20, this.currentWave],
+                [5,"red", 1, 1, 1],
+                [5,"#67f2cb", 1.25, 4 ,1],
+                [7,"purple", 1, 5, 3]];
+            //radius, color, speed, lootDrop, Health
+
+        this.mapType = mapType + 1;
+        this.amountOfEnemies = 1 * this.mapType; //Initalwert für Enemyanzahl abhängig vom mapType
         this.enemyGroup = 6;
         this.enemySpawnCooldown = 1; //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.enemyGroupCoolDown = 0; //Initialwert
-        this.minCooldown = 20;
-        this.maxCooldown = 150;
+        this.minCooldown = 10;
+        this.maxCooldown = 80;
         this.currentMinCooldown = 50;
-        this.currentMaxCooldown = 400;
+        this.currentMaxCooldown = 150;
         this.cooldownDecrement = 10;
         this.amountOfBosses = 0; //Wie viele Bosskämpfe in der aktuellen Welle
         this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
     }
 
     update(){ //Update um Klassenvariablen anzupassen
-        console.log("RestEnemies: " + this.amountOfEnemies);
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             let random = this.getRndInteger(1,10); //Randomzahl um zu bestimmen, wann Boss gespawn wird
-            if(random == 5 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
+            if(random % 2 == 0 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
                 if(this.currentWave > 5 ) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
@@ -316,9 +315,7 @@ class wave {
                 else {this.initialiseEnemies();}
             }
             else if(this.currentWave % 5 == 0 && this.amountOfBosses > 0){
-                this.initialiseEnemies(0); //Boss alle 10 Wellen spawnen lassen
-                //this.amountOfBosses--;
-                console.log("Bossanzahl: " + this.amountOfBosses);
+                this.initialiseEnemies(0); //Boss alle k Wellen spawnen lassen
             }
         }
     }
@@ -330,14 +327,13 @@ class wave {
                 this.enemySpawnCooldown--;
             }
             else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
-                this.entities.createEnemy(enemyStrength);//CreateMethode der EnemyTyp übergeben wird
+                this.entities.createEnemy(this.enemySettings[enemyStrength]);//CreateMethode der EnemyTyp übergeben wird
                 //Neuen Cooldown random setzten
                 this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
                 this.amountOfEnemies--;
                 this.enemyGroup--;
                 if(enemyStrength == 0) {
                     this.amountOfBosses--;
-                    console.log("BOSS DRAUSSEN!");
                 }
             }
         }
@@ -356,6 +352,7 @@ class wave {
     
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
+        this.enemySettings[0][4] = this.currentWave;
 
         if(this.currentWave % 5 == 0) {
             this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen
@@ -370,7 +367,7 @@ class wave {
         }
         this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
         
-        this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5)); //(currentWave)^2
+        this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5)) * this.mapType; //(currentWave)^2 * mapType( (0 + 1) oder (1 + 1))
         this.enemyGroupCoolDown = 0;
         this.enemyGroup = 6;
         
@@ -398,7 +395,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
-    this.money = 10;
+    this.money = 50;
     this.deaths = 0;
   }
 
@@ -432,13 +429,6 @@ class Entities {
         this.towerList[j].y,
         this.towerList[j].radius,
         this.towerList[j].color
-      );
-      // Draw Range
-      this.drawCircle(
-        this.towerList[j].x,
-        this.towerList[j].y,
-        this.towerList[j].range,
-        this.towerList[j].rangeColor
       );
 
           //Particle zeichnen
@@ -512,8 +502,8 @@ class Entities {
   };
 
 
-  createEnemy = (enemyType) => {
-    var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
+  createEnemy = (enemySettings) => {
+    var enemy = new Enemy(this.waypoints, this.startingPoint, enemySettings );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
   };
@@ -603,7 +593,7 @@ class Entities {
         this.towerList[j].radius,
         x,
         y,
-        radius
+        radius + 45
       );
       if (bool == true) return false;
     }
@@ -653,7 +643,10 @@ class Entities {
       for (let j = start; j < finish; j++) {
         let bool;
         if (change_x == true)
-          bool = this.detectCollision(j, y1, 35, x, y, radius);
+          if (i == -1 && j == 0) 
+            bool = this.detectCollision(j, y1, 150, x, y, radius);
+          else
+            bool = this.detectCollision(j, y1, 35, x, y, radius);
         else bool = this.detectCollision(x1, j, 35, x, y, radius);
         if (bool == true) return false;
       }
@@ -664,7 +657,405 @@ class Entities {
 
 module.exports = Entities;
 },{"./Enemy":1,"./Tower":4}],7:[function(require,module,exports){
+// Import der Klassen via Node.js
+const map = require("./map");
+const entitites = require("./entities");
+const events = require("./Events");
+const wave = require("./Wave");
 
+/*
+ * Bündeln der Klassen
+ * @author Constantin
+ *
+ */
+
+class game {
+  constructor() {
+    // Canvas erstellen
+    this.canvas = document.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+
+    /* Initalisierung der Variablen:
+     */
+    // Läuft das Spiel?
+    this.gameRunning = false;
+    // Counter für init-Funktion, da sonst Animation-Loop entsteht
+    this.initCounter = 0;
+    // Life Counter
+    this.remainingLifes = 3;
+    // Drop Tower Mode, damit um Mauszeiger gezeichnet werden kann.
+    this.dropTowerMode = false;
+    // Wenn der Start Game Button gedrückt wurde ändert sich die Flag
+    this.startGamePressed = false;
+    // Tower Typ
+    this.towerType = 0;
+    // Pause-Flag
+    this.pause = false;
+    // Map-Typ (0 = default)
+    this.mapType = 0;
+    this.map;
+    /* ---------------------------------------------------- */
+
+    // Event Instanz zum Maus-Handling
+    this.events_ = new events(this.canvas, this.ctx);
+
+    // Eigenschaften eines Turmes
+    this.towerSettings = [
+      [30, 15, "#1E90FF", 100, 100, 1, 1.4],
+      [70, 15, "#00bb2d", 150, 150, 3, 1.6],
+      // Price, Radius, Color, Range, Cooldown, Damage, Speed
+    ];
+
+    // MapTyp unterscheidung, falls Schwer, sonst default
+  }
+
+  init = () => {
+    this.gameRunnning = true;
+    this.wave = new wave(this.entities_);
+    this.entities_.nextWave(this.wave.amountOfEnemies);
+    if (this.initCounter == 0) this.draw();
+    this.initCounter = 1;
+  };
+
+  // Create Map zur Unterscheidung der Map Typen
+  createMap = (mapType) => {
+    if (mapType == 1) {
+      this.waypoints = [
+        [300, 60],
+        [300, 200],
+        [200, 200],
+        [200, 320],
+        [440, 320],
+        [440, 100],
+        [700, 100],
+        [700, 400],
+        [900, 400],
+        [900, 500],
+      ];
+      // Map StartingPoints
+      this.startingPoint = [0, 60];
+    } else {
+      // Map Waypoints
+      this.waypoints = [
+        [800, 60],
+        [800, 200],
+        [200, 200],
+        [200, 500],
+      ];
+
+      // Map StartingPoints
+      this.startingPoint = [0, 60];
+    }
+    // Map erstellen
+    this.map = new map(
+      "#F08080",
+      "#eee",
+      this.waypoints,
+      this.startingPoint,
+      this.canvas,
+      this.ctx
+    );
+    this.map.draw();
+
+    // Konstruktor von Entities kann erst aufgerufen werden, wenn die Map erstellt ist
+    this.entities_ = new entitites(this.startingPoint, this.waypoints);
+    this.towerCount = this.entities_.towerCounter;
+    this.enemyCount = this.entities_.enemyCounter;
+    document.getElementById("coinCount").innerHTML = this.entities_.money;
+    document.getElementById("lifeCount").innerHTML =
+      this.remainingLifes - this.entities_.deaths;
+  };
+  draw = () => {
+    // Animation starten
+    if (this.pause == false) {
+      window.requestAnimationFrame(this.draw);
+
+      // Clear Canvas
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // Map zeichnen
+      this.map.draw();
+
+      /* EventListening für Maus-Interaktion: */
+      this.drawTowerMouse();
+
+      // Zeichen aller Entities
+      this.entities_.draw();
+
+      if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+
+      // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
+      if (this.entities_.win == false) {
+        if (this.startGamePressed == true) {
+          this.entities_.update();
+          this.wave.update();
+        }
+      } else {
+        this.remainingLifes -= this.entities_.deaths;
+        this.wave.nextWave();
+        this.entities_.nextWave(this.wave.amountOfEnemies);
+      }
+
+      // Anzeige von WaveCount und Coins
+      document.getElementById("wcount").innerHTML = this.wave.currentWave;
+      document.getElementById("coinCount").innerHTML = this.entities_.money;
+      document.getElementById("lifeCount").innerHTML =
+        this.remainingLifes - this.entities_.deaths;
+    }
+  };
+
+  /* EventListening für Maus-Interaktion:
+      Wenn der DropTowerMode True ist, dann wird ein Kreis um den Mauszeiger im Bereich des Canvas gezeichnet
+      Wenn dann geklickt wird, dann wird ein Turm an dieser Stelle gebaut und der EventListener bricht ab.
+     */
+  drawTowerMouse = () => {
+    if (this.dropTowerMode) {
+      this.canvas.addEventListener("mousemove", this.events_.onmove);
+      this.canvas.addEventListener("click", this.events_.onclick);
+      if (
+        this.entities_.validatePosition(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1]
+        ) == false ||
+        this.entities_.money < this.towerSettings[this.towerType][0]
+      ) {
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1],
+          "#000000"
+        );
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][3],
+          "rgba(30, 144, 255, 0.2)"
+        );
+      } else {
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1],
+          this.towerSettings[this.towerType][2]
+        );
+        this.entities_.drawCircle(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][3],
+          "rgba(30, 144, 255, 0.2)"
+        );
+      }
+    }
+    if (this.events_.mouse.clicked == true && this.dropTowerMode == true) {
+      if (
+        this.entities_.validatePosition(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType][1]
+        ) == true &&
+        this.entities_.money >= this.towerSettings[this.towerType][0]
+      ) {
+        this.entities_.createTower(
+          this.events_.mouse.x,
+          this.events_.mouse.y,
+          this.towerSettings[this.towerType]
+        );
+        this.events_.mouse.clicked = false;
+        this.dropTowerMode = false;
+        this.canvas.removeEventListener("click", this.events_.onclick);
+      } else {
+        this.canvas.removeEventListener("click", this.events_.onclick);
+        this.events_.mouse.clicked = false;
+      }
+    }
+  };
+
+  // Check ob Turm gebaut ist und ob das Spiel schon läuft
+  startGame = () => {
+    if (this.entities_.towerList.length == 0) {
+      confirm("Bau lieber zuerst einen Turm");
+    } else if (this.startGamePressed == false) {
+      this.startGamePressed = true;
+      this.init();
+    } else {
+      alert("spiel läuft");
+    }
+    // this.gameRunning = true;
+  };
+
+  // Lädt Seite neu
+  restartGame = () => {
+    location.reload();
+  };
+
+  pauseGame = () => {
+    /* Timer stoppen, Waves "anhalten"
+          at the Moment keine Ahnung wie das implementiert werden soll */
+    this.pause = !this.pause;
+    if (this.pause == false) this.draw();
+    //  window.cancelAnimationFrame(this.draw);
+  };
+
+  gameOver = () => {
+    // this.restartGame();
+    this.pause = true;
+    this.startGamePressed = false;
+    alert(
+      "Game Over: \n Du hast: " +
+        this.wave.currentWave +
+        " Welle(n) geschafft! \n Herzlichen Glückwunsch"
+    );
+    this.restartGame();
+  };
+}
+
+// Neue Instanz des Spiels
+const g = new game();
+
+// Verankerung der Buttons mit den Funktionen
+document
+  .getElementById("btnStart")
+  .addEventListener("click", g.startGame, false);
+document
+  .getElementById("btnReset")
+  .addEventListener("click", g.pauseGame, false);
+
+/* Tower Build */
+// count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.
+var count = 0;
+document.getElementById("d1").addEventListener("click", function () {
+  g.dropTowerMode = true;
+  if (count == 0) {
+    g.init();
+    count++;
+  }
+  g.towerType = 0;
+  g.drawTowerMouse();
+
+  //Escape aus Baumodus
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") g.dropTowerMode = false;
+  });
+});
+
+document.getElementById("d2").addEventListener("click", function () {
+  g.dropTowerMode = true;
+  if (count == 0) {
+    g.init();
+    count++;
+  }
+  g.towerType = 1;
+  g.drawTowerMouse();
+
+  // Escape out of Baumodus
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") g.dropTowerMode = false;
+  });
+});
+
+document.getElementById("mapAuswahl").addEventListener("click", function () {
+  if (confirm("Soll die Map gewechselt werden?") == false) {
+    return;
+  } else {
+    if (g.mapType == 0) {
+      g.startGamePressed = false;
+      g.mapType = 1;
+      g.createMap(g.mapType);
+      g.map.draw;
+    } else {
+      g.startGamePressed = false;
+      g.mapType = 0;
+      g.createMap(g.mapType);
+      g.map.draw;
+    }
+  }
+});
+
+// Pop Up laden
+// Map beim Laden der Seite einzeichnen
+window.addEventListener("load", g.createMap(g.mapType));
+window.addEventListener("load", openModal);
+
+// Pop Up Rules
+const modal = document.querySelector("#modal");
+const modalBtn = document.querySelector("#btnModal");
+const closeBtn = document.querySelector(".close");
+
+modalBtn.addEventListener("click", openModal);
+closeBtn.addEventListener("click", closeModal);
+window.addEventListener("click", outsideClick);
+
+function openModal() {
+  modal.style.display = "block";
+}
+
+function closeModal() {
+  modal.style.display = "none";
+}
+
+function outsideClick(e) {
+  if (e.target == modal) {
+    modal.style.display = "none";
+  }
+  if (e.target == buildTower) {
+    buildTower.style.display = "none";
+  } else {
+    buildTower.style.display = "flex";
+  }
+}
+
+// Button Dropdown
+const buildTower = document.querySelector("#btnBuild");
+const pause = document.querySelector("#btnStart");
+const start = document.querySelector("#btnReset");
+const d1 = document.querySelector("#d1");
+const d2 = document.querySelector("#d2");
+
+buildTower.addEventListener("click", toggle);
+
+d1.addEventListener("click", close);
+d2.addEventListener("click", close);
+
+function close() {
+  buildTower.style.display = "flex";
+}
+
+function toggle() {
+  document.querySelector("#dropdown").classList.toggle("show");
+
+  // Tower Button Farbe ändern
+  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0]) {
+    // Tower 1
+    d1.style.background = "green";
+    d1.style.color = "white";
+    d2.style.background = "white";
+    d2.style.color = "black";
+  } else if (g.entities_.money >= g.towerSettings[1][0]) {
+    // Tower 2
+    d2.style.background = "green";
+    d2.style.color = "white";
+    d1.style.background = "green";
+    d1.style.color = "white";
+  } else {
+    d1.style.background = "white";
+    d2.style.background = "white";
+    d1.style.color = "black";
+    d2.style.color = "black";
+  }
+}
+
+window.onclick = function (event) {
+  if (!event.target.matches(".dropbtn")) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains("show")) {
+        openDropdown.classList.remove("show");
+      }
+    }
+  }
+};
 
 },{"./Events":2,"./Wave":5,"./entities":6,"./map":8}],8:[function(require,module,exports){
 /*
