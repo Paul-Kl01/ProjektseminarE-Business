@@ -9,10 +9,14 @@ class wave {
         this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         //erster Eintrag ist Boss Gegner
         this.enemySettings = 
-                [[15,"gold", 1, 20, this.currentWave],
-                [5,"red", 1, 1, 1],
-                [5,"#67f2cb", 1.25, 4 ,1],
-                [7,"purple", 1, 5, 3]];
+                [[15,"#ffd700", 1, 20, this.currentWave],
+                [5,"#dc143c", 1, 1, 1],
+                [5,"#d0ff14", 1.25, 4 ,1],
+                [7,"#7fffd4", 1, 5, 3],
+                //Skalierung von stärkeren Gegner für höhere Wellen (Index 4 bis 6)
+                [5,"#8b0000", 1, 1, 3],
+                [5,"#cae00d", 1.25, 2 ,1],
+                [7,"#44d7a8", 1, 3, 4]];
             //radius, color, speed, lootDrop, Health
 
         this.mapType = mapType + 1;
@@ -33,9 +37,13 @@ class wave {
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             let random = this.getRndInteger(1,10); //Randomzahl um zu bestimmen, wann Boss gespawn wird
             if(random % 2 == 0 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
-                if(this.currentWave > 5 ) {
+                if(this.currentWave > 5 && this.currentWave < 10) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
+                }
+                else if(this.currentWave >= 10) {
+                //Extra Parameter, damit Enemies zufällig stärker werden können
+                this.initialiseEnemies(this.getRndInteger(4,6)); //Typ 4,5 & 6
                 }
                 else {this.initialiseEnemies();}
             }
@@ -65,7 +73,7 @@ class wave {
 
         else if(this.enemyGroup == 0 && this.enemyGroupCoolDown == 0) {
             //Werte zurücksetzen
-            this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann
+            this.enemyGroupCoolDown = 20; //Cooldown bis neue Gruppe an Enemies spawnen kann
             this.enemyGroup = 6;
         }
         else if(this.enemyGroupCoolDown > 0) {
