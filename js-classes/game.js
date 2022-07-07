@@ -43,7 +43,7 @@ class game {
     // Eigenschaften eines Turmes
     this.towerSettings = [
       [30, 15, "#1E90FF", 100, 100, 1, 1.4],
-      [70, 15, "#00bb2d", 150, 150, 3, 1.6],
+      [85, 15, "#00bb2d", 150, 150, 3, 1.6],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
@@ -52,7 +52,6 @@ class game {
 
   init = () => {
     this.gameRunnning = true;
-    this.wave = new wave(this.entities_);
     this.entities_.nextWave(this.wave.amountOfEnemies);
     if (this.initCounter == 0) this.draw();
     this.initCounter = 1;
@@ -61,6 +60,7 @@ class game {
   // Create Map zur Unterscheidung der Map Typen
   createMap = (mapType) => {
     if (mapType == 1) {
+      this.mapType = 1;
       this.waypoints = [
         [300, 60],
         [300, 200],
@@ -100,11 +100,13 @@ class game {
 
     // Konstruktor von Entities kann erst aufgerufen werden, wenn die Map erstellt ist
     this.entities_ = new entitites(this.startingPoint, this.waypoints);
+    this.wave = new wave(this.entities_, this.mapType);
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
     document.getElementById("coinCount").innerHTML = this.entities_.money;
     document.getElementById("lifeCount").innerHTML =
       this.remainingLifes - this.entities_.deaths;
+    document.getElementById("wcount").innerHTML = this.wave.currentWave;
   };
   draw = () => {
     // Animation starten
@@ -157,8 +159,8 @@ class game {
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == false ||
-        this.entities_.money < this.towerSettings[this.towerType][0]
+        ) == false || 
+        this.entities_.money < this.towerSettings[this.towerType][0] || this.entities_.towerList.length >= this.wave.currentWave
       ) {
         this.entities_.drawCircle(
           this.events_.mouse.x,
@@ -194,7 +196,7 @@ class game {
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
         ) == true &&
-        this.entities_.money >= this.towerSettings[this.towerType][0]
+        this.entities_.money >= this.towerSettings[this.towerType][0] && this.entities_.towerList.length < this.wave.currentWave
       ) {
         this.entities_.createTower(
           this.events_.mouse.x,
@@ -365,13 +367,13 @@ function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 
   // Tower Button Farbe ändern
-  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0]) {
+  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.towerList.length < g.wave.currentWave) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
     d2.style.background = "white";
     d2.style.color = "black";
-  } else if (g.entities_.money >= g.towerSettings[1][0]) {
+  } else if (g.entities_.money >= g.towerSettings[1][0] && g.entities_.towerList.length < g.wave.currentWave) {
     // Tower 2
     d2.style.background = "green";
     d2.style.color = "white";
