@@ -284,10 +284,14 @@ class wave {
         this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
         //erster Eintrag ist Boss Gegner
         this.enemySettings = 
-                [[15,"gold", 1, 20, this.currentWave],
-                [5,"red", 1, 1, 1],
-                [5,"#67f2cb", 1.25, 4 ,1],
-                [7,"purple", 1, 5, 3]];
+                [[15,"#ffd700", 1, 20, this.currentWave],
+                [5,"#dc143c", 1, 1, 1],
+                [5,"#d0ff14", 1.25, 4 ,1],
+                [7,"#7fffd4", 1, 5, 3],
+                //Skalierung von stärkeren Gegner für höhere Wellen (Index 4 bis 6)
+                [5,"#8b0000", 1, 1, 3],
+                [5,"#cae00d", 1.25, 2 ,1],
+                [7,"#44d7a8", 1, 3, 4]];
             //radius, color, speed, lootDrop, Health
 
         this.mapType = mapType + 1;
@@ -308,9 +312,13 @@ class wave {
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             let random = this.getRndInteger(1,10); //Randomzahl um zu bestimmen, wann Boss gespawn wird
             if(random % 2 == 0 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
-                if(this.currentWave > 5 ) {
+                if(this.currentWave > 5 && this.currentWave < 10) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
+                }
+                else if(this.currentWave >= 10) {
+                //Extra Parameter, damit Enemies zufällig stärker werden können
+                this.initialiseEnemies(this.getRndInteger(4,6)); //Typ 4,5 & 6
                 }
                 else {this.initialiseEnemies();}
             }
@@ -340,7 +348,7 @@ class wave {
 
         else if(this.enemyGroup == 0 && this.enemyGroupCoolDown == 0) {
             //Werte zurücksetzen
-            this.enemyGroupCoolDown = 50; //Cooldown bis neue Gruppe an Enemies spawnen kann
+            this.enemyGroupCoolDown = 20; //Cooldown bis neue Gruppe an Enemies spawnen kann
             this.enemyGroup = 6;
         }
         else if(this.enemyGroupCoolDown > 0) {
@@ -702,7 +710,7 @@ class game {
     // Eigenschaften eines Turmes
     this.towerSettings = [
       [30, 15, "#1E90FF", 100, 100, 1, 1.4],
-      [70, 15, "#00bb2d", 150, 150, 3, 1.6],
+      [85, 15, "#00bb2d", 150, 150, 3, 1.6],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
@@ -711,7 +719,6 @@ class game {
 
   init = () => {
     this.gameRunnning = true;
-    this.wave = new wave(this.entities_);
     this.entities_.nextWave(this.wave.amountOfEnemies);
     if (this.initCounter == 0) this.draw();
     this.initCounter = 1;
@@ -720,6 +727,7 @@ class game {
   // Create Map zur Unterscheidung der Map Typen
   createMap = (mapType) => {
     if (mapType == 1) {
+      this.mapType = 1;
       this.waypoints = [
         [300, 60],
         [300, 200],
@@ -759,11 +767,13 @@ class game {
 
     // Konstruktor von Entities kann erst aufgerufen werden, wenn die Map erstellt ist
     this.entities_ = new entitites(this.startingPoint, this.waypoints);
+    this.wave = new wave(this.entities_, this.mapType);
     this.towerCount = this.entities_.towerCounter;
     this.enemyCount = this.entities_.enemyCounter;
     document.getElementById("coinCount").innerHTML = this.entities_.money;
     document.getElementById("lifeCount").innerHTML =
       this.remainingLifes - this.entities_.deaths;
+    document.getElementById("wcount").innerHTML = this.wave.currentWave;
   };
   draw = () => {
     // Animation starten
@@ -816,8 +826,8 @@ class game {
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == false ||
-        this.entities_.money < this.towerSettings[this.towerType][0]
+        ) == false || 
+        this.entities_.money < this.towerSettings[this.towerType][0] || this.entities_.towerList.length >= this.wave.currentWave
       ) {
         this.entities_.drawCircle(
           this.events_.mouse.x,
@@ -853,7 +863,7 @@ class game {
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
         ) == true &&
-        this.entities_.money >= this.towerSettings[this.towerType][0]
+        this.entities_.money >= this.towerSettings[this.towerType][0] && this.entities_.towerList.length < this.wave.currentWave
       ) {
         this.entities_.createTower(
           this.events_.mouse.x,
@@ -1024,13 +1034,13 @@ function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 
   // Tower Button Farbe ändern
-  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0]) {
+  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.towerList.length < g.wave.currentWave) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
     d2.style.background = "white";
     d2.style.color = "black";
-  } else if (g.entities_.money >= g.towerSettings[1][0]) {
+  } else if (g.entities_.money >= g.towerSettings[1][0] && g.entities_.towerList.length < g.wave.currentWave) {
     // Tower 2
     d2.style.background = "green";
     d2.style.color = "white";
