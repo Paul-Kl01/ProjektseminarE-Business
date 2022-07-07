@@ -1,18 +1,11 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 class enemy {
-  constructor(waypoints, startingPoint, enemyType) {
-    this.enemySettings= [[15,"gold",1,20,20],
-                [5,"red",1,1,1],
-                [5,"orange",1.25,4,1],
-                [7,"purple",1,5,5]];
-    //radius, color, speed, lootDrop, Health
-    //erster Eintrag ist Boss Gegner
-    this.enemyType = enemyType;
-    this.radius = this.enemySettings[this.enemyType][0];
-    this.color = this.enemySettings[this.enemyType][1];
-    this.speed = this.enemySettings[this.enemyType][2];
-    this.lootDrop = this.enemySettings[this.enemyType][3];
-    this.health = this.enemySettings[this.enemyType][4];
+  constructor(waypoints, startingPoint, enemySettings) {
+    this.radius = enemySettings[0];
+    this.color = enemySettings[1];
+    this.speed = enemySettings[2];
+    this.lootDrop = enemySettings[3];
+    this.health = enemySettings[4];
     this.waypoints = waypoints;
     this.startingPoint = startingPoint;
     this.lastwp = -1;
@@ -21,7 +14,6 @@ class enemy {
     this.coveredDistance = 0;
     this.x = this.startingPoint[0];
     this.y = this.startingPoint[1];
-
   }
 
 
@@ -204,7 +196,7 @@ class tower {
     this.particleList = [];
     this.particleCount = 0;
     this.rangeColor = 'rgba(30, 144, 255, 0.2)';
-    this.speed = 1.3;
+    this.speed = towerSettings[6];
     this.damage = towerSettings[5];
     // Fallentscheidung welchen towerType der Turm hat
     /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */
@@ -288,17 +280,25 @@ module.exports = tower; // muss mit Klassenname übereinstimmen
  */
 class wave {
     constructor(entities, mapType = 0) { //default mapType = 0
-        this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
-        this.mapType = mapType + 1;
         this.currentWave = 1; //Aktuelle Wave ingame
+        this.entities = entities; //Sicherstellen, dass Game und Wave die selbe Instanz von Entities nutzen
+        //erster Eintrag ist Boss Gegner
+        this.enemySettings = 
+                [[15,"gold", 1, 20, this.currentWave],
+                [5,"red", 1, 1, 1],
+                [5,"#67f2cb", 1.25, 4 ,1],
+                [7,"purple", 1, 5, 3]];
+            //radius, color, speed, lootDrop, Health
+
+        this.mapType = mapType + 1;
         this.amountOfEnemies = 1 * this.mapType; //Initalwert für Enemyanzahl abhängig vom mapType
         this.enemyGroup = 6;
         this.enemySpawnCooldown = 1; //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
         this.enemyGroupCoolDown = 0; //Initialwert
-        this.minCooldown = 20;
-        this.maxCooldown = 150;
+        this.minCooldown = 10;
+        this.maxCooldown = 80;
         this.currentMinCooldown = 50;
-        this.currentMaxCooldown = 400;
+        this.currentMaxCooldown = 150;
         this.cooldownDecrement = 10;
         this.amountOfBosses = 0; //Wie viele Bosskämpfe in der aktuellen Welle
         this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
@@ -327,7 +327,7 @@ class wave {
                 this.enemySpawnCooldown--;
             }
             else{ //in create als zusätzlichen Parameter: enemyStrength übergeben!
-                this.entities.createEnemy(enemyStrength);//CreateMethode der EnemyTyp übergeben wird
+                this.entities.createEnemy(this.enemySettings[enemyStrength]);//CreateMethode der EnemyTyp übergeben wird
                 //Neuen Cooldown random setzten
                 this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
                 this.amountOfEnemies--;
@@ -352,6 +352,7 @@ class wave {
     
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
+        this.enemySettings[0][4] = this.currentWave;
 
         if(this.currentWave % 5 == 0) {
             this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen
@@ -394,7 +395,7 @@ class Entities {
     this.enemyCounter = 0;
     this.towerCounter = 0;
     this.win = false; 
-    this.money = 10;
+    this.money = 50;
     this.deaths = 0;
   }
 
@@ -428,13 +429,6 @@ class Entities {
         this.towerList[j].y,
         this.towerList[j].radius,
         this.towerList[j].color
-      );
-      // Draw Range
-      this.drawCircle(
-        this.towerList[j].x,
-        this.towerList[j].y,
-        this.towerList[j].range,
-        this.towerList[j].rangeColor
       );
 
           //Particle zeichnen
@@ -508,8 +502,8 @@ class Entities {
   };
 
 
-  createEnemy = (enemyType) => {
-    var enemy = new Enemy(this.waypoints, this.startingPoint, enemyType );
+  createEnemy = (enemySettings) => {
+    var enemy = new Enemy(this.waypoints, this.startingPoint, enemySettings );
     var id = this.enemyCounter++;
     this.enemyList[id] = enemy;
   };
@@ -599,7 +593,7 @@ class Entities {
         this.towerList[j].radius,
         x,
         y,
-        radius
+        radius + 45
       );
       if (bool == true) return false;
     }
@@ -649,7 +643,10 @@ class Entities {
       for (let j = start; j < finish; j++) {
         let bool;
         if (change_x == true)
-          bool = this.detectCollision(j, y1, 35, x, y, radius);
+          if (i == -1 && j == 0) 
+            bool = this.detectCollision(j, y1, 150, x, y, radius);
+          else
+            bool = this.detectCollision(j, y1, 35, x, y, radius);
         else bool = this.detectCollision(x1, j, 35, x, y, radius);
         if (bool == true) return false;
       }
@@ -704,9 +701,9 @@ class game {
 
     // Eigenschaften eines Turmes
     this.towerSettings = [
-      [10, 15, "#1E90FF", 100, 120, 1],
-      [20, 15, "#00bb2d", 150, 200, 3],
-      // Price, Radius, Color, Range, Cooldown, Damage
+      [30, 15, "#1E90FF", 100, 100, 1, 1.4],
+      [70, 15, "#00bb2d", 150, 150, 3, 1.6],
+      // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
     // MapTyp unterscheidung, falls Schwer, sonst default
@@ -961,10 +958,12 @@ document.getElementById("mapAuswahl").addEventListener("click", function () {
     return;
   } else {
     if (g.mapType == 0) {
+      g.startGamePressed = false;
       g.mapType = 1;
       g.createMap(g.mapType);
       g.map.draw;
     } else {
+      g.startGamePressed = false;
       g.mapType = 0;
       g.createMap(g.mapType);
       g.map.draw;
@@ -1025,13 +1024,13 @@ function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 
   // Tower Button Farbe ändern
-  if (g.entities_.money >= 10 && g.entities_.money < 20) {
+  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0]) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
     d2.style.background = "white";
     d2.style.color = "black";
-  } else if (g.entities_.money >= 20) {
+  } else if (g.entities_.money >= g.towerSettings[1][0]) {
     // Tower 2
     d2.style.background = "green";
     d2.style.color = "white";

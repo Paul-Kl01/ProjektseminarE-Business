@@ -42,9 +42,9 @@ class game {
 
     // Eigenschaften eines Turmes
     this.towerSettings = [
-      [10, 15, "#1E90FF", 100, 120, 1],
-      [20, 15, "#00bb2d", 150, 200, 3],
-      // Price, Radius, Color, Range, Cooldown, Damage
+      [30, 15, "#1E90FF", 100, 100, 1, 1.4],
+      [70, 15, "#00bb2d", 150, 150, 3, 1.6],
+      // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
     // MapTyp unterscheidung, falls Schwer, sonst default
@@ -299,10 +299,12 @@ document.getElementById("mapAuswahl").addEventListener("click", function () {
     return;
   } else {
     if (g.mapType == 0) {
+      g.startGamePressed = false;
       g.mapType = 1;
       g.createMap(g.mapType);
       g.map.draw;
     } else {
+      g.startGamePressed = false;
       g.mapType = 0;
       g.createMap(g.mapType);
       g.map.draw;
@@ -363,13 +365,13 @@ function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 
   // Tower Button Farbe ändern
-  if (g.entities_.money >= 10 && g.entities_.money < 20) {
+  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0]) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
     d2.style.background = "white";
     d2.style.color = "black";
-  } else if (g.entities_.money >= 20) {
+  } else if (g.entities_.money >= g.towerSettings[1][0]) {
     // Tower 2
     d2.style.background = "green";
     d2.style.color = "white";
