@@ -221,7 +221,7 @@ class game {
       this.startGamePressed = true;
       this.init();
     } else {
-      alert("spiel läuft");
+      alert("Spiel läuft");
     }
     // this.gameRunning = true;
   };
