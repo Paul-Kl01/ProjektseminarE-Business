@@ -88,9 +88,9 @@ class wave {
         this.enemySettings[0][4] = this.currentWave;
 
         if(this.currentWave % 10 == 8) {
-            this.enemySettings[1][4] = (Math.round(Math.pow((this.enemySettings[1][4] + 1),1.2)));
+            this.enemySettings[1][4] = (Math.floor(Math.pow((this.enemySettings[1][4] + 1),1.2)));
             //this.enemySettings[2][4] = (Math.floor(Math.pow((this.enemySettings[2][4] + 1),1.2)) * this.mapType);
-            this.enemySettings[3][4] = (Math.round(Math.pow((this.enemySettings[3][4]),1.2)));
+            this.enemySettings[3][4] = (Math.floor(Math.pow((this.enemySettings[3][4]),1.2)));
         }
 
         if(this.currentWave % 5 == 0) {
