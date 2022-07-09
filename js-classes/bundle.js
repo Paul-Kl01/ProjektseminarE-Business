@@ -288,13 +288,15 @@ class wave {
                 [5,"#dc143c", 1, 1, 1],
                 [5,"#d0ff14", 1.25, 4 ,1],
                 [7,"#7fffd4", 1, 5, 3]];
-                //Skalierung von stärkeren Gegner für höhere Wellen (Index 4 bis 6)
-                // [5,"#8b0000", 1, 1, 3],
-                // [5,"#cae00d", 1.25, 2 ,1],
-                // [7,"#44d7a8", 1, 3, 4]];
             //radius, color, speed, lootDrop, Health
 
-        this.mapType = mapType + 1;
+        //Skalierung je nach MapType
+        if(mapType == 0) {
+            this.mapType = 1;
+        }
+        else {
+            this.mapType = 1,5;
+        }
         this.amountOfEnemies = 1 * this.mapType; //Initalwert für Enemyanzahl abhängig vom mapType
         this.enemyGroup = 6;
         this.enemySpawnCooldown = 1; //Damit Enemies nicht alle direkt ohne Abstand hintereinnander spawnen
@@ -360,16 +362,20 @@ class wave {
     
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
+        
+        //Boss-Stärke erhöhen
         this.enemySettings[0][4] = this.currentWave;
 
+        //Stärke der Enemies erhöhen
         if(this.currentWave % 10 == 8) {
-            this.enemySettings[1][4] = (Math.round(Math.pow((this.enemySettings[1][4] + 1),1.2)) * this.mapType);
+            this.enemySettings[1][4] = (Math.floor(Math.pow((this.enemySettings[1][4] + 1),1.2)));
             //this.enemySettings[2][4] = (Math.floor(Math.pow((this.enemySettings[2][4] + 1),1.2)) * this.mapType);
-            this.enemySettings[3][4] = (Math.round(Math.pow((this.enemySettings[3][4]),1.2)) * this.mapType);
+            this.enemySettings[3][4] = (Math.floor(Math.pow((this.enemySettings[3][4]),1.2)));
         }
 
+        //Anzahl der Bosskämpfe für aktuelle Welle festlegen
         if(this.currentWave % 5 == 0) {
-            this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen
+            this.amountOfBosses = this.maxAmountBosses + 1; 
         }
 
         //Cooldown für Enemies verringern
@@ -381,7 +387,7 @@ class wave {
         }
         this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
         
-        this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5)) * this.mapType; //(currentWave)^2 * mapType( (0 + 1) oder (1 + 1))
+        this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5) * this.mapType); //(currentWave)^1,5 * mapType(1 oder 1,5) & Abrundung
         this.enemyGroupCoolDown = 0;
         this.enemyGroup = 6;
         
