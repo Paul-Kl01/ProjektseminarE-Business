@@ -33,6 +33,8 @@ class wave {
         this.cooldownDecrement = 10;
         this.amountOfBosses = 0; //Wie viele Bosskämpfe in der aktuellen Welle
         this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
+        this.currentSkaling = 8; //Wird schrittweise verringert bis this.minSkaling erreicht wird
+        this.minSkaling = 2;
     }
 
     update(){ //Update um Klassenvariablen anzupassen
@@ -92,10 +94,19 @@ class wave {
         this.enemySettings[0][4] = this.currentWave;
 
         //Stärke der Enemies erhöhen
-        if(this.currentWave % 10 == 8) {
+        if(this.currentWave % 10 == this.currentSkaling) {
             this.enemySettings[1][4] = (Math.floor(Math.pow((this.enemySettings[1][4] + 1),1.2)));
-            //this.enemySettings[2][4] = (Math.floor(Math.pow((this.enemySettings[2][4] + 1),1.2)) * this.mapType);
             this.enemySettings[3][4] = (Math.floor(Math.pow((this.enemySettings[3][4]),1.2)));
+
+            //Bei der DefaultMap soll schneller Enemy ebenfalls hochskaliert werden
+            if(this.mapType == 1) {
+                this.enemySettings[2][4] = (Math.floor(Math.pow((this.enemySettings[2][4] + 1),1.2)) * this.mapType);
+            }
+            
+            //Skalingzeitpunkt verringern
+            if(this.currentSkaling > this.minSkaling) {
+                this.currentSkaling--;
+            }
         }
 
         //Anzahl der Bosskämpfe für aktuelle Welle festlegen
