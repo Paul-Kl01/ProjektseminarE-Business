@@ -13,10 +13,6 @@ class wave {
                 [5,"#dc143c", 1, 1, 1],
                 [5,"#d0ff14", 1.25, 4 ,1],
                 [7,"#7fffd4", 1, 5, 3]];
-                //Skalierung von stärkeren Gegner für höhere Wellen (Index 4 bis 6)
-                // [5,"#8b0000", 1, 1, 3],
-                // [5,"#cae00d", 1.25, 2 ,1],
-                // [7,"#44d7a8", 1, 3, 4]];
             //radius, color, speed, lootDrop, Health
 
         this.mapType = mapType + 1;
