@@ -384,7 +384,7 @@ function toggle() {
     d2.style.color = "white";
     d1.style.background = "green";
     d1.style.color = "white";
-  } 
+  }
 }
 
 window.onclick = function (event) {
