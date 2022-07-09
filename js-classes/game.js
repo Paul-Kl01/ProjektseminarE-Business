@@ -42,8 +42,8 @@ class game {
 
     // Eigenschaften eines Turmes
     this.towerSettings = [
-      [30, 15, "#1E90FF", 100, 100, 1, 1.4],
-      [85, 15, "#00bb2d", 150, 150, 3, 1.6],
+      [30, 15, "#1E90FF", 100, 80, 1, 1.4],
+      [85, 15, "#00bb2d", 150, 150, 4, 1.6],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
