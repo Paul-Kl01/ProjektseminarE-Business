@@ -1046,7 +1046,12 @@ function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
 
   // Tower Button Farbe ändern
-  if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0] && g.entities_.towerList.length < g.wave.currentWave) {
+  if(g.entities_.money < g.towerSettings[0][0] || g.entities_.towerList.length >= g.wave.currentWave) {
+      d1.style.background = "white";
+      d2.style.background = "white";
+      d1.style.color = "black";
+      d2.style.color = "black";
+  } else if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0] && g.entities_.towerList.length < g.wave.currentWave) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
@@ -1058,12 +1063,7 @@ function toggle() {
     d2.style.color = "white";
     d1.style.background = "green";
     d1.style.color = "white";
-  } else {
-    d1.style.background = "white";
-    d2.style.background = "white";
-    d1.style.color = "black";
-    d2.style.color = "black";
-  }
+  } 
 }
 
 window.onclick = function (event) {
