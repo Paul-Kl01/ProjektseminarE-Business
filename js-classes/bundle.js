@@ -287,11 +287,11 @@ class wave {
                 [[15,"#ffd700", 1, 20, this.currentWave],
                 [5,"#dc143c", 1, 1, 1],
                 [5,"#d0ff14", 1.25, 4 ,1],
-                [7,"#7fffd4", 1, 5, 3],
+                [7,"#7fffd4", 1, 5, 3]];
                 //Skalierung von stärkeren Gegner für höhere Wellen (Index 4 bis 6)
-                [5,"#8b0000", 1, 1, 3],
-                [5,"#cae00d", 1.25, 2 ,1],
-                [7,"#44d7a8", 1, 3, 4]];
+                // [5,"#8b0000", 1, 1, 3],
+                // [5,"#cae00d", 1.25, 2 ,1],
+                // [7,"#44d7a8", 1, 3, 4]];
             //radius, color, speed, lootDrop, Health
 
         this.mapType = mapType + 1;
@@ -312,14 +312,14 @@ class wave {
         if(this.amountOfEnemies > 0) { //Solange amount > 0, Enemies erstellen lassen
             let random = this.getRndInteger(1,10); //Randomzahl um zu bestimmen, wann Boss gespawn wird
             if(random % 2 == 0 || this.currentWave % 5 != 0 || this.amountOfBosses == 0) {
-                if(this.currentWave > 5 && this.currentWave < 10) {
+                if(this.currentWave > 5) {
                 //Extra Parameter, damit Enemies zufällig stärker werden können
                 this.initialiseEnemies(this.getRndInteger(1,3)); //Typ 0,1,2 & 3
                 }
-                else if(this.currentWave >= 10) {
-                //Extra Parameter, damit Enemies zufällig stärker werden können
-                this.initialiseEnemies(this.getRndInteger(4,6)); //Typ 4,5 & 6
-                }
+                // else if(this.currentWave >= 10) {
+                // //Extra Parameter, damit Enemies zufällig stärker werden können
+                // this.initialiseEnemies(this.getRndInteger(4,6)); //Typ 4,5 & 6
+                // }
                 else {this.initialiseEnemies();}
             }
             else if(this.currentWave % 5 == 0 && this.amountOfBosses > 0){
@@ -361,6 +361,12 @@ class wave {
     nextWave() { //Klassenvariablen für die nächste Wave vorbereiten
         this.currentWave++;
         this.enemySettings[0][4] = this.currentWave;
+
+        if(this.currentWave % 10 == 8) {
+            this.enemySettings[1][4] = (Math.round(Math.pow((this.enemySettings[1][4] + 1),1.2)) * this.mapType);
+            //this.enemySettings[2][4] = (Math.floor(Math.pow((this.enemySettings[2][4] + 1),1.2)) * this.mapType);
+            this.enemySettings[3][4] = (Math.round(Math.pow((this.enemySettings[3][4]),1.2)) * this.mapType);
+        }
 
         if(this.currentWave % 5 == 0) {
             this.amountOfBosses = this.maxAmountBosses + 1; //Anzahl der Bosskämpfe für aktuelle Welle festlegen
@@ -709,8 +715,8 @@ class game {
 
     // Eigenschaften eines Turmes
     this.towerSettings = [
-      [30, 15, "#1E90FF", 100, 100, 1, 1.4],
-      [85, 15, "#00bb2d", 150, 150, 3, 1.6],
+      [30, 15, "#1E90FF", 100, 80, 1, 1.4],
+      [85, 15, "#00bb2d", 150, 150, 4, 1.6],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
