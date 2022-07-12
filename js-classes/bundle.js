@@ -310,6 +310,7 @@ class wave {
         this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
         this.currentSkaling = 8; //Wird schrittweise verringert bis this.minSkaling erreicht wird
         this.minSkaling = 2;
+        this.expon = 1.5; 
     }
 
     update(){ //Update um Klassenvariablen anzupassen
@@ -386,7 +387,8 @@ class wave {
 
         //Anzahl der Bosskämpfe für aktuelle Welle festlegen
         if(this.currentWave % 5 == 0) {
-            this.amountOfBosses = this.maxAmountBosses + 1; 
+            this.maxAmountBosses += 1;
+            this.amountOfBosses = this.maxAmountBosses; 
         }
 
         //Cooldown für Enemies verringern
@@ -398,9 +400,16 @@ class wave {
         }
         this.enemySpawnCooldown = this.getRndInteger(this.currentMinCooldown,this.currentMaxCooldown);
         
-        this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5) * this.mapType); //(currentWave)^1,5 * mapType(1 oder 1,5) & Abrundung
+        //this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5) * this.mapType); //(currentWave)^1,5 * mapType(1 oder 1,5) & Abrundung
+        this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),this.expon) * this.mapType);
+        console.log(this.amountOfEnemies); 
+
         this.enemyGroupCoolDown = 0;
         this.enemyGroup = 6;
+        
+        if(this.currentWave > 9){
+            this.expon += 0.05; 
+        }
         
         this.update();
     }
@@ -733,7 +742,7 @@ class game {
     // Eigenschaften eines Turmes
     this.towerSettings = [
       [30, 15, "#1E90FF", 100, 80, 1, 1.4],
-      [85, 15, "#00bb2d", 150, 150, 4, 1.6],
+      [85, 15, "#00bb2d", 130, 150, 2, 1.5],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
@@ -814,7 +823,8 @@ class game {
       // Zeichen aller Entities
       this.entities_.draw();
 
-      if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+      //if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+      if (this.remainingLifes - this.entities_.deaths <= 0) this.gameOver();
 
       // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
       if (this.entities_.win == false) {

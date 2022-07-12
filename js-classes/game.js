@@ -43,7 +43,7 @@ class game {
     // Eigenschaften eines Turmes
     this.towerSettings = [
       [30, 15, "#1E90FF", 100, 80, 1, 1.4],
-      [85, 15, "#00bb2d", 150, 150, 4, 1.6],
+      [85, 15, "#00bb2d", 130, 150, 2, 1.5],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
@@ -124,7 +124,8 @@ class game {
       // Zeichen aller Entities
       this.entities_.draw();
 
-      if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+      //if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+      if (this.remainingLifes - this.entities_.deaths <= 0) this.gameOver();
 
       // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
       if (this.entities_.win == false) {
