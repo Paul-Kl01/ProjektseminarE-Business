@@ -46,8 +46,6 @@ class game {
       [85, 15, "#00bb2d", 130, 150, 2, 1.5],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
-
-    // MapTyp unterscheidung, falls Schwer, sonst default
   }
 
   init = () => {
@@ -227,7 +225,6 @@ class game {
     } else {
       alert("Spiel läuft");
     }
-    // this.gameRunning = true;
   };
 
   // Lädt Seite neu
@@ -240,11 +237,9 @@ class game {
           at the Moment keine Ahnung wie das implementiert werden soll */
     this.pause = !this.pause;
     if (this.pause == false) this.draw();
-    //  window.cancelAnimationFrame(this.draw);
   };
 
   gameOver = () => {
-    // this.restartGame();
     this.pause = true;
     this.startGamePressed = false;
     alert(
@@ -294,7 +289,7 @@ document.getElementById("d2").addEventListener("click", function () {
   g.towerType = 1;
   g.drawTowerMouse();
 
-  // Escape out of Baumodus
+  // Escape aus Baumodus
   window.addEventListener("keydown", function (e) {
     if (e.key === "Escape") g.dropTowerMode = false;
   });
@@ -354,8 +349,6 @@ function outsideClick(e) {
 
 // Button Dropdown
 const buildTower = document.querySelector("#btnBuild");
-const pause = document.querySelector("#btnStart");
-const start = document.querySelector("#btnReset");
 const d1 = document.querySelector("#d1");
 const d2 = document.querySelector("#d2");
 

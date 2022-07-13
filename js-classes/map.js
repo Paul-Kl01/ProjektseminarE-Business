@@ -19,7 +19,6 @@ class map {
     this.startingPoint = startingPoint;
     this.canvas = canvas;
     this.context = context;
-    //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
   // Weg auf Canvas zeichnen
