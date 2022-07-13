@@ -320,7 +320,6 @@ class wave {
     this.amountOfBosses = 0; //Wie viele Bosskämpfe in der aktuellen Welle
     this.maxAmountBosses = 0; //Anzahl der Bosskämpfe soll steigen
     this.currentSkaling = 8; //Wird schrittweise verringert bis this.minSkaling erreicht wird
-    // this.minSkaling = 2;
     this.minSkaling = 1;
     this.expon = 1.5;
   }
@@ -339,10 +338,6 @@ class wave {
           //Extra Parameter, damit Enemies zufällig stärker werden können
           this.initialiseEnemies(this.getRndInteger(1, 3)); //Typ 0,1,2 & 3
         }
-        // else if(this.currentWave >= 10) {
-        // //Extra Parameter, damit Enemies zufällig stärker werden können
-        // this.initialiseEnemies(this.getRndInteger(4,6)); //Typ 4,5 & 6
-        // }
         else {
           this.initialiseEnemies();
         }
@@ -392,7 +387,6 @@ class wave {
 
     //Stärke der Enemies erhöhen
     if (this.currentWave % this.currentSkaling == 0) {
-      //   if(this.currentWave % 10 == this.currentSkaling) {
       this.enemySettings[1][4] = Math.floor(
         Math.pow(this.enemySettings[1][4] + 1, 1.2)
       );
@@ -432,7 +426,6 @@ class wave {
       this.currentMaxCooldown
     );
 
-    //this.amountOfEnemies = Math.floor(Math.pow((this.currentWave),1.5) * this.mapType); //(currentWave)^1,5 * mapType(1 oder 1,5) & Abrundung
     this.amountOfEnemies = Math.floor(
       Math.pow(this.currentWave, this.expon) * this.mapType
     );
@@ -787,8 +780,6 @@ class game {
       [85, 15, "#00bb2d", 130, 150, 2, 1.5],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
-
-    // MapTyp unterscheidung, falls Schwer, sonst default
   }
 
   init = () => {
@@ -968,7 +959,6 @@ class game {
     } else {
       alert("Spiel läuft");
     }
-    // this.gameRunning = true;
   };
 
   // Lädt Seite neu
@@ -981,16 +971,14 @@ class game {
           at the Moment keine Ahnung wie das implementiert werden soll */
     this.pause = !this.pause;
     if (this.pause == false) this.draw();
-    //  window.cancelAnimationFrame(this.draw);
   };
 
   gameOver = () => {
-    // this.restartGame();
     this.pause = true;
     this.startGamePressed = false;
     alert(
       "Game Over: \n Du hast: " +
-        this.wave.currentWave +
+        (this.wave.currentWave - 1) +
         " Welle(n) geschafft! \n Herzlichen Glückwunsch"
     );
     this.restartGame();
@@ -1035,7 +1023,7 @@ document.getElementById("d2").addEventListener("click", function () {
   g.towerType = 1;
   g.drawTowerMouse();
 
-  // Escape out of Baumodus
+  // Escape aus Baumodus
   window.addEventListener("keydown", function (e) {
     if (e.key === "Escape") g.dropTowerMode = false;
   });
@@ -1095,8 +1083,6 @@ function outsideClick(e) {
 
 // Button Dropdown
 const buildTower = document.querySelector("#btnBuild");
-const pause = document.querySelector("#btnStart");
-const start = document.querySelector("#btnReset");
 const d1 = document.querySelector("#d1");
 const d2 = document.querySelector("#d2");
 
@@ -1196,7 +1182,6 @@ class map {
     this.startingPoint = startingPoint;
     this.canvas = canvas;
     this.context = context;
-    //this.initalEnemyPos = {x,y}; // Einfügen aus Enemy
   }
 
   // Weg auf Canvas zeichnen
