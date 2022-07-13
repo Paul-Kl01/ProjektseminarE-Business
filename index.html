@@ -31,6 +31,7 @@
                 <p>
                   Baue Türme um dich gegen die Gegner zu verteidigen. <br>
                   Pro Welle spawnt eine gewisse Anzahl an Gegner, die mit jeder Welle größer wird. <br>
+                  Die Gegner werden im Verlauf des Spieles schwerer. <br>
                   Läuft ein Gegner bis zum Ende durch, wird ein Leben abgezogen.
                 </p>
                 <br>
@@ -61,8 +62,8 @@
           <button id="btnReset">Pause</button>
           <button id="btnBuild" class="dropbtn">Bauen</button>
           <div id="dropdown" class="dropdown-content">
-            <button id="d1">Turm1</button>
-            <button id="d2">Turm2</button>
+            <button id="d1">Turm 1</button>
+            <button id="d2">Turm 2</button>
           </div>
           <div id="waveCounter">
             <p id="headWave">Welle</p>
@@ -71,6 +72,7 @@
         </div>
         <canvas id="canvas" width="1000px" height="500px"></canvas>
       </div>
+    <div id="scoreBoards">
       <div class="tower-info">
         <p>Turm Info</p>
         <div class="tower">
@@ -84,12 +86,87 @@
         <div class="tower">
           <b>Turm 2:</b>
           <li>Kosten: 85 Münzen</li>
-          <li>Reichweite: mittel</li>
+          <li>Reichweite: hoch</li>
           <li>Schaden: hoch</li>
           <li>Schussfrequenz: langsam</li>
           <br>
         </div>
       </div>
+      <div class="tower-info">
+        <p>Highscore</p>
+        <div class="map1">
+          <br>
+          <table class="tg" style="table-layout: fixed; width: 210px;">
+            <colgroup>
+            <col style="width: 97px">
+            <col style="width: 73px">
+            </colgroup>
+            <tbody>
+              <tr>
+                <td class="tg-0pky">Anika</td>
+                <td class="tg-0pky">10 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Nicole</td>
+                <td class="tg-0pky">12 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Felix</td>
+                <td class="tg-0pky">10 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Constantin</td>
+                <td class="tg-0pky">9 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Benedikt</td>
+                <td class="tg-0pky">5 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Paul</td>
+                <td class="tg-0pky">10 Wellen</td>
+              </tr>
+            </tbody>
+            </table>
+          <br />
+        </div>
+        <div class="map2">
+          <table class="tg" style="table-layout: fixed; width: 210px;">
+            <colgroup>
+            <col style="width: 97px">
+            <col style="width: 73px">
+            </colgroup>
+            <tbody>
+              <tr>
+                <td class="tg-0pky">Anika</td>
+                <td class="tg-0pky">10 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Nicole</td>
+                <td class="tg-0pky">12 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Felix</td>
+                <td class="tg-0pky">4 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Constantin</td>
+                <td class="tg-0pky">16 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Benedikt</td>
+                <td class="tg-0pky">5 Wellen</td>
+              </tr>
+              <tr>
+                <td class="tg-0pky">Paul</td>
+                <td class="tg-0pky">10 Wellen</td>
+              </tr>
+            </tbody>
+            </table>
+          <br />
+        </div>
+      </div>
+    </div>
     </section>
     <script src="./js-classes/bundle.js"></script>
   </body>

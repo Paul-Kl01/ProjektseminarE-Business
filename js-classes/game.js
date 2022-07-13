@@ -43,7 +43,7 @@ class game {
     // Eigenschaften eines Turmes
     this.towerSettings = [
       [30, 15, "#1E90FF", 100, 80, 1, 1.4],
-      [85, 15, "#00bb2d", 150, 150, 4, 1.6],
+      [85, 15, "#00bb2d", 130, 150, 2, 1.5],
       // Price, Radius, Color, Range, Cooldown, Damage, Speed
     ];
 
@@ -124,7 +124,8 @@ class game {
       // Zeichen aller Entities
       this.entities_.draw();
 
-      if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+      //if (this.remainingLifes - this.entities_.deaths == 0) this.gameOver();
+      if (this.remainingLifes - this.entities_.deaths <= 0) this.gameOver();
 
       // Solange nicht alle Gegner Tot sind und solange der StartButton gedrückt wurde
       if (this.entities_.win == false) {
@@ -143,6 +144,7 @@ class game {
       document.getElementById("coinCount").innerHTML = this.entities_.money;
       document.getElementById("lifeCount").innerHTML =
         this.remainingLifes - this.entities_.deaths;
+      colorButtons();
     }
   };
 
@@ -159,8 +161,9 @@ class game {
           this.events_.mouse.x,
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
-        ) == false || 
-        this.entities_.money < this.towerSettings[this.towerType][0] || this.entities_.towerList.length >= this.wave.currentWave
+        ) == false ||
+        this.entities_.money < this.towerSettings[this.towerType][0] ||
+        this.entities_.towerList.length >= this.wave.currentWave
       ) {
         this.entities_.drawCircle(
           this.events_.mouse.x,
@@ -196,7 +199,8 @@ class game {
           this.events_.mouse.y,
           this.towerSettings[this.towerType][1]
         ) == true &&
-        this.entities_.money >= this.towerSettings[this.towerType][0] && this.entities_.towerList.length < this.wave.currentWave
+        this.entities_.money >= this.towerSettings[this.towerType][0] &&
+        this.entities_.towerList.length < this.wave.currentWave
       ) {
         this.entities_.createTower(
           this.events_.mouse.x,
@@ -312,6 +316,7 @@ document.getElementById("mapAuswahl").addEventListener("click", function () {
       g.map.draw;
     }
   }
+  scoreChange();
 });
 
 // Pop Up laden
@@ -365,20 +370,32 @@ function close() {
 
 function toggle() {
   document.querySelector("#dropdown").classList.toggle("show");
+}
 
-  // Tower Button Farbe ändern
-  if(g.entities_.money < g.towerSettings[0][0] || g.entities_.towerList.length >= g.wave.currentWave) {
-      d1.style.background = "white";
-      d2.style.background = "white";
-      d1.style.color = "black";
-      d2.style.color = "black";
-  } else if (g.entities_.money >= g.towerSettings[0][0] && g.entities_.money < g.towerSettings[1][0] && g.entities_.towerList.length < g.wave.currentWave) {
+// Farbe der Buttons ändern in Funktion, damit sie im Game-Draw aufgerufen werden kann
+function colorButtons() {
+  if (
+    g.entities_.money < g.towerSettings[0][0] ||
+    g.entities_.towerList.length >= g.wave.currentWave
+  ) {
+    d1.style.background = "white";
+    d2.style.background = "white";
+    d1.style.color = "black";
+    d2.style.color = "black";
+  } else if (
+    g.entities_.money >= g.towerSettings[0][0] &&
+    g.entities_.money < g.towerSettings[1][0] &&
+    g.entities_.towerList.length < g.wave.currentWave
+  ) {
     // Tower 1
     d1.style.background = "green";
     d1.style.color = "white";
     d2.style.background = "white";
     d2.style.color = "black";
-  } else if (g.entities_.money >= g.towerSettings[1][0] && g.entities_.towerList.length < g.wave.currentWave) {
+  } else if (
+    g.entities_.money >= g.towerSettings[1][0] &&
+    g.entities_.towerList.length < g.wave.currentWave
+  ) {
     // Tower 1 & 2 werden grün gefärbt
     d2.style.background = "green";
     d2.style.color = "white";
@@ -386,6 +403,9 @@ function toggle() {
     d1.style.color = "white";
   }
 }
+
+// Erstmaliges Aufrufen der colorButtons, vor Spielstart
+window.addEventListener("load", colorButtons());
 
 window.onclick = function (event) {
   if (!event.target.matches(".dropbtn")) {
@@ -399,3 +419,16 @@ window.onclick = function (event) {
     }
   }
 };
+
+// Highscore Board
+function scoreChange() {
+  const map1 = document.querySelector(".map1");
+  const map2 = document.querySelector(".map2");
+  if (g.mapType == 1) {
+    map2.style.display = "flex";
+    map1.style.display = "none";
+  } else {
+    map1.style.display = "flex";
+    map2.style.display = "none";
+  }
+}

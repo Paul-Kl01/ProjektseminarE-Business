@@ -1,5 +1,9 @@
 const particle = require("./Particle");
-
+/*
+ * Verwaltung der Türme im Spiel
+ * @author Benedikt
+ *
+ */
 class tower {
   constructor(x, y, towerSettings) {
     this.price = towerSettings[0];
@@ -12,26 +16,22 @@ class tower {
     this.cooldown = towerSettings[4];
     this.particleList = [];
     this.particleCount = 0;
-    this.rangeColor = 'rgba(30, 144, 255, 0.2)';
+    this.rangeColor = "rgba(30, 144, 255, 0.2)";
     this.speed = towerSettings[6];
     this.damage = towerSettings[5];
-    // Fallentscheidung welchen towerType der Turm hat
-    /*Edit - Constantin: Wir haben den TowerTyp via TowerSettings in der Game durchgereicht, das spart die IF-Statements */
-
-
-    // if (towerType == 0) {
-    //   // Standardturm
-    //   this.price = 10;
-    //   this.range = 100;
-    //   this.cooldown = 120; // 30 = 1 Sekunde, dann durch Updates herabsetzbar
-    //   this.particlesPerShot = 1;
-    // }
   }
 
   shoot = (enemy, amount = 1) => {
     // Anzahl von Partikeln wird erzeugt mit Tower Koordinaten wenn Enemy in Reichweite, und Feuerbereit
     for (var i = 1; i <= amount; i++) {
-      var particle_ = new particle(this.x, this.y, this.damage, enemy, this.speed, this.range);
+      var particle_ = new particle(
+        this.x,
+        this.y,
+        this.damage,
+        enemy,
+        this.speed,
+        this.range
+      );
       var id = this.particleCount++;
       this.particleList[id] = particle_;
     }
@@ -51,31 +51,28 @@ class tower {
 
   // +++ Schauen ob man später vllt Höchstgrenzen von Upgrades setzt, oder Prozentual upgraded, oder direkt größere Schritte macht +++
 
-  upgradeDamage(value = 1) {
-    // Upgrade von Schaden
-    this.damage += value;
-  }
+  /* Methoden werden (noch, Stand: release) nicht genutzt */
+  
+  // upgradeDamage(value = 1) {
+  //   // Upgrade von Schaden
+  //   this.damage += value;
+  // }
 
-  upgradeRange(value = 1) {
-    // Upgrade von Reichweite
-    this.range += value;
-  }
+  // upgradeRange(value = 1) {
+  //   // Upgrade von Reichweite
+  //   this.range += value;
+  // }
 
-  upgradeSpeed(value = 1) {
-    // Upgrade von Schussgeschwindigkeit
-    if (this.cooldown > 1 && this.cooldown - value > 0) {
-      this.cooldown -= value;
-    }
-  }
+  // upgradeSpeed(value = 1) {
+  //   // Upgrade von Schussgeschwindigkeit
+  //   if (this.cooldown > 1 && this.cooldown - value > 0) {
+  //     this.cooldown -= value;
+  //   }
+  // }
 
-  upgradeAmountParticlesPerShot(value = 1) {
-    // Upgrade Projektilanzahl pro Schuss
-    this.particlesPerShot += value;
-  }
-
-  // draw() {
-  //     // Zeichnet den Kreis des Turms
-  //     helpers.drawCircle(this.x, this.y, this.radius, this.color)
+  // upgradeAmountParticlesPerShot(value = 1) {
+  //   // Upgrade Projektilanzahl pro Schuss
+  //   this.particlesPerShot += value;
   // }
 
   isFireReady() {

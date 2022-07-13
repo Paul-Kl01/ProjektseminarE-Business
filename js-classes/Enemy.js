@@ -1,3 +1,8 @@
+/*
+ * Verwaltung der Enemies im Spiel
+ * @author Felix
+ *
+ */
 class enemy {
   constructor(waypoints, startingPoint, enemySettings) {
     this.radius = enemySettings[0];
@@ -15,10 +20,8 @@ class enemy {
     this.y = this.startingPoint[1];
   }
 
-
   //update Funktion bewegt die Gegner in Abhängigkeit davon, welchen WP sie bereits erreicht haben.
   update() {
-
     if (this.lastwp == -1) {
       var x1 = this.startingPoint[0];
       var y1 = this.startingPoint[1];
@@ -33,37 +36,34 @@ class enemy {
     var x2 = this.waypoints[this.lastwp + 1][0];
     var y2 = this.waypoints[this.lastwp + 1][1];
 
+    if (x1 < x2) {
+      //rechts
+      this.x += this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (x1 > x2) {
+      //links
+      this.x -= this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (y1 < y2) {
+      //oben
+      this.y += this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (y1 > y2) {
+      //unten
+      this.y -= this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (this.x == x2 && this.y == y2) {
+      this.lastwp += 1;
+    }
 
-    
-
-      if(x1 < x2){ //rechts
-        this.x += this.speed;
-        this.coveredDistance += this.speed;
-      }
-      if(x1 > x2){ //links
-        this.x -= this.speed;
-        this.coveredDistance += this.speed;
-      }
-      if(y1 < y2){ //oben
-        this.y += this.speed;
-        this.coveredDistance += this.speed;
-      }
-      if(y1 > y2){ //unten
-        this.y -= this.speed;
-        this.coveredDistance += this.speed;
-
-      }
-      if(this.x == x2 && this.y == y2){
-        this.lastwp += 1;
-      }
-
-      if (this.lastwp == this.waypoints.length-1) {
-        this.reached = true;
-        this.dead = true;
-
-      }
-
-    
+    if (this.lastwp == this.waypoints.length - 1) {
+      this.reached = true;
+      this.dead = true;
+    }
   }
 
   draw() {
@@ -76,12 +76,10 @@ class enemy {
   }
   hit(damage) {
     this.health -= damage;
-    if(this.health <= 0){
+    if (this.health <= 0) {
       this.dead = true;
     }
-
   }
 }
-
 
 module.exports = enemy;
