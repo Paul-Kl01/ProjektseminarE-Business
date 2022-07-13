@@ -978,7 +978,7 @@ class game {
     this.startGamePressed = false;
     alert(
       "Game Over: \n Du hast: " +
-        (this.wave.currentWave - 1) +
+        this.wave.currentWave +
         " Welle(n) geschafft! \n Herzlichen Glückwunsch"
     );
     this.restartGame();
