@@ -22,16 +22,23 @@ class particle {
   update() {
     this.x = this.x + this.velocity.x; //Bewegung updaten
     this.y = this.y + this.velocity.y;
-    
-    if(this.enemy.dead == true) this.flag = true;
 
-    if(this.inRange(this.x,this.y,this.radius,this.towerX,this.towerY,this.towerRange)) {
+    if (this.enemy.dead == true) this.flag = true;
+
+    if (
+      this.inRange(
+        this.x,
+        this.y,
+        this.radius,
+        this.towerX,
+        this.towerY,
+        this.towerRange
+      )
+    ) {
       this.calcPathToEnemy(); //Da Enemy sich bewegt, muss Bewegungsrichtung des Particles immer wieder angepasst werden
-    }
-    else{
+    } else {
       this.flag = true; //Flag wird gesetzt sobald Particle zu weit aus der TowerRange raus ist
     }
-    
   }
 
   /*Enemies bewegen sich, Path zum Enemy muss immer wieder aktualisiert werden,
@@ -49,10 +56,11 @@ class particle {
 
   //Stellt sicher, dass Particle nicht zu weit außerhalb der TowerRange existieren kann
   //1 -> Particle , 2 -> TowerRange
-  inRange(x1,y1,r1,x2,y2,r2) {
-    var a = x1 - (x2);
-    var b = y1 - (y2);
-    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 100) { //Der Wert 100 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
+  inRange(x1, y1, r1, x2, y2, r2) {
+    var a = x1 - x2;
+    var b = y1 - y2;
+    if (Math.sqrt(a * a + b * b) <= r1 + r2 + 100) {
+      //Der Wert 100 sorgt dafür, dass Particle etwas weiter aus der Range rauskommt
       return true;
     }
     return false;

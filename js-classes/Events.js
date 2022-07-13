@@ -1,3 +1,8 @@
+/*
+ * Eventlistener für Turm-Bau
+ * @author Constantin
+ *
+ */
 class events {
   constructor(canvas, context) {
     this.canvas = canvas;
@@ -8,21 +13,21 @@ class events {
     this.mouse = {
       x: 0,
       y: 0,
-      clicked: false, 
-    }
+      clicked: false,
+    };
   }
-    onmove = (e) => {
-      this.mouse.x = (e.clientX - this.rect.left) * this.scaleX
-      this.mouse.y = (e.clientY - this.rect.top) * this.scaleY
-    }
+  onmove = (e) => {
+    this.mouse.x = (e.clientX - this.rect.left) * this.scaleX;
+    this.mouse.y = (e.clientY - this.rect.top) * this.scaleY;
+  };
 
-     onclick = (e) => {
-      this.mouse.clicked = true;
-    }
+  onclick = (e) => {
+    this.mouse.clicked = true;
+  };
 
-    update = () => {
-      this.mouse.clicked = false;
-    }
+  update = () => {
+    this.mouse.clicked = false;
+  };
 }
 
 module.exports = events;
