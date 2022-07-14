@@ -20,8 +20,15 @@ class particle {
   }
 
   update() {
+<<<<<<< Updated upstream
     this.x = this.x + this.velocity.x; //Bewegung updaten
     this.y = this.y + this.velocity.y;
+=======
+    console.log(this.velocity.x * window.GLOBALSPEED);
+    console.log(this.velocity.y * window.GLOBALSPEED);
+    this.x = this.x + (this.velocity.x * window.GLOBALSPEED); //Bewegung updaten
+    this.y = this.y + (this.velocity.y * window.GLOBALSPEED);
+>>>>>>> Stashed changes
 
     if (this.enemy.dead == true) this.flag = true;
 

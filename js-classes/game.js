@@ -143,6 +143,8 @@ class game {
       document.getElementById("lifeCount").innerHTML =
         this.remainingLifes - this.entities_.deaths;
       colorButtons();
+
+      console.log(window.GLOBALSPEED);
     }
   };
 
@@ -239,6 +241,23 @@ class game {
     if (this.pause == false) this.draw();
   };
 
+<<<<<<< Updated upstream
+=======
+  speedChange = () => {
+    // Geschwindigkeit des Spiels ändern
+    console.log(window.GLOBALSPEED);
+    this.pause = true;
+
+    if (window.GLOBALSPEED == 1) {
+      window.GLOBALSPEED = 5; 
+    } else {
+      window.GLOBALSPEED = 1;
+    }
+
+    this.pause = false;
+  }
+
+>>>>>>> Stashed changes
   gameOver = () => {
     this.pause = true;
     this.startGamePressed = false;
