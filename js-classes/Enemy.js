@@ -35,37 +35,27 @@ class enemy {
     //auslesen nächster waypint i+1
     var x2 = this.waypoints[this.lastwp + 1][0];
     var y2 = this.waypoints[this.lastwp + 1][1];
-    
-    //schauen ob mit nächstem Schritt der Wegpunkt überschritten wird, wenn ja, Koordinaten auf Wegpunkt setzen
-    var distanceToNextWaypoint = Math.abs(x2 - this.x) + Math.abs(y2 - this.y); // Betrag der Distanz zum nächsten Wegpunkt
 
-    //Wenn mit nächstem Schritt der Wegpunkt überschritten werden würde, Koordinaten auf Wegpunkt setzen
-    if (distanceToNextWaypoint <= (this.speed * window.GLOBALSPEED)) {
-      this.x = x2;
-      this.y = y2;
-    } else {
-      if (x1 < x2) {
-        //rechts
-        this.x += this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
-      if (x1 > x2) {
-        //links
-        this.x -= this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
-      if (y1 < y2) {
-        //oben
-        this.y += this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
-      if (y1 > y2) {
-        //unten
-        this.y -= this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
+    if (x1 < x2) {
+      //rechts
+      this.x += this.speed;
+      this.coveredDistance += this.speed;
     }
-    
+    if (x1 > x2) {
+      //links
+      this.x -= this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (y1 < y2) {
+      //oben
+      this.y += this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (y1 > y2) {
+      //unten
+      this.y -= this.speed;
+      this.coveredDistance += this.speed;
+    }
     if (this.x == x2 && this.y == y2) {
       this.lastwp += 1;
     }

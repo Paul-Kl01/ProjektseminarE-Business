@@ -32,11 +32,10 @@ class game {
     this.towerType = 0;
     // Pause-Flag
     this.pause = false;
-    // GlobalSpeed (Spielgeschwindigkeitmultiplikator)
-    window.GLOBALSPEED = 1;
     // Map-Typ (0 = default)
     this.mapType = 0;
     this.map;
+    /* ---------------------------------------------------- */
 
     // Event Instanz zum Maus-Handling
     this.events_ = new events(this.canvas, this.ctx);
@@ -240,15 +239,6 @@ class game {
     if (this.pause == false) this.draw();
   };
 
-  speedChange = () => {
-    // Geschwindigkeit des Spiels ändern
-    if (window.GLOBALSPEED == 1) {
-      window.GLOBALSPEED = 5; 
-    } else {
-      window.GLOBALSPEED = 1;
-    }
-  }
-
   gameOver = () => {
     this.pause = true;
     this.startGamePressed = false;
@@ -271,9 +261,6 @@ document
 document
   .getElementById("btnReset")
   .addEventListener("click", g.pauseGame, false);
-  document
-  .getElementById("btnSpeed")
-  .addEventListener("click", g.speedChange, false);
 
 /* Tower Build */
 // count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.

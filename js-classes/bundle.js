@@ -36,37 +36,27 @@ class enemy {
     //auslesen nächster waypint i+1
     var x2 = this.waypoints[this.lastwp + 1][0];
     var y2 = this.waypoints[this.lastwp + 1][1];
-    
-    //schauen ob mit nächstem Schritt der Wegpunkt überschritten wird, wenn ja, Koordinaten auf Wegpunkt setzen
-    var distanceToNextWaypoint = Math.abs(x2 - this.x) + Math.abs(y2 - this.y); // Betrag der Distanz zum nächsten Wegpunkt
 
-    //Wenn mit nächstem Schritt der Wegpunkt überschritten werden würde, Koordinaten auf Wegpunkt setzen
-    if (distanceToNextWaypoint <= (this.speed * window.GLOBALSPEED)) {
-      this.x = x2;
-      this.y = y2;
-    } else {
-      if (x1 < x2) {
-        //rechts
-        this.x += this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
-      if (x1 > x2) {
-        //links
-        this.x -= this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
-      if (y1 < y2) {
-        //oben
-        this.y += this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
-      if (y1 > y2) {
-        //unten
-        this.y -= this.speed * window.GLOBALSPEED;
-        this.coveredDistance += this.speed * window.GLOBALSPEED;
-      }
+    if (x1 < x2) {
+      //rechts
+      this.x += this.speed;
+      this.coveredDistance += this.speed;
     }
-    
+    if (x1 > x2) {
+      //links
+      this.x -= this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (y1 < y2) {
+      //oben
+      this.y += this.speed;
+      this.coveredDistance += this.speed;
+    }
+    if (y1 > y2) {
+      //unten
+      this.y -= this.speed;
+      this.coveredDistance += this.speed;
+    }
     if (this.x == x2 && this.y == y2) {
       this.lastwp += 1;
     }
@@ -153,8 +143,8 @@ class particle {
   }
 
   update() {
-    this.x = this.x + (this.velocity.x * window.GLOBALSPEED); //Bewegung updaten
-    this.y = this.y + (this.velocity.y * window.GLOBALSPEED);
+    this.x = this.x + this.velocity.x; //Bewegung updaten
+    this.y = this.y + this.velocity.y;
 
     if (this.enemy.dead == true) this.flag = true;
 
@@ -201,6 +191,7 @@ class particle {
 }
 
 module.exports = particle;
+
 },{}],4:[function(require,module,exports){
 const particle = require("./Particle");
 /*
@@ -245,7 +236,7 @@ class tower {
   update() {
     // Schaut ob der Tower wieder schießbereit ist, wenn ja, schauen ob Gegner in Reichweite, wenn ja Partikel erzeugen (= schiessen)
     if (this.cooldownLeft > 0) {
-      this.cooldownLeft = this.cooldownLeft - window.GLOBALSPEED;
+      this.cooldownLeft--;
     }
     for (let i = 0; i < this.particleList.length; i++) {
       if (this.particleList[i].flag == true) continue;
@@ -289,7 +280,8 @@ class tower {
   }
 }
 
-module.exports = tower;
+module.exports = tower; // muss mit Klassenname übereinstimmen
+
 },{"./Particle":3}],5:[function(require,module,exports){
 /*
  * Verwaltung der Waves im Spiel
@@ -361,7 +353,7 @@ class wave {
     if (this.enemyGroup > 0 && this.enemyGroupCoolDown == 0) {
       //Enemies dürfen ganz normal gespawnt werden
       if (this.enemySpawnCooldown > 0) {
-        this.enemySpawnCooldown = this.enemySpawnCooldown - window.GLOBALSPEED;
+        this.enemySpawnCooldown--;
       } else {
         //in create als zusätzlichen Parameter: enemyStrength übergeben!
         this.entities.createEnemy(this.enemySettings[enemyStrength]); //CreateMethode der EnemyTyp übergeben wird
@@ -382,7 +374,7 @@ class wave {
       this.enemyGroup = 6;
     } else if (this.enemyGroupCoolDown > 0) {
       //Cooldown damit neue Gruppe an Enemies spawnen kann runterzählen
-      this.enemyGroupCoolDown = this.enemyGroupCoolDown - window.GLOBALSPEED;
+      this.enemyGroupCoolDown--;
     }
   }
 
@@ -455,6 +447,7 @@ class wave {
 }
 
 module.exports = wave;
+
 },{}],6:[function(require,module,exports){
 const Tower = require("./Tower");
 const Enemy = require("./Enemy");
@@ -773,11 +766,10 @@ class game {
     this.towerType = 0;
     // Pause-Flag
     this.pause = false;
-    // GlobalSpeed (Spielgeschwindigkeitmultiplikator)
-    window.GLOBALSPEED = 1;
     // Map-Typ (0 = default)
     this.mapType = 0;
     this.map;
+    /* ---------------------------------------------------- */
 
     // Event Instanz zum Maus-Handling
     this.events_ = new events(this.canvas, this.ctx);
@@ -981,15 +973,6 @@ class game {
     if (this.pause == false) this.draw();
   };
 
-  speedChange = () => {
-    // Geschwindigkeit des Spiels ändern
-    if (window.GLOBALSPEED == 1) {
-      window.GLOBALSPEED = 5; 
-    } else {
-      window.GLOBALSPEED = 1;
-    }
-  }
-
   gameOver = () => {
     this.pause = true;
     this.startGamePressed = false;
@@ -1012,9 +995,6 @@ document
 document
   .getElementById("btnReset")
   .addEventListener("click", g.pauseGame, false);
-  document
-  .getElementById("btnSpeed")
-  .addEventListener("click", g.speedChange, false);
 
 /* Tower Build */
 // count nötig, da sonst init immer wieder beim Tower bauen aufgerufen wird.
@@ -1179,6 +1159,7 @@ function scoreChange() {
     map2.style.display = "none";
   }
 }
+
 },{"./Events":2,"./Wave":5,"./entities":6,"./map":8}],8:[function(require,module,exports){
 /*
  * Spielflaeche erzeugen

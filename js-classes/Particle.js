@@ -20,8 +20,8 @@ class particle {
   }
 
   update() {
-    this.x = this.x + (this.velocity.x * window.GLOBALSPEED); //Bewegung updaten
-    this.y = this.y + (this.velocity.y * window.GLOBALSPEED);
+    this.x = this.x + this.velocity.x; //Bewegung updaten
+    this.y = this.y + this.velocity.y;
 
     if (this.enemy.dead == true) this.flag = true;
 

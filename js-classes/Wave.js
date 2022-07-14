@@ -68,7 +68,7 @@ class wave {
     if (this.enemyGroup > 0 && this.enemyGroupCoolDown == 0) {
       //Enemies dürfen ganz normal gespawnt werden
       if (this.enemySpawnCooldown > 0) {
-        this.enemySpawnCooldown = this.enemySpawnCooldown - window.GLOBALSPEED;
+        this.enemySpawnCooldown--;
       } else {
         //in create als zusätzlichen Parameter: enemyStrength übergeben!
         this.entities.createEnemy(this.enemySettings[enemyStrength]); //CreateMethode der EnemyTyp übergeben wird
@@ -89,7 +89,7 @@ class wave {
       this.enemyGroup = 6;
     } else if (this.enemyGroupCoolDown > 0) {
       //Cooldown damit neue Gruppe an Enemies spawnen kann runterzählen
-      this.enemyGroupCoolDown = this.enemyGroupCoolDown - window.GLOBALSPEED;
+      this.enemyGroupCoolDown--;
     }
   }
 
