@@ -41,7 +41,7 @@ class tower {
   update() {
     // Schaut ob der Tower wieder schießbereit ist, wenn ja, schauen ob Gegner in Reichweite, wenn ja Partikel erzeugen (= schiessen)
     if (this.cooldownLeft > 0) {
-      this.cooldownLeft--;
+      this.cooldownLeft = this.cooldownLeft - window.GLOBALSPEED;
     }
     for (let i = 0; i < this.particleList.length; i++) {
       if (this.particleList[i].flag == true) continue;
@@ -85,4 +85,4 @@ class tower {
   }
 }
 
-module.exports = tower; // muss mit Klassenname übereinstimmen
+module.exports = tower;

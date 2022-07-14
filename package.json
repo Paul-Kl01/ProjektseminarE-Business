@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "game": "^1.0.3",
     "map": "^1.0.1"
   }
 }
