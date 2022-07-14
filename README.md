@@ -32,6 +32,6 @@ Veränderungen pushen: \
 # Watchify
 
 1. `npm install -g watchify`
-2. `cd js-classes
+2. `cd js-classes`
 3. `npm install`
 4. `watchify game.js -o bundle.js -v`
